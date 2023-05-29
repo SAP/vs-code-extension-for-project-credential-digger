@@ -1,2 +1,3 @@
 .husky
 .*ignore
+.reuse/dep5
