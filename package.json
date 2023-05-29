@@ -1,0 +1,217 @@
+{
+    "name": "vscode-credential-digger",
+    "displayName": "VS Code extension for project Credential Digger",
+    "description": "Runs credential digger scan",
+    "version": "1.0.0",
+    "private": true,
+    "icon": "resources/logo-CD.png",
+    "keywords": [
+        "Credential Digger",
+        "SAP"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/SAP/vscode-credential-digger"
+    },
+    "publisher": "SAPOSS",
+    "license": "Apache-2.0",
+    "engines": {
+        "vscode": "^1.76.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onStartupFinished"
+    ],
+    "main": "./out/extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "vscode-credential-digger.credentialDiggerScan",
+                "title": "Credential Digger > Scan"
+            },
+            {
+                "command": "vscode-credential-digger.credentialDiggerAddRules",
+                "title": "Credential Digger > Add Rules"
+            }
+        ],
+        "configuration": {
+            "id": "credentialDigger",
+            "title": "Credential digger",
+            "required": [
+                "credentialDigger.credentialDiggerRunner.type"
+            ],
+            "properties": {
+                "credentialDigger.rules": {
+                    "type": "string",
+                    "description": "Specifies the path to the rules file"
+                },
+                "credentialDigger.credentialDiggerRunner.type": {
+                    "type": "string",
+                    "enum": [
+                        "docker",
+                        "webserver",
+                        "binary"
+                    ],
+                    "enumDescriptions": [
+                        "Specifies whether the Credential Digger is running on a Docker container",
+                        "Specifies whether the Credential Digger is running on a Webserver",
+                        "Specifies whether the Credential Digger is running as binary"
+                    ]
+                },
+                "credentialDigger.credentialDiggerRunner.docker": {
+                    "type": "object",
+                    "description": "Specifies the configuration when the Credential Digger is running on a Docker container",
+                    "properties": {
+                        "containerId": {
+                            "type": "string",
+                            "description": "The container ID where the Credential Digger is running"
+                        },
+                        "databaseConfig": {
+                            "type": "object",
+                            "description": "Specifies the database used by the Credential Digger",
+                            "properties": {
+                                "type": {
+                                    "type": "string",
+                                    "default": "sqlite",
+                                    "enum": [
+                                        "sqlite",
+                                        "postgres"
+                                    ],
+                                    "enumDescriptions": [
+                                        "Specifies whether the Credential Digger is using SQLite DB",
+                                        "Specifies whether the Credential Digger is using Postgres DB"
+                                    ]
+                                },
+                                "sqlite": {
+                                    "type": "object",
+                                    "description": "Specifies the SQLite DB configuration",
+                                    "properties": {
+                                        "filename": {
+                                            "type": "string",
+                                            "description": "Specifies the SQLite DB file path"
+                                        }
+                                    }
+                                },
+                                "postgres": {
+                                    "type": "object",
+                                    "description": "Specifies the Postgres DB configuration",
+                                    "properties": {
+                                        "envFile": {
+                                            "type": "string",
+                                            "description": "Specifies the path to an environment file"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "credentialDigger.credentialDiggerRunner.binary": {
+                    "type": "object",
+                    "description": "Specifies the configuration when the Credential Digger is installed locally",
+                    "properties": {
+                        "path": {
+                            "type": "string",
+                            "description": "Specifies the Credential Digger full path"
+                        },
+                        "databaseConfig": {
+                            "type": "object",
+                            "description": "Specifies the database used by the Credential Digger",
+                            "properties": {
+                                "type": {
+                                    "type": "string",
+                                    "default": "sqlite",
+                                    "enum": [
+                                        "sqlite",
+                                        "postgres"
+                                    ],
+                                    "enumDescriptions": [
+                                        "Specifies whether the Credential Digger is using SQLite DB",
+                                        "Specifies whether the Credential Digger is using Postgres DB"
+                                    ]
+                                },
+                                "sqlite": {
+                                    "type": "object",
+                                    "description": "Specifies the SQLite DB configuration",
+                                    "properties": {
+                                        "filename": {
+                                            "type": "string",
+                                            "description": "Specifies the SQLite DB file path"
+                                        }
+                                    }
+                                },
+                                "postgres": {
+                                    "type": "object",
+                                    "description": "Specifies the Postgres DB configuration",
+                                    "properties": {
+                                        "envFile": {
+                                            "type": "string",
+                                            "description": "Specifies the path to an environment file"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "credentialDigger.credentialDiggerRunner.webserver": {
+                    "type": "object",
+                    "description": "Specifies the configuration when the Credential Digger is running on a Webserver",
+                    "properties": {
+                        "host": {
+                            "type": "string",
+                            "description": "Specifies the URL of the Credential Digger"
+                        },
+                        "envFile": {
+                            "type": "string",
+                            "description": "Specifies the path to an environment file"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "pretest": "npm run compile && npm run lint",
+        "lint": "eslint src --ext ts",
+        "test": "node ./out/test/runTest.js",
+        "package": "vsce package",
+        "publish": "vsce publish",
+        "unpublish": "vsce unpublish"
+    },
+    "devDependencies": {
+        "@types/dotenv": "8.2.0",
+        "@types/glob": "8.1.0",
+        "@types/lodash": "4.14.194",
+        "@types/mocha": "10.0.1",
+        "@types/node": "16.x",
+        "@types/tough-cookie": "4.0.2",
+        "@types/uuid": "9.0.1",
+        "@types/vscode": "1.76.0",
+        "@typescript-eslint/eslint-plugin": "5.53.0",
+        "@typescript-eslint/parser": "5.53.0",
+        "@vscode/test-electron": "2.2.3",
+        "@vscode/vsce": "2.19.0",
+        "eslint": "8.34.0",
+        "glob": "8.1.0",
+        "mocha": "10.2.0",
+        "typescript": "4.9.5"
+    },
+    "dependencies": {
+        "@vscode-logging/logger": "1.2.3",
+        "argon2": "0.30.3",
+        "axios": "1.4.0",
+        "axios-cookiejar-support": "4.0.6",
+        "csv-parse": "5.3.8",
+        "dotenv": "16.0.3",
+        "form-data": "4.0.0",
+        "lodash": "4.17.21",
+        "tough-cookie": "4.1.2",
+        "uuid": "9.0.0"
+    }
+}
