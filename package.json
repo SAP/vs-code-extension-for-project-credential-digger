@@ -186,8 +186,7 @@
         "package": "vsce package",
         "vscode:prepublish": "npm run compile",
         "publish": "vsce publish",
-        "unpublish": "vsce unpublish",
-        "execute-husky": "npx husky install && npx husky add .husky/pre-commit \"npx --no-install lint-staged\""
+        "unpublish": "vsce unpublish"
     },
     "devDependencies": {
         "@commitlint/cli": "17.6.3",
