@@ -183,8 +183,8 @@
         "package": "vsce package",
         "publish": "vsce publish",
         "unpublish": "vsce unpublish",
-        "format:check": "prettier --check .",
-        "format:write": "prettier --write",
+        "format": "prettier --check .",
+        "format:fix": "prettier --write .",
         "lint:fix": "eslint src --ext ts --fix .",
         "execute-husky": "npx husky install && npx husky add .husky/pre-commit \"npx --no-install lint-staged\""
     },
@@ -232,6 +232,6 @@
     },
     "lint-staged": {
         "*.ts": "npm run lint:fix",
-        "*": "npm run format:write"
+        "*": "npm run format:fix"
     }
 }
