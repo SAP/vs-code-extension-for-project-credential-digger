@@ -174,18 +174,18 @@
         }
     },
     "scripts": {
-        "vscode:prepublish": "npm run compile",
         "compile": "tsc -p ./",
         "watch": "tsc -watch -p ./",
         "pretest": "npm run compile && npm run lint",
-        "lint": "eslint src --ext ts",
         "test": "node ./out/test/runTest.js",
-        "package": "vsce package",
-        "publish": "vsce publish",
-        "unpublish": "vsce unpublish",
+        "lint": "eslint src --ext ts",
+        "lint:fix": "eslint src --ext ts --fix .",
         "format": "prettier --check .",
         "format:fix": "prettier --write",
-        "lint:fix": "eslint src --ext ts --fix .",
+        "package": "vsce package",
+        "vscode:prepublish": "npm run compile",
+        "publish": "vsce publish",
+        "unpublish": "vsce unpublish",
         "execute-husky": "npx husky install && npx husky add .husky/pre-commit \"npx --no-install lint-staged\""
     },
     "devDependencies": {
