@@ -12,17 +12,17 @@ In case you are the maintainer of a new SAP open source project, these are the s
 - Add information about your project to this README (name, description, requirements etc). Especially take care for the <your-project> placeholders - those ones need to be replaced with your project name. See the sections below the horizontal line and [our guidelines on our wiki page](https://wiki.wdf.sap.corp/wiki/display/ospodocs/Guidelines+for+README.md+file) what is required and recommended.
 - Remove all content in this README above and including the horizontal line ;)
 
-***
+---
 
 # Our new open source project
 
 ## About this project
 
-*Insert a short description of your project here...*
+_Insert a short description of your project here..._
 
 ## Requirements and Setup
 
-*Insert a short description what is required to get your project running...*
+_Insert a short description what is required to get your project running..._
 
 ## Support, Feedback, Contributing
 

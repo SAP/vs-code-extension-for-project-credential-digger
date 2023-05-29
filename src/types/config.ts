@@ -1,25 +1,25 @@
 export interface SQLiteDbConfig {
     filename: string;
-};
+}
 
 export interface PostgresDbConfig {
     envFile: string;
-};
+}
 export interface DbConfig {
     type: DbType;
     sqlite?: SQLiteDbConfig;
     postgres?: PostgresDbConfig;
-};
+}
 
 export enum DbType {
-    SQLite = "sqlite",
-    Postgres = "postgres",
+    SQLite = 'sqlite',
+    Postgres = 'postgres',
 }
 
 export enum CredentialDiggerRuntime {
     Docker = 'docker',
     WebServer = 'webserver',
-    Binary = 'binary'
+    Binary = 'binary',
 }
 
 export interface ExtensionConfig {
@@ -49,4 +49,7 @@ export interface CredentialDiggerRunnerWebServerConfig {
     envFile: string;
 }
 
-export type CredentialDiggerRunnerConfig = CredentialDiggerRunnerDockerConfig | CredentialDiggerRunnerBinaryConfig | CredentialDiggerRunnerWebServerConfig;
+export type CredentialDiggerRunnerConfig =
+    | CredentialDiggerRunnerDockerConfig
+    | CredentialDiggerRunnerBinaryConfig
+    | CredentialDiggerRunnerWebServerConfig;

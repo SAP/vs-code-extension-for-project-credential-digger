@@ -1,8 +1,8 @@
-export type CredentialDiggerTaskDefinition = {
+export interface CredentialDiggerTaskDefinition {
     type: CredentialDiggerTaskDefinitionType;
     group: CredentialDiggerTaskGroup;
     scanId: string;
-};
+}
 
 export enum CredentialDiggerTaskDefinitionType {
     Scan = 'scan',
@@ -12,19 +12,34 @@ export enum CredentialDiggerTaskDefinitionType {
 }
 
 export enum CredentialDiggerTaskGroup {
-    CredentialDigger = 'CredentialDigger'
+    CredentialDigger = 'CredentialDigger',
 }
 
-export type CredentialDiggerTaskInfo = {
+export interface CredentialDiggerTaskInfo {
     name: string;
     description: string;
-};
+}
 
-export const CredentialDiggerTasks: Record<CredentialDiggerTaskDefinitionType, CredentialDiggerTaskInfo> = {
-    scan: { name: 'CredentialDiggerScan', description: 'Credential Digger Scan' },
-    discoveries: { name: 'CredentialDiggerDiscoveries', description: 'Credential Digger Discoveries' },
-    cleanup: { name: 'CredentialDiggerCleanup', description: 'Credential Digger Cleanup' },
-    addRules: { name: 'CredentialDiggerAddRules', description: 'Credential Digger Add Rules' }
+export const CredentialDiggerTasks: Record<
+    CredentialDiggerTaskDefinitionType,
+    CredentialDiggerTaskInfo
+> = {
+    scan: {
+        name: 'CredentialDiggerScan',
+        description: 'Credential Digger Scan',
+    },
+    discoveries: {
+        name: 'CredentialDiggerDiscoveries',
+        description: 'Credential Digger Discoveries',
+    },
+    cleanup: {
+        name: 'CredentialDiggerCleanup',
+        description: 'Credential Digger Cleanup',
+    },
+    addRules: {
+        name: 'CredentialDiggerAddRules',
+        description: 'Credential Digger Add Rules',
+    },
 };
 
 export enum TaskProblemMatcher {

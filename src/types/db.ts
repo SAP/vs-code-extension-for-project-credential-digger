@@ -8,7 +8,7 @@ export interface Discovery {
     ruleId: number;
     state: State;
     timestamp: string;
-    rule?: Rule
+    rule?: Rule;
 }
 
 export enum State {

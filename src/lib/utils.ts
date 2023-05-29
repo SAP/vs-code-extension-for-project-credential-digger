@@ -9,7 +9,6 @@ import * as uuid from 'uuid';
 import { ExtensionConfig } from '../types/config';
 
 export default class Utils {
-
     public static async executeTask(task: vscode.Task) {
         // Generate a uniq id for the task to check on
         task.definition['taskId'] = Utils.generateUniqNumber();
@@ -25,11 +24,15 @@ export default class Utils {
         };
         // Execute
         await vscode.tasks.executeTask(task);
-        return new Promise<number | undefined>(resolve => {
-            let disposable = vscode.tasks.onDidEndTaskProcess(e => {
-                if (e.execution.task.definition.type === task.definition.type &&
-                    e.execution.task.definition.taskId === task.definition.taskId &&
-                    e.execution.task.definition.scanId === task.definition.scanId) {
+        return new Promise<number | undefined>((resolve) => {
+            const disposable = vscode.tasks.onDidEndTaskProcess((e) => {
+                if (
+                    e.execution.task.definition.type === task.definition.type &&
+                    e.execution.task.definition.taskId ===
+                        task.definition.taskId &&
+                    e.execution.task.definition.scanId ===
+                        task.definition.scanId
+                ) {
                     disposable.dispose();
                     resolve(e.exitCode);
                 }
@@ -37,13 +40,17 @@ export default class Utils {
         });
     }
 
-    public static async parseDiscoveriesCSVFile(fileLocation: string): Promise<Discovery[]> {
+    public static async parseDiscoveriesCSVFile(
+        fileLocation: string,
+    ): Promise<Discovery[]> {
         const records = [];
-        const parser = fs
-            .createReadStream(fileLocation)
-            .pipe(parse({
-                columns: true, encoding: 'utf-8', delimiter: ','
-            }));
+        const parser = fs.createReadStream(fileLocation).pipe(
+            parse({
+                columns: true,
+                encoding: 'utf-8',
+                delimiter: ',',
+            }),
+        );
         for await (const record of parser) {
             records.push({
                 id: record.id,
@@ -60,14 +67,19 @@ export default class Utils {
                     regex: record.rule_regex,
                     category: record.rule_category,
                     description: record.rule_description,
-                }
+                },
             });
         }
         return records;
     }
 
-    public static async createHash(data: string, length: number): Promise<string> {
-        return (await argon2.hash(data, { raw: true, hashLength: length })).toString('hex');
+    public static async createHash(
+        data: string,
+        length: number,
+    ): Promise<string> {
+        return (
+            await argon2.hash(data, { raw: true, hashLength: length })
+        ).toString('hex');
     }
 
     public static cloneObject<T>(object: T): T {
@@ -86,20 +98,33 @@ export default class Utils {
     }
 
     public static isSettingsEmpty(settings: ExtensionConfig): boolean {
-        return Utils.isNullOrUndefinedOrEmptyObject(settings) || (settings && !Utils.isNullOrUndefinedOrEmptyObject(settings.credentialDiggerRunner) && Utils.isNullOrUndefinedOrEmptyObject(settings.credentialDiggerRunner.binary) && Utils.isNullOrUndefinedOrEmptyObject(settings.credentialDiggerRunner.docker) && !settings.credentialDiggerRunner.type);
+        return (
+            Utils.isNullOrUndefinedOrEmptyObject(settings) ||
+            (settings &&
+                !Utils.isNullOrUndefinedOrEmptyObject(
+                    settings.credentialDiggerRunner,
+                ) &&
+                Utils.isNullOrUndefinedOrEmptyObject(
+                    settings.credentialDiggerRunner.binary,
+                ) &&
+                Utils.isNullOrUndefinedOrEmptyObject(
+                    settings.credentialDiggerRunner.docker,
+                ) &&
+                !settings.credentialDiggerRunner.type)
+        );
     }
 
     public static isNullOrUndefined(obj: unknown): boolean {
         return obj == null;
     }
 
-
     public static isEmptyObject(obj: object): boolean {
         return !Object.keys(obj).length;
     }
 
-
     public static isNullOrUndefinedOrEmptyObject(obj: unknown): boolean {
-        return Utils.isNullOrUndefined(obj) || Utils.isEmptyObject(obj as object);
+        return (
+            Utils.isNullOrUndefined(obj) || Utils.isEmptyObject(obj as object)
+        );
     }
 }

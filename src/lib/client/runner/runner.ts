@@ -1,7 +1,13 @@
-import { CredentialDiggerRunnerBinaryConfig, CredentialDiggerRunnerConfig, CredentialDiggerRunnerDockerConfig, CredentialDiggerRuntime, DbType } from "../../../types/config";
-import { Discovery } from "../../../types/db";
+import {
+    CredentialDiggerRunnerBinaryConfig,
+    CredentialDiggerRunnerConfig,
+    CredentialDiggerRunnerDockerConfig,
+    CredentialDiggerRuntime,
+    DbType,
+} from '../../../types/config';
+import { Discovery } from '../../../types/db';
 import * as vscode from 'vscode';
-import Utils from "../../utils";
+import Utils from '../../utils';
 
 export default abstract class Runner {
     private id: string;
@@ -12,7 +18,12 @@ export default abstract class Runner {
     protected discoveriesFileLocation!: vscode.Uri;
     protected rules: vscode.Uri | undefined;
 
-    public constructor(config: CredentialDiggerRunnerConfig, runnerType: CredentialDiggerRuntime, rules: string, currentFile?: vscode.TextDocument) {
+    public constructor(
+        config: CredentialDiggerRunnerConfig,
+        runnerType: CredentialDiggerRuntime,
+        rules: string,
+        currentFile?: vscode.TextDocument,
+    ) {
         // Set
         this.runnerType = runnerType;
         this.config = config;
@@ -35,7 +46,9 @@ export default abstract class Runner {
     }
 
     public abstract run(): Promise<number>;
-    public abstract getDiscoveries(storagePath: vscode.Uri): Promise<Discovery[]>;
+    public abstract getDiscoveries(
+        storagePath: vscode.Uri,
+    ): Promise<Discovery[]>;
     public abstract cleanup(): Promise<void>;
     protected validateConfig(): void {
         switch (this.runnerType) {
@@ -49,27 +62,37 @@ export default abstract class Runner {
                 return;
         }
         if (!this.config.databaseConfig) {
-            throw new Error('Please provide the Credential Digger database configuration');
+            throw new Error(
+                'Please provide the Credential Digger database configuration',
+            );
         }
 
         if (this.config.databaseConfig.type === DbType.SQLite) {
             if (!this.config.databaseConfig.sqlite) {
-                throw new Error('Please provide the Credential Digger SQLite database configuration');
+                throw new Error(
+                    'Please provide the Credential Digger SQLite database configuration',
+                );
             }
 
             if (!this.config.databaseConfig.sqlite.filename) {
-                throw new Error('Please provide the Credential Digger SQLite database location');
+                throw new Error(
+                    'Please provide the Credential Digger SQLite database location',
+                );
             }
         }
 
         // Only relevant when rules config is defined
         if (this.config.databaseConfig.type === DbType.Postgres && this.rules) {
             if (!this.config.databaseConfig.postgres) {
-                throw new Error('Please provide the Credential Digger Postgres database configuration');
+                throw new Error(
+                    'Please provide the Credential Digger Postgres database configuration',
+                );
             }
 
             if (!this.config.databaseConfig.postgres.envFile) {
-                throw new Error('Please provide the Credential Digger Postgres database environment file');
+                throw new Error(
+                    'Please provide the Credential Digger Postgres database environment file',
+                );
             }
         }
     }
