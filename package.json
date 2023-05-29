@@ -184,8 +184,9 @@
         "publish": "vsce publish",
         "unpublish": "vsce unpublish",
         "format:check": "prettier --check .",
-        "format:write": "prettier --write .",
-        "lint:fix": "eslint src --ext ts --fix ."
+        "format:write": "prettier --write",
+        "lint:fix": "eslint src --ext ts --fix .",
+        "execute-husky": "npx husky install && npx husky add .husky/pre-commit \"npx --no-install lint-staged\""
     },
     "devDependencies": {
         "@types/dotenv": "8.2.0",
@@ -203,6 +204,8 @@
         "eslint": "8.41.0",
         "eslint-config-prettier": "8.8.0",
         "glob": "8.1.0",
+        "husky": "8.0.3",
+        "lint-staged": "13.2.2",
         "mocha": "10.2.0",
         "prettier": "2.8.8",
         "typescript": "5.0.4"
@@ -221,5 +224,14 @@
     },
     "overrides": {
         "@typescript-eslint/typescript-estree": "^5.59.7"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    },
+    "lint-staged": {
+        "*.ts": "npm run lint:fix",
+        "*": "npm run format:write"
     }
 }
