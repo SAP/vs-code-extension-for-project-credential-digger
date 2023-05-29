@@ -184,7 +184,7 @@
         "publish": "vsce publish",
         "unpublish": "vsce unpublish",
         "format": "prettier --check .",
-        "format:fix": "prettier --write .",
+        "format:fix": "prettier --write",
         "lint:fix": "eslint src --ext ts --fix .",
         "execute-husky": "npx husky install && npx husky add .husky/pre-commit \"npx --no-install lint-staged\""
     },
