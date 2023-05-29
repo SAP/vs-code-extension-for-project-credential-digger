@@ -174,6 +174,7 @@
         }
     },
     "scripts": {
+        "commit": "cz",
         "compile": "tsc -p ./",
         "watch": "tsc -watch -p ./",
         "pretest": "npm run compile && npm run lint",
@@ -189,6 +190,8 @@
         "execute-husky": "npx husky install && npx husky add .husky/pre-commit \"npx --no-install lint-staged\""
     },
     "devDependencies": {
+        "@commitlint/cli": "17.6.3",
+        "@commitlint/config-conventional": "17.6.3",
         "@types/dotenv": "8.2.0",
         "@types/glob": "8.1.0",
         "@types/lodash": "4.14.194",
@@ -201,6 +204,8 @@
         "@typescript-eslint/parser": "5.53.0",
         "@vscode/test-electron": "2.2.3",
         "@vscode/vsce": "2.19.0",
+        "commitizen": "4.3.0",
+        "cz-conventional-changelog": "3.3.0",
         "eslint": "8.41.0",
         "eslint-config-prettier": "8.8.0",
         "glob": "8.1.0",
@@ -208,6 +213,7 @@
         "lint-staged": "13.2.2",
         "mocha": "10.2.0",
         "prettier": "2.8.8",
+        "standard-version": "9.5.0",
         "typescript": "5.0.4"
     },
     "dependencies": {
@@ -233,5 +239,10 @@
     "lint-staged": {
         "*.ts": "npm run lint:fix",
         "*": "npm run format:fix"
+    },
+    "config": {
+        "commitizen": {
+            "path": "./node_modules/cz-conventional-changelog"
+        }
     }
 }
