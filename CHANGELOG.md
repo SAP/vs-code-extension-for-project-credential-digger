@@ -1,9 +1,9 @@
 # Change Log
 
-All notable changes to the "vscode-credential-digger" extension will be documented in this file.
+All notable changes to the "vs-code-extension-for-project-credential-digger" extension will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
 ## [Unreleased]
 
-- Initial release
+-   Initial release

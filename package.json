@@ -1,5 +1,5 @@
 {
-    "name": "vscode-credential-digger",
+    "name": "vs-code-extension-for-project-credential-digger",
     "displayName": "VS Code extension for project Credential Digger",
     "description": "Runs credential digger scan",
     "version": "1.0.0",
@@ -11,7 +11,7 @@
     ],
     "repository": {
         "type": "git",
-        "url": "https://github.com/SAP/vscode-credential-digger"
+        "url": "https://github.com/SAP/vs-code-extension-for-project-credential-digger"
     },
     "publisher": "SAPOSS",
     "license": "Apache-2.0",
@@ -28,11 +28,11 @@
     "contributes": {
         "commands": [
             {
-                "command": "vscode-credential-digger.credentialDiggerScan",
+                "command": "vs-code-extension-for-project-credential-digger.credentialDiggerScan",
                 "title": "Credential Digger > Scan"
             },
             {
-                "command": "vscode-credential-digger.credentialDiggerAddRules",
+                "command": "vs-code-extension-for-project-credential-digger.credentialDiggerAddRules",
                 "title": "Credential Digger > Add Rules"
             }
         ],
