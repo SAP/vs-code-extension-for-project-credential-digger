@@ -193,7 +193,7 @@
         "@types/glob": "8.1.0",
         "@types/lodash": "4.14.195",
         "@types/mocha": "10.0.1",
-        "@types/node": "16.x",
+        "@types/node": "20.x",
         "@types/tough-cookie": "4.0.2",
         "@types/uuid": "9.0.1",
         "@types/vscode": "1.76.0",
