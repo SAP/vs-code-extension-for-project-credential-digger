@@ -191,7 +191,7 @@
     "devDependencies": {
         "@types/dotenv": "8.2.0",
         "@types/glob": "8.1.0",
-        "@types/lodash": "4.14.194",
+        "@types/lodash": "4.14.195",
         "@types/mocha": "10.0.1",
         "@types/node": "16.x",
         "@types/tough-cookie": "4.0.2",
