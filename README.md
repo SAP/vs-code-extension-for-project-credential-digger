@@ -19,9 +19,9 @@ The tool provides the following support:
     -   locally
     -   in a docker container
     -   in a web server
--   Pushes the regular expressions rules to the Credential Digger via the command ``
+-   Pushes the regular expressions rules to the Credential Digger via the command `Credential Digger: Add Rules`
 -   Triggers the scan when opening/saving a file
--   Forces a scan of a file via the command ``
+-   Forces a scan of a file via the command `Credential Digger: Scan`
 -   Highlights the findings in the code and displays them in the `Problems` panel as warnings
 
 ## Requirements and Setup

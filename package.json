@@ -29,11 +29,11 @@
         "commands": [
             {
                 "command": "vs-code-extension-for-project-credential-digger.credentialDiggerScan",
-                "title": "Credential Digger > Scan"
+                "title": "Credential Digger: Scan"
             },
             {
                 "command": "vs-code-extension-for-project-credential-digger.credentialDiggerAddRules",
-                "title": "Credential Digger > Add Rules"
+                "title": "Credential Digger: Add Rules"
             }
         ],
         "configuration": {
