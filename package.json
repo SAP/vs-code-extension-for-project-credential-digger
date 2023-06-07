@@ -184,6 +184,7 @@
         "format": "prettier --check .",
         "format:fix": "prettier --write",
         "package": "vsce package",
+        "generate:release": "standard-version",
         "vscode:prepublish": "npm run compile",
         "publish": "vsce publish",
         "unpublish": "vsce unpublish"
