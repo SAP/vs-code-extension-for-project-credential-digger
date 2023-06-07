@@ -33,7 +33,7 @@ The tool provides the following support:
 ### Setup
 
 1. The extension relies on an existing instance of the Credential Digger, hence you need to configure the extension based on the chosen mode
-2. If your Credential digger instance does not have scanning rules or you want to provide your customized set then you can push them by running this command ``
+2. If your Credential digger instance does not have scanning rules or you want to provide your customized set then you can push them by running this command `Credential Digger: Add Rules`
 
 ## Support, Feedback, Contributing
 
