@@ -1,26 +1,39 @@
-# SAP Repository Template
+# VS Code extension for project Credential Digger
 
-Default templates for SAP open source repositories, including LICENSE, .reuse/dep5, Code of Conduct, etc... All repositories on github.com/SAP will be created based on this template.
+## About
 
-## To-Do
+VS Code extension for project Credential Digger is a free IDE extension that let you detect secrets and credentials in your code before they get leaked! Like a spell checker, the extension scans your files using the [Credential Digger](https://github.com/SAP/credential-digger) and highlights the secrets as you write code, so you can fix them before the code is even committed. The extension could be installed directly from the VS Code Marketplace!
 
-In case you are the maintainer of a new SAP open source project, these are the steps to do with the template files:
+## How it works
 
--   Adjust the contribution guidelines (e.g. add coding style guidelines, pull request checklists, different license if needed etc.)
--   Add information about your project to this README (name, description, requirements etc). Especially take care for the <your-project> placeholders - those ones need to be replaced with your project name. See the sections below the horizontal line and [our guidelines on our wiki page](https://wiki.wdf.sap.corp/wiki/display/ospodocs/Guidelines+for+README.md+file) what is required and recommended.
--   Remove all content in this README above and including the horizontal line ;)
+Open any source file, or edit an existing one and save, then you will start seeing the issues reported by the extension.
+The issues are highlighted in your code as warnings, and also are listed in the `Problems` panel.
 
----
+![on-the-fly](images/credential-digger-vscode.gif)
 
-# Our new open source project
+## Features
 
-## About this project
+The tool provides the following support:
 
-_Insert a short description of your project here..._
+-   Connects to an instance of the Credential Digger running either
+    -   locally
+    -   in a docker container
+    -   in a web server
+-   Pushes the regular expressions rules to the Credential Digger via the command ``
+-   Triggers the scan when opening/saving a file
+-   Forces a scan of a file via the command ``
+-   Highlights the findings in the code and displays them in the `Problems` panel as warnings
 
 ## Requirements and Setup
 
-_Insert a short description what is required to get your project running..._
+### Dependencies
+
+-   Credential Digger >= v4.11.1
+
+### Setup
+
+1. The extension relies on an existing instance of the Credential Digger, hence you need to configure the extension based on the chosen mode
+2. If your Credential digger instance does not have scanning rules or you want to provide your customized set then you can push them by running this command ``
 
 ## Support, Feedback, Contributing
 

@@ -1,3 +1,4 @@
 .husky
 .*ignore
 .reuse/dep5
+*.gif
