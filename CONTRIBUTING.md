@@ -61,7 +61,6 @@ npm run lint:fix
 npm run format
 # To run auto fix
 npm run format:fix
-
 ```
 
 #### Compiling
@@ -76,9 +75,11 @@ npm run compile
 npm run test
 ```
 
-#### Code Coverage
+#### Commit
 
-TBD
+```sh
+npm run commit
+```
 
 ## Issues and Planning
 
