@@ -1,17 +1,17 @@
 # VS Code extension for project Credential Digger
 
-## About
+## Description
 
-VS Code extension for project Credential Digger is a free IDE extension that let you detect secrets and credentials in your code before they get leaked! Like a spell checker, the extension scans your files using the [Credential Digger](https://github.com/SAP/credential-digger) and highlights the secrets as you write code, so you can fix them before the code is even committed. The extension could be installed directly from the VS Code Marketplace!
+VS Code extension for project Credential Digger is a free IDE extension that let you detect secrets and credentials in your code before they get leaked! Like a spell checker, the extension scans your files using the [Credential Digger](https://github.com/SAP/credential-digger) and highlights the secrets as you write code, so you can fix them before the code is even committed.
 
-## How it works
+### How it works
 
 Open any source file, or edit an existing one and save, then you will start seeing the issues reported by the extension.
 The issues are highlighted in your code as warnings, and also are listed in the `Problems` panel.
 
-![on-the-fly](images/credential-digger-vscode.gif)
+![on-the-fly](images/credential-digger-how-it-works.gif)
 
-## Features
+### Features
 
 The tool provides the following support:
 
@@ -24,16 +24,37 @@ The tool provides the following support:
 -   Forces a scan of a file via the command `Credential Digger: Scan`
 -   Highlights the findings in the code and displays them in the `Problems` panel as warnings
 
-## Requirements and Setup
-
-### Dependencies
+## Requirements
 
 -   Credential Digger >= v4.11.1
 
-### Setup
+## Download and Installation
 
-1. The extension relies on an existing instance of the Credential Digger, hence you need to configure the extension based on the chosen mode
-2. If your Credential digger instance does not have scanning rules or you want to provide your customized set then you can push them by running this command `Credential Digger: Add Rules`
+The extension could be installed directly from the VS Code Marketplace!
+
+## Configuration
+
+### Credential Digger instance
+
+The extension relies on an existing instance of the Credential Digger, hence you need to configure the extension based on the chosen mode
+
+#### Local
+
+![local](images/credential-digger-local.gif)
+
+#### Docker
+
+![docker](images/credential-digger-docker.gif)
+
+#### Web Server
+
+![webserver](images/credential-digger-webserver.gif)
+
+### Add rules
+
+If your Credential digger instance does not have scanning rules or you want to provide your customized set then you can push them by running this command `Credential Digger: Add Rules`
+
+![add-rules](images/credential-digger-add-rules.gif)
 
 ## Support, Feedback, Contributing
 
