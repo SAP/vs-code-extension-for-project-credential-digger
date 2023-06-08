@@ -38,7 +38,7 @@
         ],
         "configuration": {
             "id": "credentialDigger",
-            "title": "Credential digger",
+            "title": "Credential Digger",
             "required": [
                 "credentialDigger.credentialDiggerRunner.type"
             ],
