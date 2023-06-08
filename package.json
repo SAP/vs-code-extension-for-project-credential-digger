@@ -183,7 +183,7 @@
         "lint:fix": "eslint src --ext ts --fix .",
         "format": "prettier --check .",
         "format:fix": "prettier --write",
-        "package": "vsce package",
+        "package": "vsce package --ignoreFile .vscodeignore",
         "generate:release": "standard-version",
         "vscode:prepublish": "npm run compile",
         "publish": "vsce publish",
