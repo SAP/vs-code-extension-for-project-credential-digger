@@ -49,6 +49,7 @@
                 },
                 "credentialDigger.credentialDiggerRunner.type": {
                     "type": "string",
+                    "description": "Specifies the Credential Digger runner mode",
                     "enum": [
                         "docker",
                         "webserver",
