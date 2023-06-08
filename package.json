@@ -3,7 +3,6 @@
     "displayName": "VS Code extension for project Credential Digger",
     "description": "Runs credential digger scan",
     "version": "1.0.0",
-    "private": true,
     "icon": "resources/logo-CD.png",
     "keywords": [
         "Credential Digger",
@@ -18,6 +17,7 @@
     "engines": {
         "vscode": "^1.76.0"
     },
+    "pricing": "Free",
     "categories": [
         "Other"
     ],
@@ -183,7 +183,7 @@
         "lint:fix": "eslint src --ext ts --fix .",
         "format": "prettier --check .",
         "format:fix": "prettier --write",
-        "package": "vsce package",
+        "package": "vsce package --ignoreFile .vscodeignore",
         "generate:release": "standard-version",
         "vscode:prepublish": "npm run compile",
         "publish": "vsce publish",
