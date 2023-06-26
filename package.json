@@ -191,7 +191,7 @@
         "unpublish": "vsce unpublish"
     },
     "devDependencies": {
-        "@commitlint/cli": "17.6.3",
+        "@commitlint/cli": "17.6.6",
         "@commitlint/config-conventional": "17.6.5",
         "@types/dotenv": "8.2.0",
         "@types/glob": "8.1.0",
