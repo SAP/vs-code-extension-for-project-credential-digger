@@ -201,7 +201,7 @@
         "@types/tough-cookie": "4.0.2",
         "@types/uuid": "9.0.1",
         "@types/vscode": "1.76.0",
-        "@typescript-eslint/eslint-plugin": "5.59.7",
+        "@typescript-eslint/eslint-plugin": "5.60.0",
         "@typescript-eslint/parser": "5.53.0",
         "@vscode/test-electron": "2.3.2",
         "@vscode/vsce": "2.19.0",
