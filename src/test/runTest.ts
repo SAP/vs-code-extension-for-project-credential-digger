@@ -17,7 +17,11 @@ async function main() {
         await runTests({
             extensionDevelopmentPath,
             extensionTestsPath,
-            launchArgs: ['--user-data-dir', `${os.tmpdir()}`],
+            launchArgs: [
+                '--disable-extensions',
+                '--user-data-dir',
+                `${os.tmpdir()}`,
+            ],
         });
     } catch (err) {
         console.error('Failed to run tests', err);
