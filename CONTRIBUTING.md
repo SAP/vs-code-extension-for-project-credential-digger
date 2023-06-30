@@ -71,6 +71,31 @@ npm run compile
 
 #### Testing
 
+##### Unit tests
+
+For unit tests, we leverage below packages;
+
+-   `mocha`: test suite
+-   `chai`: assertion
+-   `sinon`: mocking
+-   `istanbul`: code coverage
+
+```sh
+npm run test:unit
+```
+
+##### Integration tests
+
+`Pre-requisites`
+
+-   Credential digger instance running on a web server
+
+```sh
+npm run test:integration
+```
+
+##### All tests
+
 ```sh
 npm run test
 ```

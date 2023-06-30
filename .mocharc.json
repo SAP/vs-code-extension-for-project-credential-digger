@@ -1,0 +1,14 @@
+{
+    "diff": true,
+    "recursive": true,
+    "extension": ["ts"],
+    "package": "./package.json",
+    "slow": 75,
+    "timeout": 30000,
+    "ui": "bdd",
+    "full-trace": true,
+    "enable-source-maps": true,
+    "exit": true,
+    "sort": true,
+    "require": ["ts-node/register", "source-map-support/register"]
+}
