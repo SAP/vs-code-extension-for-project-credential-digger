@@ -38,7 +38,7 @@ export default abstract class Runner {
     }
 
     public getCurrentFile(): vscode.TextDocument {
-        return this.currentFile!;
+        return this.currentFile as vscode.TextDocument;
     }
 
     public getId(): string {

@@ -18,11 +18,9 @@ import {
 export default class BinaryRunner extends Runner {
     public async run(): Promise<number> {
         this.config = this.config as CredentialDiggerRunnerBinaryConfig;
-        this.fileLocation = this.currentFile!.uri;
+        this.fileLocation = (this.currentFile as vscode.TextDocument).uri;
         // Prepare scan command
-        let cmd = `${this.config.path} scan_path "${
-            this.currentFile!.uri.fsPath
-        }" --models PathModel --force --debug`;
+        let cmd = `${this.config.path} scan_path "${this.fileLocation.fsPath}" --models PathModel --force --debug`;
         if (this.config.databaseConfig.type === DbType.SQLite) {
             cmd += ` --sqlite "${this.config.databaseConfig.sqlite?.filename}"`;
         }

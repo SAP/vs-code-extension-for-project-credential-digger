@@ -27,7 +27,7 @@ export default class DockerRunner extends Runner {
         // Copy to a temporary folder within the container
         this.fileLocation = vscode.Uri.joinPath(
             vscode.Uri.parse(this.containerWorkingDir),
-            this.currentFile!.uri.fsPath,
+            (this.currentFile as vscode.TextDocument).uri.fsPath,
         );
         commands.push(
             `docker exec "${this.config.containerId}" mkdir -p "${path.dirname(
@@ -35,9 +35,9 @@ export default class DockerRunner extends Runner {
             )}"`,
         );
         commands.push(
-            `docker cp "${this.currentFile!.uri.fsPath}" "${
-                this.config.containerId
-            }:${this.fileLocation.fsPath}"`,
+            `docker cp "${
+                (this.currentFile as vscode.TextDocument).uri.fsPath
+            }" "${this.config.containerId}:${this.fileLocation.fsPath}"`,
         );
 
         // Scan

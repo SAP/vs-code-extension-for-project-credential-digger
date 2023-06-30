@@ -69,7 +69,9 @@ export default class WebServerRunner extends Runner {
         form.append('forceScan', 'force');
         form.append(
             'filename',
-            fs.createReadStream(this.currentFile!.uri.fsPath),
+            fs.createReadStream(
+                (this.currentFile as vscode.TextDocument).uri.fsPath,
+            ),
         );
         LoggerFactory.getInstance().debug(
             `${this.getId()}: scan: sending file ${
@@ -165,7 +167,10 @@ export default class WebServerRunner extends Runner {
         );
         try {
             const form = new FormData();
-            form.append('filename', fs.createReadStream(this.rules!.fsPath));
+            form.append(
+                'filename',
+                fs.createReadStream((this.rules as vscode.Uri).fsPath),
+            );
             await this.httpInstance.post('/upload_rule', form, {
                 headers: form.getHeaders(),
                 jar: this.cookies,
