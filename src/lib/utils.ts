@@ -110,6 +110,9 @@ export default class Utils {
                 Utils.isNullOrUndefinedOrEmptyObject(
                     settings.credentialDiggerRunner.docker,
                 ) &&
+                Utils.isNullOrUndefinedOrEmptyObject(
+                    settings.credentialDiggerRunner.webserver,
+                ) &&
                 !settings.credentialDiggerRunner.type)
         );
     }
