@@ -1,6 +1,6 @@
 import * as path from 'path';
 import * as Mocha from 'mocha';
-import { glob } from 'glob';
+import * as glob from 'glob';
 
 function setupCoverage() {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -23,32 +23,49 @@ function setupCoverage() {
 
 export async function run(): Promise<void> {
     const nyc = setupCoverage();
-
     // Create the mocha test
     const mocha = new Mocha({
         ui: 'tdd',
         color: true,
+        timeout: 300000,
+        diff: true,
+        fullTrace: true,
+        reporter: 'mochawesome',
+        reporterOptions: {
+            json: false,
+        },
+        require: ['mochawesome/register'],
     });
 
     const testsRoot = path.resolve(__dirname, '..');
-    try {
-        const files = await glob('**/**.test.js', { cwd: testsRoot });
-        files.forEach((f) => mocha.addFile(path.resolve(testsRoot, f)));
-        // Run the mocha test
-        mocha.run((failures) => {
-            if (failures > 0) {
-                throw new Error(`${failures} tests failed.`);
-            } else {
-                return;
+
+    return new Promise((c, e) => {
+        glob('**/**.test.js', { cwd: testsRoot }, async (err, files) => {
+            if (err) {
+                return e(err);
+            }
+
+            // Add files to the test suite
+            files.forEach((f) => mocha.addFile(path.resolve(testsRoot, f)));
+
+            try {
+                // Run the mocha test
+                mocha.run((failures) => {
+                    if (failures > 0) {
+                        e(new Error(`${failures} tests failed.`));
+                    } else {
+                        c();
+                    }
+                });
+            } catch (err) {
+                console.error(err);
+                e(err);
+            } finally {
+                if (nyc) {
+                    nyc.writeCoverageFile();
+                    await nyc.report();
+                }
             }
         });
-    } catch (err) {
-        console.error(err);
-        throw err;
-    } finally {
-        if (nyc) {
-            nyc.writeCoverageFile();
-            await nyc.report();
-        }
-    }
+    });
 }
