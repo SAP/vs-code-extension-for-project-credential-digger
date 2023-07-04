@@ -25,12 +25,12 @@ export async function run(): Promise<void> {
     const nyc = setupCoverage();
     // Create the mocha test
     const mocha = new Mocha({
-        ui: 'tdd',
+        ui: 'bdd',
         color: true,
         timeout: 300000,
         diff: true,
         fullTrace: true,
-        reporter: 'mochawesome',
+        reporter: process.env.NODE_ENV !== 'debug' ? 'mochawesome' : undefined,
         reporterOptions: {
             json: false,
         },
@@ -50,21 +50,20 @@ export async function run(): Promise<void> {
 
             try {
                 // Run the mocha test
-                mocha.run((failures) => {
+                mocha.run(async (failures) => {
                     if (failures > 0) {
                         e(new Error(`${failures} tests failed.`));
                     } else {
+                        if (nyc) {
+                            nyc.writeCoverageFile();
+                            await nyc.report();
+                        }
                         c();
                     }
                 });
             } catch (err) {
                 console.error(err);
                 e(err);
-            } finally {
-                if (nyc) {
-                    nyc.writeCoverageFile();
-                    await nyc.report();
-                }
             }
         });
     });

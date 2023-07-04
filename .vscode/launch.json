@@ -19,11 +19,15 @@
             "request": "launch",
             "args": [
                 "--disable-extensions",
+                "--disable-gpu",
                 "--extensionDevelopmentPath=${workspaceFolder}",
                 "--extensionTestsPath=${workspaceFolder}/out/test/suite/index"
             ],
             "outFiles": ["${workspaceFolder}/out/test/**/*.js"],
-            "preLaunchTask": "${defaultBuildTask}"
+            "preLaunchTask": "${defaultBuildTask}",
+            "env": {
+                "NODE_ENV": "debug"
+            }
         }
     ]
 }
