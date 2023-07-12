@@ -27,7 +27,6 @@ export async function run(): Promise<void> {
     const mocha = new Mocha({
         ui: 'bdd',
         color: true,
-        timeout: 300000,
         diff: true,
         fullTrace: true,
         reporter: process.env.NODE_ENV !== 'debug' ? 'mochawesome' : undefined,

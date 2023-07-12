@@ -9,7 +9,9 @@ import * as uuid from 'uuid';
 import { ExtensionConfig } from '../types/config';
 
 export default class Utils {
-    public static async executeTask(task: vscode.Task) {
+    public static async executeTask(
+        task: vscode.Task,
+    ): Promise<number | undefined> {
         // Generate a uniq id for the task to check on
         task.definition['taskId'] = Utils.generateUniqNumber();
         // Set defaults
@@ -24,20 +26,7 @@ export default class Utils {
         };
         // Execute
         await vscode.tasks.executeTask(task);
-        return new Promise<number | undefined>((resolve) => {
-            const disposable = vscode.tasks.onDidEndTaskProcess((e) => {
-                if (
-                    e.execution.task.definition.type === task.definition.type &&
-                    e.execution.task.definition.taskId ===
-                        task.definition.taskId &&
-                    e.execution.task.definition.scanId ===
-                        task.definition.scanId
-                ) {
-                    disposable.dispose();
-                    resolve(e.exitCode);
-                }
-            });
-        });
+        return await Utils.getTaskExitCode(task);
     }
 
     public static async parseDiscoveriesCSVFile(
@@ -97,24 +86,50 @@ export default class Utils {
         return uuid.v4();
     }
 
-    public static isSettingsEmpty(settings: ExtensionConfig): boolean {
-        return (
-            Utils.isNullOrUndefinedOrEmptyObject(settings) ||
-            (settings &&
-                !Utils.isNullOrUndefinedOrEmptyObject(
-                    settings.credentialDiggerRunner,
-                ) &&
-                Utils.isNullOrUndefinedOrEmptyObject(
-                    settings.credentialDiggerRunner.binary,
-                ) &&
-                Utils.isNullOrUndefinedOrEmptyObject(
-                    settings.credentialDiggerRunner.docker,
-                ) &&
-                Utils.isNullOrUndefinedOrEmptyObject(
-                    settings.credentialDiggerRunner.webserver,
-                ) &&
-                !settings.credentialDiggerRunner.type)
-        );
+    public static isSettingsConfigured(
+        settings: ExtensionConfig | undefined,
+    ): boolean {
+        // Settings not configured
+        if (Utils.isNullOrUndefinedOrEmptyObject(settings)) {
+            return false;
+        }
+        // Runner is not configured
+        if (
+            Utils.isNullOrUndefinedOrEmptyObject(
+                settings?.credentialDiggerRunner,
+            )
+        ) {
+            return false;
+        }
+        // Runner type is not set
+        if (!settings?.credentialDiggerRunner.type) {
+            return false;
+        }
+        // All Runner objects are not set
+        if (
+            Utils.isNullOrUndefinedOrEmptyObject(
+                settings.credentialDiggerRunner.binary,
+            ) &&
+            Utils.isNullOrUndefinedOrEmptyObject(
+                settings.credentialDiggerRunner.docker,
+            ) &&
+            Utils.isNullOrUndefinedOrEmptyObject(
+                settings.credentialDiggerRunner.webserver,
+            )
+        ) {
+            return false;
+        }
+        // Runner type does not match runner object
+        if (
+            Utils.isNullOrUndefinedOrEmptyObject(
+                settings.credentialDiggerRunner[
+                    settings.credentialDiggerRunner.type
+                ],
+            )
+        ) {
+            return false;
+        }
+        return true;
     }
 
     public static isNullOrUndefined(obj: unknown): boolean {
@@ -129,5 +144,24 @@ export default class Utils {
         return (
             Utils.isNullOrUndefined(obj) || Utils.isEmptyObject(obj as object)
         );
+    }
+
+    public static async getTaskExitCode(
+        task: vscode.Task,
+    ): Promise<number | undefined> {
+        return new Promise<number | undefined>((resolve) => {
+            const disposable = vscode.tasks.onDidEndTaskProcess((e) => {
+                if (
+                    e.execution.task.definition.type === task.definition.type &&
+                    e.execution.task.definition.taskId ===
+                        task.definition.taskId &&
+                    e.execution.task.definition.scanId ===
+                        task.definition.scanId
+                ) {
+                    disposable.dispose();
+                    resolve(e.exitCode);
+                }
+            });
+        });
     }
 }

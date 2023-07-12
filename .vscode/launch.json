@@ -18,6 +18,7 @@
             "type": "extensionHost",
             "request": "launch",
             "args": [
+                "--profile-temp",
                 "--disable-extensions",
                 "--disable-gpu",
                 "--extensionDevelopmentPath=${workspaceFolder}",

@@ -37,7 +37,7 @@ export function activate(context: vscode.ExtensionContext) {
         const settings = vscode.workspace
             .getConfiguration()
             .get<ExtensionConfig>('credentialDigger');
-        if (!settings || Utils.isSettingsEmpty(settings)) {
+        if (!settings || !Utils.isSettingsConfigured(settings)) {
             if (showErrorOnEmptySettings) {
                 vscode.window.showErrorMessage(
                     `Failed to scan file: Credential Digger extension is not configured`,
@@ -77,15 +77,16 @@ export function activate(context: vscode.ExtensionContext) {
     const addRulesHandler = async () => {
         let id = null;
         // Read settings
-        const settings = vscode.workspace
+        let settings = vscode.workspace
             .getConfiguration()
             .get<ExtensionConfig>('credentialDigger');
-        if (!settings || Utils.isSettingsEmpty(settings)) {
+        if (!Utils.isSettingsConfigured(settings)) {
             vscode.window.showErrorMessage(
                 'Failed to add rules: Credential Digger extension is not configured',
             );
             return;
         }
+        settings = settings as ExtensionConfig;
         try {
             // Add Rules
             const runner = RunnerFactory.getInstance(
