@@ -16,7 +16,7 @@ import {
 } from '../../../types/task';
 
 export default class BinaryRunner extends Runner {
-    public async run(): Promise<number> {
+    public async scan(): Promise<number> {
         this.config = this.config as CredentialDiggerRunnerBinaryConfig;
         this.fileLocation = (this.currentFile as vscode.TextDocument).uri;
         // Prepare scan command

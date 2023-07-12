@@ -43,7 +43,7 @@ export default abstract class Runner {
         return this.id;
     }
 
-    public abstract run(): Promise<number>;
+    public abstract scan(): Promise<number>;
     public abstract getDiscoveries(
         storagePath: vscode.Uri,
     ): Promise<Discovery[]>;

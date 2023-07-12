@@ -20,7 +20,7 @@ export default class DockerRunner extends Runner {
     private containerWorkingDir = '/data/credentialDigger';
     private discoveriesLocalFileLocation!: vscode.Uri;
 
-    public async run(): Promise<number> {
+    public async scan(): Promise<number> {
         const commands = [];
         this.config = this.config as CredentialDiggerRunnerDockerConfig;
 

@@ -60,7 +60,7 @@ export default class RunnerFactory {
         // Clear credential digger findings for current file
         diagCollection.delete(this.runner.getCurrentFile().uri);
         // Scan
-        const numberOfDiscoveries = await this.runner.run();
+        const numberOfDiscoveries = await this.runner.scan();
         // Get discoveries
         if (numberOfDiscoveries > 0) {
             const discoveries = await this.runner.getDiscoveries(storageUri);

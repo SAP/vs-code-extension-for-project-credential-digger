@@ -53,7 +53,7 @@ export default class WebServerRunner extends Runner {
         }
     }
 
-    public async run(): Promise<number> {
+    public async scan(): Promise<number> {
         this.config = this.config as CredentialDiggerRunnerWebServerConfig;
         // Connect
         if (!this.cookies && this.secureConnection) {
