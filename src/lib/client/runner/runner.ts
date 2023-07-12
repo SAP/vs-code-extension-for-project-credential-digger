@@ -70,6 +70,9 @@ export default abstract class Runner {
                 'Please provide the Credential Digger database configuration',
             );
         }
+        if (!Object.values(DbType).includes(this.config.databaseConfig.type)) {
+            throw new Error('Please provide a valid database type');
+        }
         if (this.config.databaseConfig.type === DbType.SQLite) {
             if (!this.config.databaseConfig.sqlite) {
                 throw new Error(
