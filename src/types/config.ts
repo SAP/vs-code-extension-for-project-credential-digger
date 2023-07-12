@@ -46,7 +46,7 @@ export interface CredentialDiggerRunnerBinaryConfig {
 
 export interface CredentialDiggerRunnerWebServerConfig {
     host: string;
-    envFile: string;
+    envFile?: string;
 }
 
 export type CredentialDiggerRunnerConfig =

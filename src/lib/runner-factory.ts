@@ -15,34 +15,24 @@ import WebServerRunner from './client/runner/webserver-runner';
 export default class RunnerFactory {
     private runner: Runner;
 
-    private constructor(
-        runnerConfig: CredentialDiggerRunner,
-        rules: string,
-        currentFile?: vscode.TextDocument,
-    ) {
+    private constructor(runnerConfig: CredentialDiggerRunner) {
         switch (runnerConfig.type) {
             case CredentialDiggerRuntime.Docker:
                 this.runner = new DockerRunner(
                     runnerConfig.docker as CredentialDiggerRunnerDockerConfig,
                     runnerConfig.type,
-                    rules,
-                    currentFile,
                 );
                 break;
             case CredentialDiggerRuntime.Binary:
                 this.runner = new BinaryRunner(
                     runnerConfig.binary as CredentialDiggerRunnerBinaryConfig,
                     runnerConfig.type,
-                    rules,
-                    currentFile,
                 );
                 break;
             case CredentialDiggerRuntime.WebServer:
                 this.runner = new WebServerRunner(
                     runnerConfig.webserver as CredentialDiggerRunnerWebServerConfig,
                     runnerConfig.type,
-                    rules,
-                    currentFile,
                 );
                 break;
             default:
@@ -52,13 +42,12 @@ export default class RunnerFactory {
 
     public static getInstance(
         runnerConfig: CredentialDiggerRunner,
-        rules: string,
-        currentFile?: vscode.TextDocument,
     ): RunnerFactory {
-        return new RunnerFactory(runnerConfig, rules, currentFile);
+        return new RunnerFactory(runnerConfig);
     }
 
     public async scan(
+        currentFile: vscode.TextDocument,
         storageUri: vscode.Uri,
         diagCollection: vscode.DiagnosticCollection,
     ) {
@@ -67,6 +56,7 @@ export default class RunnerFactory {
                 this.runner.getCurrentFile().uri.fsPath
             }`,
         );
+        this.runner.setCurrentFile(currentFile);
         // Clear credential digger findings for current file
         diagCollection.delete(this.runner.getCurrentFile().uri);
         // Scan
@@ -119,10 +109,12 @@ export default class RunnerFactory {
         return this.runner.getId();
     }
 
-    public async addRules() {
+    public async addRules(rules: string) {
         LoggerFactory.getInstance().debug(
             `${this.getId()}: addRules: start adding rules`,
         );
+        // Validate & set rules
+        this.runner.validateAndSetRules(rules);
         // Add rules
         const success = await this.runner.addRules();
         if (success) {

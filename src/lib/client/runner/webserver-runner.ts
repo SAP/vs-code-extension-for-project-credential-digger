@@ -24,10 +24,8 @@ export default class WebServerRunner extends Runner {
     public constructor(
         config: CredentialDiggerRunnerWebServerConfig,
         runnerType: CredentialDiggerRuntime,
-        rules: string,
-        currentFile?: vscode.TextDocument,
     ) {
-        super(config, runnerType, rules, currentFile);
+        super(config, runnerType);
         this.config = this.config as CredentialDiggerRunnerWebServerConfig;
         // Create httpsAgent
         let httpsAgent;

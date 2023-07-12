@@ -57,11 +57,13 @@ export function activate(context: vscode.ExtensionContext) {
                 // Scan
                 const runner = RunnerFactory.getInstance(
                     settings.credentialDiggerRunner,
-                    settings.rules ?? '',
-                    currentDoc,
                 );
                 id = runner.getId();
-                await runner.scan(context.storageUri, diagCollection);
+                await runner.scan(
+                    currentDoc,
+                    context.storageUri,
+                    diagCollection,
+                );
             } catch (err) {
                 LoggerFactory.getInstance().error(
                     `${id}: Error occurred when scanning ${currentDoc.uri.fsPath}: ${err}`,
@@ -91,10 +93,9 @@ export function activate(context: vscode.ExtensionContext) {
             // Add Rules
             const runner = RunnerFactory.getInstance(
                 settings.credentialDiggerRunner,
-                settings.rules ?? '',
             );
             id = runner.getId();
-            runner.addRules();
+            runner.addRules(settings.rules ?? '');
         } catch (err) {
             LoggerFactory.getInstance().error(
                 `${id}: Error occurred when adding rules: ${err}`,
