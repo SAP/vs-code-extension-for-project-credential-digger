@@ -50,6 +50,11 @@ export default abstract class Runner {
     public abstract cleanup(): Promise<void>;
     public abstract addRules(): Promise<boolean>;
     protected validateConfig(): void {
+        if (Utils.isNullOrUndefinedOrEmptyObject(this.config)) {
+            throw new Error(
+                'Please provide the Credential Digger configuration',
+            );
+        }
         switch (this.runnerType) {
             case CredentialDiggerRuntime.Docker:
                 this.config = this.config as CredentialDiggerRunnerDockerConfig;

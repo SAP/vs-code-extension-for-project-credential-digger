@@ -184,11 +184,11 @@ export default class DockerRunner extends Runner {
     }
 
     protected validateConfig() {
+        super.validateConfig();
         this.config = this.config as CredentialDiggerRunnerDockerConfig;
         if (!this.config.containerId) {
             throw new Error('Please provide a containerId');
         }
-        super.validateConfig();
     }
 
     public async addRules(): Promise<boolean> {

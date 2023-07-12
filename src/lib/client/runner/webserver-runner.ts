@@ -132,6 +132,7 @@ export default class WebServerRunner extends Runner {
     }
 
     protected validateConfig(): void {
+        super.validateConfig();
         this.config = this.config as CredentialDiggerRunnerWebServerConfig;
         if (!this.config.host) {
             throw new Error(
@@ -148,7 +149,6 @@ export default class WebServerRunner extends Runner {
         if (this.config.envFile && !fs.existsSync(this.config.envFile)) {
             throw new Error('Please provide a valid Credential File location');
         }
-        super.validateConfig();
     }
 
     public async addRules(): Promise<boolean> {

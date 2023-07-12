@@ -104,6 +104,7 @@ export default class BinaryRunner extends Runner {
     }
 
     protected validateConfig(): void {
+        super.validateConfig();
         this.config = this.config as CredentialDiggerRunnerBinaryConfig;
         if (!this.config.path) {
             throw new Error('Please provide the Credential Digger location');
@@ -114,7 +115,6 @@ export default class BinaryRunner extends Runner {
                 'Please provide a valid Credential Digger location',
             );
         }
-        super.validateConfig();
     }
 
     public async addRules(): Promise<boolean> {
