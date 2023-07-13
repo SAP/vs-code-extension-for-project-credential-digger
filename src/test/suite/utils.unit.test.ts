@@ -9,6 +9,7 @@ import {
     DbType,
     ExtensionConfig,
 } from '../../types/config';
+import { generateRule } from './utils';
 
 describe('Utils - Unit Tests', function () {
     afterEach(() => {
@@ -211,6 +212,20 @@ describe('Utils - Unit Tests', function () {
                 },
             });
             expect(result).to.be.true;
+        });
+    });
+
+    describe('cloneObject - Unit Tests', function () {
+        it('Should clone the object successfully', function () {
+            const obj = generateRule();
+            const result = Utils.cloneObject(obj);
+            expect(result).to.be.eql(obj);
+        });
+
+        it('Should return the object if it is null', function () {
+            const obj = null;
+            const result = Utils.cloneObject(obj);
+            expect(result).to.be.eql(obj);
         });
     });
 });
