@@ -51,12 +51,12 @@ export default class RunnerFactory {
         storageUri: vscode.Uri,
         diagCollection: vscode.DiagnosticCollection,
     ) {
+        this.runner.setCurrentFile(currentFile);
         LoggerFactory.getInstance().debug(
             `${this.getId()}: scan: start scanning file ${
                 this.runner.getCurrentFile().uri.fsPath
             }`,
         );
-        this.runner.setCurrentFile(currentFile);
         // Clear credential digger findings for current file
         diagCollection.delete(this.runner.getCurrentFile().uri);
         // Scan
