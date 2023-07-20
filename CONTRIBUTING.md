@@ -33,7 +33,7 @@ The following rule governs code contributions:
 
 ### Contribution process
 
--   Check the `develop` branch and make sure that the issue/feature you want to work on has not been solved yet.
+-   Check the `main` branch and make sure that the issue/feature you want to work on has not been solved yet.
 -   Fork the current repository to your GitHub account.
 -   You must follow the coding style as best you can when submitting code. Take note of naming conventions, separation of concerns, and formatting rules.
     -   If you are using `vscode`, please install the recommended extensions
