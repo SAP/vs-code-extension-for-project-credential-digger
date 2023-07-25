@@ -1,8 +1,8 @@
-# VS Code extension for project Credential Digger
+# Credential Digger Secret Scanner
 
 ## Description
 
-VS Code extension for project Credential Digger is a free IDE extension that let you detect secrets and credentials in your code before they get leaked! Like a spell checker, the extension scans your files using the [Credential Digger](https://github.com/SAP/credential-digger) and highlights the secrets as you write code, so you can fix them before the code is even committed.
+Credential Digger Secret Scanner is a free IDE extension that let you detect secrets and credentials in your code before they get leaked! Like a spell checker, the extension scans your files using the [Credential Digger](https://github.com/SAP/credential-digger) and highlights the secrets as you write code, so you can fix them before the code is even committed.
 
 ### How it works
 
