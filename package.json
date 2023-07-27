@@ -1,6 +1,6 @@
 {
     "name": "vs-code-extension-for-project-credential-digger",
-    "displayName": "Credential Digger Secret Scanner",
+    "displayName": "VS Code extension for project \"Credential Digger\"",
     "description": "Runs credential digger scan",
     "version": "0.0.3",
     "icon": "resources/logo-CD.png",
