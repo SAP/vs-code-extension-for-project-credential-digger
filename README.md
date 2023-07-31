@@ -1,3 +1,5 @@
+[![REUSE status](https://api.reuse.software/badge/github.com/SAP/vs-code-extension-for-project-credential-digger)](https://api.reuse.software/info/github.com/SAP/vs-code-extension-for-project-credential-digger)
+
 # VS Code extension for project Credential Digger
 
 ## Description
