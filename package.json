@@ -1,8 +1,8 @@
 {
     "name": "vs-code-extension-for-project-credential-digger",
-    "displayName": "VS Code extension for project Credential Digger",
+    "displayName": "VS Code extension for project \"Credential Digger\"",
     "description": "Runs credential digger scan",
-    "version": "1.0.0",
+    "version": "0.0.4",
     "icon": "resources/logo-CD.png",
     "keywords": [
         "Credential Digger",
@@ -200,7 +200,7 @@
         "@types/node": "16.x",
         "@types/tough-cookie": "4.0.2",
         "@types/uuid": "9.0.1",
-        "@types/vscode": "1.79.1",
+        "@types/vscode": "1.76.0",
         "@typescript-eslint/eslint-plugin": "5.60.0",
         "@typescript-eslint/parser": "5.53.0",
         "@vscode/test-electron": "2.3.2",
@@ -209,7 +209,7 @@
         "cz-conventional-changelog": "3.3.0",
         "eslint": "8.42.0",
         "eslint-config-prettier": "8.8.0",
-        "glob": "10.2.6",
+        "glob": "8.1.0",
         "husky": "8.0.3",
         "lint-staged": "13.2.2",
         "mocha": "10.2.0",
