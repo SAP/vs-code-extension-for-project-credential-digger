@@ -6,15 +6,15 @@ import {
     DbConfig,
     DbType,
     SQLiteDbConfig,
-} from '../../types/config';
+} from '../../../types/config';
 import * as sinon from 'sinon';
-import RunnerFactory from '../../lib/runner-factory';
+import RunnerFactory from '../../../lib/runner-factory';
 import { expect } from 'chai';
 import * as fs from 'fs';
-import DockerRunner from '../../lib/client/runner/docker-runner';
-import LoggerFactory from '../../lib/logger-factory';
+import DockerRunner from '../../../lib/client/runner/docker-runner';
+import LoggerFactory from '../../../lib/logger-factory';
 import * as vscode from 'vscode';
-import { generateDiscoveries } from './utils';
+import { generateDiscoveries } from '../utils';
 
 describe('RunnerFactory  - Unit Tests', function () {
     let runnerConfig: CredentialDiggerRunner;

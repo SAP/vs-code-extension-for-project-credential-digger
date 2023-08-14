@@ -2,14 +2,14 @@ import { expect } from 'chai';
 import { faker } from '@faker-js/faker';
 import * as sinon from 'sinon';
 import * as vscode from 'vscode';
-import Utils from '../../lib/utils';
+import Utils from '../../../lib/utils';
 import { describe, it, beforeEach } from 'mocha';
 import {
     CredentialDiggerRuntime,
     DbType,
     ExtensionConfig,
-} from '../../types/config';
-import { generateRule } from './utils';
+} from '../../../types/config';
+import { generateRule } from '../utils';
 
 describe('Utils - Unit Tests', function () {
     afterEach(() => {
