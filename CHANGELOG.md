@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 0.0.4 (2023-07-27)
+
+### Bug Fixes
+
+-   **extension:** change display name ([#38](https://github.com/SAP/vs-code-extension-for-project-credential-digger/pull/38))([ca2ac1d](https://github.com/SAP/vs-code-extension-for-project-credential-digger/commit/ca2ac1d5d1c7f6142b2fc501d2fdc49f68056cfe))
+
+### 0.0.3 (2023-07-25)
+
+### Bug Fixes
+
+-   **extension:** change display name of the extension ([#36](https://github.com/SAP/vs-code-extension-for-project-credential-digger/pull/36)) ([70e6763](https://github.com/SAP/vs-code-extension-for-project-credential-digger/commit/70e676384aa760593732b5ede803a749dd28b615))
+
 ### 0.0.2 (2023-07-20)
 
 ### Bug Fixes
