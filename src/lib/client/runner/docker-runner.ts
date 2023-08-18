@@ -25,10 +25,6 @@ export default class DockerRunner extends Runner {
         this.config = this.config as CredentialDiggerRunnerDockerConfig;
 
         // Copy to a temporary folder within the container
-        this.fileLocation = vscode.Uri.joinPath(
-            vscode.Uri.parse(this.containerWorkingDir),
-            (this.currentFile as vscode.TextDocument).uri.fsPath,
-        );
         commands.push(
             `docker exec "${this.config.containerId}" mkdir -p "${path.dirname(
                 this.fileLocation.fsPath,
@@ -242,5 +238,13 @@ export default class DockerRunner extends Runner {
             `${this.getId()}: addRules: exit code: ${exitCode}`,
         );
         return exitCode === 0;
+    }
+
+    public setCurrentFile(currentFile: vscode.TextDocument) {
+        super.setCurrentFile(currentFile);
+        this.fileLocation = vscode.Uri.joinPath(
+            vscode.Uri.parse(this.containerWorkingDir),
+            (this.currentFile as vscode.TextDocument).uri.fsPath,
+        );
     }
 }

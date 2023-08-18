@@ -6,15 +6,15 @@ import {
     DbConfig,
     DbType,
     SQLiteDbConfig,
-} from '../../../types/config';
+} from '../../types/config';
 import * as sinon from 'sinon';
-import RunnerFactory from '../../../lib/runner-factory';
+import RunnerFactory from '../../lib/runner-factory';
 import { expect } from 'chai';
 import * as fs from 'fs';
-import DockerRunner from '../../../lib/client/runner/docker-runner';
-import LoggerFactory from '../../../lib/logger-factory';
+import DockerRunner from '../../lib/client/runner/docker-runner';
+import LoggerFactory from '../../lib/logger-factory';
 import * as vscode from 'vscode';
-import { generateDiscoveries } from '../utils';
+import { generateDiscoveries } from './utils';
 
 describe('RunnerFactory  - Unit Tests', function () {
     let runnerConfig: CredentialDiggerRunner;
@@ -407,8 +407,7 @@ describe('RunnerFactory  - Unit Tests', function () {
                     };
                 },
             } as unknown as vscode.TextDocument;
-
-            storageUri = faker.system.filePath() as unknown as vscode.Uri;
+            storageUri = vscode.Uri.parse(faker.system.filePath());
             diagCollection = {
                 delete: () => true,
                 set: () => true,
@@ -419,13 +418,18 @@ describe('RunnerFactory  - Unit Tests', function () {
             const debugStub = sinon
                 .stub(LoggerFactory.getInstance(), 'debug')
                 .resolves();
+            const runnerSetFileStub = sinon
+                .stub(DockerRunner.prototype, 'setCurrentFile')
+                .returns();
+            const getCurrentFileStub = sinon
+                .stub(DockerRunner.prototype, 'getCurrentFile')
+                .returns(currentFile);
             const runnerScanStub = sinon
                 .stub(DockerRunner.prototype, 'scan')
                 .resolves(0);
             const runnerGetDiscoveriesStub = sinon
                 .stub(DockerRunner.prototype, 'getDiscoveries')
                 .resolves();
-            1;
             const runnerCleanupStub = sinon
                 .stub(DockerRunner.prototype, 'cleanup')
                 .resolves();
@@ -435,6 +439,8 @@ describe('RunnerFactory  - Unit Tests', function () {
                 diagCollection,
             );
             expect(debugStub.callCount).to.be.eql(2);
+            expect(runnerSetFileStub.callCount).to.be.eql(1);
+            expect(getCurrentFileStub.called).to.be.true;
             expect(runnerScanStub.callCount).to.be.eql(1);
             expect(runnerGetDiscoveriesStub.callCount).to.be.eql(0);
             expect(runnerCleanupStub.callCount).to.be.eql(1);
@@ -458,6 +464,12 @@ describe('RunnerFactory  - Unit Tests', function () {
             const debugStub = sinon
                 .stub(LoggerFactory.getInstance(), 'debug')
                 .resolves();
+            const runnerSetFileStub = sinon
+                .stub(DockerRunner.prototype, 'setCurrentFile')
+                .returns();
+            const getCurrentFileStub = sinon
+                .stub(DockerRunner.prototype, 'getCurrentFile')
+                .returns(currentFile);
             const runnerScanStub = sinon
                 .stub(DockerRunner.prototype, 'scan')
                 .resolves(discoveries.length);
@@ -473,6 +485,8 @@ describe('RunnerFactory  - Unit Tests', function () {
                 diagCollection,
             );
             expect(debugStub.callCount).to.be.eql(2);
+            expect(runnerSetFileStub.callCount).to.be.eql(1);
+            expect(getCurrentFileStub.called).to.be.true;
             expect(runnerScanStub.callCount).to.be.eql(1);
             expect(runnerGetDiscoveriesStub.callCount).to.be.eql(1);
             expect(runnerCleanupStub.callCount).to.be.eql(1);

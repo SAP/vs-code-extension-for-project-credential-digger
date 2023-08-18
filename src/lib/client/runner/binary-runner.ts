@@ -18,7 +18,6 @@ import {
 export default class BinaryRunner extends Runner {
     public async scan(): Promise<number> {
         this.config = this.config as CredentialDiggerRunnerBinaryConfig;
-        this.fileLocation = (this.currentFile as vscode.TextDocument).uri;
         // Prepare scan command
         let cmd = `${this.config.path} scan_path "${this.fileLocation.fsPath}" --models PathModel --force --debug`;
         if (this.config.databaseConfig.type === DbType.SQLite) {
@@ -150,5 +149,10 @@ export default class BinaryRunner extends Runner {
             `${this.getId()}: addRules: exit code: ${exitCode}`,
         );
         return exitCode === 0;
+    }
+
+    public setCurrentFile(currentFile: vscode.TextDocument) {
+        super.setCurrentFile(currentFile);
+        this.fileLocation = (this.currentFile as vscode.TextDocument).uri;
     }
 }
