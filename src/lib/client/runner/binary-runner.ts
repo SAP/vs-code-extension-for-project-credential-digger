@@ -118,7 +118,7 @@ export default class BinaryRunner extends Runner {
 
     public async addRules(): Promise<boolean> {
         if (!this.rules) {
-            return true;
+            return false;
         }
         this.config = this.config as CredentialDiggerRunnerBinaryConfig;
         let cmd = `${this.config.path} add_rules "${this.rules?.fsPath}"`;

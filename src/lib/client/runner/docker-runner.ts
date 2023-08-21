@@ -189,7 +189,7 @@ export default class DockerRunner extends Runner {
 
     public async addRules(): Promise<boolean> {
         if (!this.rules) {
-            return true;
+            return false;
         }
         const commands = [];
         this.config = this.config as CredentialDiggerRunnerDockerConfig;
