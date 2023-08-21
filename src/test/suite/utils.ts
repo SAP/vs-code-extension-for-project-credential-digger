@@ -1,41 +1,44 @@
 import { faker } from '@faker-js/faker';
-import { Discovery, Rule, State } from '../../types/db';
+import { Discovery, RawDiscovery, Rule, State } from '../../types/db';
 import {
     CredentialDiggerRunner,
-    CredentialDiggerRunnerBinaryConfig,
     CredentialDiggerRuntime,
     DbConfig,
     DbType,
 } from '../../types/config';
+import Utils from '../../lib/utils';
 
-export function generateRule(): Rule {
+export function generateRawDiscovery(lineNumber?: number): RawDiscovery {
     return {
         id: faker.number.int(),
-        regex: faker.lorem.sentence(),
-        category: faker.color.human(),
-        description: faker.lorem.sentence(),
-    };
-}
-
-export function generateDiscovery(lineNumber?: number): Discovery {
-    return {
-        id: faker.number.int(),
-        filename: faker.system.filePath(),
-        commitId: faker.git.commitSha(),
-        lineNumber: lineNumber ?? faker.number.int({ min: 0 }),
+        file_name: faker.system.filePath(),
+        commit_id: faker.git.commitSha(),
+        line_number: lineNumber ?? faker.number.int({ min: 0 }),
         snippet: faker.lorem.text(),
-        repoUrl: faker.internet.url(),
-        ruleId: faker.number.int(),
+        repo_url: faker.internet.url(),
+        rule_id: faker.number.int(),
         state: State.New,
         timestamp: faker.date.anytime().toISOString(),
-        rule: generateRule(),
+        rule_regex: faker.lorem.sentence(),
+        rule_category: faker.color.human(),
+        rule_description: faker.lorem.sentence(),
     };
 }
 
 export function generateDiscoveries(count: number): Discovery[] {
     const discoveries = [];
     for (let x = 0; x < count; x++) {
-        discoveries.push(generateDiscovery(x + 1));
+        discoveries.push(
+            Utils.convertRawToDiscovery(generateRawDiscovery(x + 1)),
+        );
+    }
+    return discoveries;
+}
+
+export function generateRawDiscoveries(count: number): RawDiscovery[] {
+    const discoveries = [];
+    for (let x = 0; x < count; x++) {
+        discoveries.push(generateRawDiscovery(x + 1));
     }
     return discoveries;
 }

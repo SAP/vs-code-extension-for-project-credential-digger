@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import { parse } from 'csv-parse';
-import { Discovery } from '../types/db';
+import { Discovery, RawDiscovery } from '../types/db';
 import * as argon2 from 'argon2';
 import * as _ from 'lodash';
 import { TaskRevealKind, TaskPanelKind } from 'vscode';
@@ -29,6 +29,26 @@ export default class Utils {
         return await Utils.getTaskExitCode(task);
     }
 
+    public static convertRawToDiscovery(record: RawDiscovery): Discovery {
+        return {
+            id: record.id,
+            filename: record.file_name,
+            commitId: record.commit_id,
+            lineNumber: record.line_number,
+            snippet: record.snippet,
+            repoUrl: record.repo_url,
+            ruleId: record.rule_id,
+            state: record.state,
+            timestamp: record.timestamp,
+            rule: {
+                id: record.rule_id,
+                regex: record.rule_regex,
+                category: record.rule_category,
+                description: record.rule_description,
+            },
+        };
+    }
+
     public static async parseDiscoveriesCSVFile(
         fileLocation: string,
     ): Promise<Discovery[]> {
@@ -41,23 +61,7 @@ export default class Utils {
             }),
         );
         for await (const record of parser) {
-            records.push({
-                id: record.id,
-                filename: record.file_name,
-                commitId: record.commit_id,
-                lineNumber: record.line_number,
-                snippet: record.snippet,
-                repoUrl: record.repo_url,
-                ruleId: record.rule_id,
-                state: record.state,
-                timestamp: record.timestamp,
-                rule: {
-                    id: record.rule_id,
-                    regex: record.rule_regex,
-                    category: record.rule_category,
-                    description: record.rule_description,
-                },
-            });
+            records.push(Utils.convertRawToDiscovery(record));
         }
         return records;
     }

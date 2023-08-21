@@ -9,7 +9,7 @@ import {
     DbType,
     ExtensionConfig,
 } from '../../types/config';
-import { generateRule } from './utils';
+import { generateRawDiscovery } from './utils';
 
 describe('Utils - Unit Tests', function () {
     afterEach(() => {
@@ -217,7 +217,7 @@ describe('Utils - Unit Tests', function () {
 
     describe('cloneObject - Unit Tests', function () {
         it('Should clone the object successfully', function () {
-            const obj = generateRule();
+            const obj = generateRawDiscovery();
             const result = Utils.cloneObject(obj);
             expect(result).to.be.eql(obj);
         });

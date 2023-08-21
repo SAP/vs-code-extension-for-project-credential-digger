@@ -14,6 +14,7 @@ import { CookieJar } from 'tough-cookie';
 import LoggerFactory from '../../logger-factory';
 import * as https from 'node:https';
 import * as FormData from 'form-data';
+import Utils from '../../utils';
 
 export default class WebServerRunner extends Runner {
     private discoveries: Discovery[] = [];
@@ -56,7 +57,7 @@ export default class WebServerRunner extends Runner {
     public async scan(): Promise<number> {
         this.config = this.config as CredentialDiggerRunnerWebServerConfig;
         // Connect
-        if (!this.cookies && this.secureConnection) {
+        if (this.secureConnection && !this.cookies) {
             await this.connect();
         }
         // Call API
@@ -89,23 +90,7 @@ export default class WebServerRunner extends Runner {
         ) {
             // Convert discoveries
             for (const d of resp.data) {
-                this.discoveries.push({
-                    id: d.id,
-                    filename: d.file_name,
-                    commitId: d.commit_id,
-                    lineNumber: d.line_number,
-                    snippet: d.snippet,
-                    repoUrl: d.repo_url,
-                    ruleId: d.rule_id,
-                    state: d.state,
-                    timestamp: d.timestamp,
-                    rule: {
-                        id: d.rule_id,
-                        regex: d.rule_regex,
-                        category: d.rule_category,
-                        description: d.rule_description,
-                    },
-                });
+                this.discoveries.push(Utils.convertRawToDiscovery(d));
             }
         } else {
             throw new Error(
