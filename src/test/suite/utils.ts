@@ -59,15 +59,6 @@ export function generateDBConfig(dbType: DbType): DbConfig {
     }
 }
 
-export function generateBinaryRunnerConfig(
-    dbType: DbType,
-): CredentialDiggerRunnerBinaryConfig {
-    return {
-        path: faker.system.filePath(),
-        databaseConfig: generateDBConfig(dbType),
-    };
-}
-
 export function generateCredentialDiggerRunnerConfig(
     runnerType: CredentialDiggerRuntime,
     databaseConfig?: DbConfig,

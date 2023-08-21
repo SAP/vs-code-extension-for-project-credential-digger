@@ -9,7 +9,11 @@ import {
     CredentialDiggerRuntime,
     DbType,
 } from '../../../../types/config';
-import { generateBinaryRunnerConfig, generateDiscoveries } from '../../utils';
+import {
+    generateCredentialDiggerRunnerConfig,
+    generateDBConfig,
+    generateDiscoveries,
+} from '../../utils';
 import LoggerFactory from '../../../../lib/logger-factory';
 import Utils from '../../../../lib/utils';
 import { Discovery } from '../../../../types/db';
@@ -53,7 +57,10 @@ describe('BinaryRunner  - Unit Tests', function () {
         let result: number;
 
         it('Should successfully scan a file: sqlite db', async function () {
-            config = generateBinaryRunnerConfig(DbType.SQLite);
+            config = generateCredentialDiggerRunnerConfig(
+                CredentialDiggerRuntime.Binary,
+                generateDBConfig(DbType.SQLite),
+            ).binary as CredentialDiggerRunnerBinaryConfig;
             executeTaskStub = sinon
                 .stub(Utils, 'executeTask')
                 .resolves(discoveries.length);
@@ -71,7 +78,10 @@ describe('BinaryRunner  - Unit Tests', function () {
         });
 
         it('Should successfully scan a file: postgres db', async function () {
-            config = generateBinaryRunnerConfig(DbType.Postgres);
+            config = generateCredentialDiggerRunnerConfig(
+                CredentialDiggerRuntime.Binary,
+                generateDBConfig(DbType.Postgres),
+            ).binary as CredentialDiggerRunnerBinaryConfig;
             executeTaskStub = sinon
                 .stub(Utils, 'executeTask')
                 .resolves(discoveries.length);
@@ -89,7 +99,10 @@ describe('BinaryRunner  - Unit Tests', function () {
         });
 
         it('Should fail to scan a file', async function () {
-            config = generateBinaryRunnerConfig(DbType.SQLite);
+            config = generateCredentialDiggerRunnerConfig(
+                CredentialDiggerRuntime.Binary,
+                generateDBConfig(DbType.SQLite),
+            ).binary as CredentialDiggerRunnerBinaryConfig;
             executeTaskStub = sinon
                 .stub(Utils, 'executeTask')
                 .resolves(undefined);
@@ -108,7 +121,10 @@ describe('BinaryRunner  - Unit Tests', function () {
         });
 
         it('Should fail to scan a file: exception is raised', async function () {
-            config = generateBinaryRunnerConfig(DbType.SQLite);
+            config = generateCredentialDiggerRunnerConfig(
+                CredentialDiggerRuntime.Binary,
+                generateDBConfig(DbType.SQLite),
+            ).binary as CredentialDiggerRunnerBinaryConfig;
             const message = 'Failed to execute task';
             executeTaskStub = sinon
                 .stub(Utils, 'executeTask')
@@ -154,7 +170,10 @@ describe('BinaryRunner  - Unit Tests', function () {
         });
 
         it('Should successfully get discoveries: sqlite db', async function () {
-            config = generateBinaryRunnerConfig(DbType.SQLite);
+            config = generateCredentialDiggerRunnerConfig(
+                CredentialDiggerRuntime.Binary,
+                generateDBConfig(DbType.SQLite),
+            ).binary as CredentialDiggerRunnerBinaryConfig;
             executeTaskStub = sinon
                 .stub(Utils, 'executeTask')
                 .resolves(discoveries.length);
@@ -177,7 +196,10 @@ describe('BinaryRunner  - Unit Tests', function () {
         });
 
         it('Should successfully get discoveries: postgres db', async function () {
-            config = generateBinaryRunnerConfig(DbType.Postgres);
+            config = generateCredentialDiggerRunnerConfig(
+                CredentialDiggerRuntime.Binary,
+                generateDBConfig(DbType.Postgres),
+            ).binary as CredentialDiggerRunnerBinaryConfig;
             executeTaskStub = sinon
                 .stub(Utils, 'executeTask')
                 .resolves(discoveries.length);
@@ -196,7 +218,10 @@ describe('BinaryRunner  - Unit Tests', function () {
         });
 
         it('Should find 0 discoveries', async function () {
-            config = generateBinaryRunnerConfig(DbType.Postgres);
+            config = generateCredentialDiggerRunnerConfig(
+                CredentialDiggerRuntime.Binary,
+                generateDBConfig(DbType.Postgres),
+            ).binary as CredentialDiggerRunnerBinaryConfig;
             executeTaskStub = sinon.stub(Utils, 'executeTask').resolves(0);
             runner = new BinaryRunner(config, CredentialDiggerRuntime.Binary);
             runner.setCurrentFile(currentFile);
@@ -211,7 +236,10 @@ describe('BinaryRunner  - Unit Tests', function () {
         });
 
         it('Should fail to get discoveries: non-existing file location', async function () {
-            config = generateBinaryRunnerConfig(DbType.SQLite);
+            config = generateCredentialDiggerRunnerConfig(
+                CredentialDiggerRuntime.Binary,
+                generateDBConfig(DbType.SQLite),
+            ).binary as CredentialDiggerRunnerBinaryConfig;
             runner = new BinaryRunner(config, CredentialDiggerRuntime.Binary);
             result = await runner.getDiscoveries(storagePath);
             expect(createHashStub.callCount).to.be.eql(0);
@@ -246,7 +274,10 @@ describe('BinaryRunner  - Unit Tests', function () {
         });
 
         it('Should successfully add rules: sqlite db', async function () {
-            config = generateBinaryRunnerConfig(DbType.SQLite);
+            config = generateCredentialDiggerRunnerConfig(
+                CredentialDiggerRuntime.Binary,
+                generateDBConfig(DbType.SQLite),
+            ).binary as CredentialDiggerRunnerBinaryConfig;
             executeTaskStub = sinon.stub(Utils, 'executeTask').resolves(0);
             runner = new BinaryRunner(config, CredentialDiggerRuntime.Binary);
             runner.validateAndSetRules(rulesFileLocation);
@@ -263,7 +294,10 @@ describe('BinaryRunner  - Unit Tests', function () {
         });
 
         it('Should successfully add rules: postgres db', async function () {
-            config = generateBinaryRunnerConfig(DbType.Postgres);
+            config = generateCredentialDiggerRunnerConfig(
+                CredentialDiggerRuntime.Binary,
+                generateDBConfig(DbType.Postgres),
+            ).binary as CredentialDiggerRunnerBinaryConfig;
             executeTaskStub = sinon.stub(Utils, 'executeTask').resolves(0);
             runner = new BinaryRunner(config, CredentialDiggerRuntime.Binary);
             runner.validateAndSetRules(rulesFileLocation);
@@ -280,7 +314,10 @@ describe('BinaryRunner  - Unit Tests', function () {
         });
 
         it('Should fail to add rules: non-zero exit code', async function () {
-            config = generateBinaryRunnerConfig(DbType.SQLite);
+            config = generateCredentialDiggerRunnerConfig(
+                CredentialDiggerRuntime.Binary,
+                generateDBConfig(DbType.SQLite),
+            ).binary as CredentialDiggerRunnerBinaryConfig;
             executeTaskStub = sinon.stub(Utils, 'executeTask').resolves(-9);
             runner = new BinaryRunner(config, CredentialDiggerRuntime.Binary);
             runner.validateAndSetRules(rulesFileLocation);
@@ -293,7 +330,10 @@ describe('BinaryRunner  - Unit Tests', function () {
         });
 
         it('Should fail to add rules: rules are not set', async function () {
-            config = generateBinaryRunnerConfig(DbType.SQLite);
+            config = generateCredentialDiggerRunnerConfig(
+                CredentialDiggerRuntime.Binary,
+                generateDBConfig(DbType.SQLite),
+            ).binary as CredentialDiggerRunnerBinaryConfig;
             runner = new BinaryRunner(config, CredentialDiggerRuntime.Binary);
             result = await runner.addRules();
             expect(debugStub.callCount).to.be.eql(0);
@@ -305,7 +345,10 @@ describe('BinaryRunner  - Unit Tests', function () {
 
     describe('cleanup - Unit Tests', function () {
         it('Should successfully cleanup', async function () {
-            config = generateBinaryRunnerConfig(DbType.SQLite);
+            config = generateCredentialDiggerRunnerConfig(
+                CredentialDiggerRuntime.Binary,
+                generateDBConfig(DbType.SQLite),
+            ).binary as CredentialDiggerRunnerBinaryConfig;
             runner = new BinaryRunner(config, CredentialDiggerRuntime.Binary);
             await runner.cleanup();
         });
