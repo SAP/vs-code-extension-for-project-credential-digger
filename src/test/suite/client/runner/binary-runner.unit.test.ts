@@ -251,20 +251,6 @@ describe('BinaryRunner  - Unit Tests', function () {
         });
     });
 
-    describe('cleanup - Unit Tests', function () {
-        it('Should successfully cleanup', async function () {
-            //
-        });
-
-        it('Should return when file is empty', async function () {
-            //
-        });
-
-        it('Should fail to cleanup', async function () {
-            //
-        });
-    });
-
     describe('addRules - Unit Tests', function () {
         let result: boolean;
         let rulesFileLocation: string;
