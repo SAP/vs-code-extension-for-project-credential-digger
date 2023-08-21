@@ -1,5 +1,12 @@
 import { faker } from '@faker-js/faker';
 import { Discovery, Rule, State } from '../../types/db';
+import {
+    CredentialDiggerRunner,
+    CredentialDiggerRunnerBinaryConfig,
+    CredentialDiggerRuntime,
+    DbConfig,
+    DbType,
+} from '../../types/config';
 
 export function generateRule(): Rule {
     return {
@@ -31,4 +38,66 @@ export function generateDiscoveries(count: number): Discovery[] {
         discoveries.push(generateDiscovery(x + 1));
     }
     return discoveries;
+}
+
+export function generateDBConfig(dbType: DbType): DbConfig {
+    switch (dbType) {
+        case DbType.Postgres:
+            return {
+                type: DbType.Postgres,
+                postgres: {
+                    envFile: faker.system.filePath(),
+                },
+            };
+        default:
+            return {
+                type: DbType.SQLite,
+                sqlite: {
+                    filename: faker.system.filePath(),
+                },
+            };
+    }
+}
+
+export function generateBinaryRunnerConfig(
+    dbType: DbType,
+): CredentialDiggerRunnerBinaryConfig {
+    return {
+        path: faker.system.filePath(),
+        databaseConfig: generateDBConfig(dbType),
+    };
+}
+
+export function generateCredentialDiggerRunnerConfig(
+    runnerType: CredentialDiggerRuntime,
+    databaseConfig?: DbConfig,
+): CredentialDiggerRunner {
+    switch (runnerType) {
+        case CredentialDiggerRuntime.Docker:
+            return {
+                type: CredentialDiggerRuntime.Docker,
+                docker: {
+                    containerId: faker.git.commitSha(),
+                    databaseConfig:
+                        databaseConfig ?? generateDBConfig(DbType.SQLite),
+                },
+            };
+        case CredentialDiggerRuntime.WebServer:
+            return {
+                type: CredentialDiggerRuntime.WebServer,
+                webserver: {
+                    host: faker.internet.url(),
+                    envFile: faker.system.filePath(),
+                },
+            };
+        default:
+            return {
+                type: CredentialDiggerRuntime.Binary,
+                binary: {
+                    path: faker.system.filePath(),
+                    databaseConfig:
+                        databaseConfig ?? generateDBConfig(DbType.SQLite),
+                },
+            };
+    }
 }

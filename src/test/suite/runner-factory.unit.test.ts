@@ -14,7 +14,11 @@ import * as fs from 'fs';
 import DockerRunner from '../../lib/client/runner/docker-runner';
 import LoggerFactory from '../../lib/logger-factory';
 import * as vscode from 'vscode';
-import { generateDiscoveries } from './utils';
+import {
+    generateCredentialDiggerRunnerConfig,
+    generateDBConfig,
+    generateDiscoveries,
+} from './utils';
 
 describe('RunnerFactory  - Unit Tests', function () {
     let runnerConfig: CredentialDiggerRunner;
@@ -25,45 +29,31 @@ describe('RunnerFactory  - Unit Tests', function () {
 
     describe('getInstance - Unit Tests', function () {
         it('Should instantiate a docker runner', function () {
-            runnerConfig = {
-                type: CredentialDiggerRuntime.Docker,
-                docker: {
-                    containerId: faker.git.commitSha(),
-                    databaseConfig: {
-                        type: DbType.SQLite,
-                        sqlite: {
-                            filename: faker.system.filePath(),
-                        },
-                    },
-                },
-            };
+            runnerConfig = generateCredentialDiggerRunnerConfig(
+                CredentialDiggerRuntime.Docker,
+                generateDBConfig(DbType.SQLite),
+            );
             const result = RunnerFactory.getInstance(runnerConfig);
             expect(result).to.be.not.null;
             expect(result.getId()).to.be.not.empty.string;
         });
 
         it('Should instantiate a webserver runner', function () {
-            runnerConfig = {
-                type: CredentialDiggerRuntime.WebServer,
-                webserver: {
-                    host: faker.internet.url(),
-                },
-            };
+            runnerConfig = generateCredentialDiggerRunnerConfig(
+                CredentialDiggerRuntime.WebServer,
+            );
+            const fsExistsSyncStub = sinon.stub(fs, 'existsSync').returns(true);
             const result = RunnerFactory.getInstance(runnerConfig);
             expect(result).to.be.not.null;
             expect(result.getId()).to.be.not.empty.string;
+            expect(fsExistsSyncStub.callCount).to.be.eql(1);
         });
 
         it('Should instantiate a binary runner', function () {
-            runnerConfig = {
-                type: CredentialDiggerRuntime.Binary,
-                binary: {
-                    path: faker.system.filePath(),
-                    databaseConfig: {
-                        type: DbType.Postgres,
-                    },
-                },
-            };
+            runnerConfig = generateCredentialDiggerRunnerConfig(
+                CredentialDiggerRuntime.Binary,
+                generateDBConfig(DbType.Postgres),
+            );
             const fsExistsSyncStub = sinon.stub(fs, 'existsSync').returns(true);
             const result = RunnerFactory.getInstance(runnerConfig);
             expect(result).to.be.not.null;
@@ -102,15 +92,10 @@ describe('RunnerFactory  - Unit Tests', function () {
 
         it('Should fail to instantiate a runner with unknown database type', function () {
             const errMessage = 'Please provide a valid database type';
-            runnerConfig = {
-                type: CredentialDiggerRuntime.Docker,
-                docker: {
-                    containerId: faker.git.commitSha(),
-                    databaseConfig: {
-                        type: faker.database.type(),
-                    } as unknown as DbConfig,
-                },
-            };
+            runnerConfig = generateCredentialDiggerRunnerConfig(
+                CredentialDiggerRuntime.Docker,
+                { type: faker.database.type() } as unknown as DbConfig,
+            );
             try {
                 RunnerFactory.getInstance(runnerConfig);
             } catch (err) {
@@ -142,15 +127,10 @@ describe('RunnerFactory  - Unit Tests', function () {
         it('Should fail to instantiate a runner without sqlite database config', function () {
             const errMessage =
                 'Please provide the Credential Digger SQLite database configuration';
-            runnerConfig = {
-                type: CredentialDiggerRuntime.Binary,
-                binary: {
-                    path: faker.system.filePath(),
-                    databaseConfig: {
-                        type: DbType.SQLite,
-                    },
-                },
-            };
+            runnerConfig = generateCredentialDiggerRunnerConfig(
+                CredentialDiggerRuntime.Binary,
+                { type: DbType.SQLite },
+            );
             const fsExistsSyncStub = sinon.stub(fs, 'existsSync').returns(true);
             try {
                 RunnerFactory.getInstance(runnerConfig);
@@ -165,16 +145,13 @@ describe('RunnerFactory  - Unit Tests', function () {
         it('Should fail to instantiate a runner without sqlite database file config', function () {
             const errMessage =
                 'Please provide the Credential Digger SQLite database location';
-            runnerConfig = {
-                type: CredentialDiggerRuntime.Binary,
-                binary: {
-                    path: faker.system.filePath(),
-                    databaseConfig: {
-                        type: DbType.SQLite,
-                        sqlite: {} as unknown as SQLiteDbConfig,
-                    },
+            runnerConfig = generateCredentialDiggerRunnerConfig(
+                CredentialDiggerRuntime.Binary,
+                {
+                    type: DbType.SQLite,
+                    sqlite: {} as unknown as SQLiteDbConfig,
                 },
-            };
+            );
             const fsExistsSyncStub = sinon.stub(fs, 'existsSync').returns(true);
             try {
                 RunnerFactory.getInstance(runnerConfig);
@@ -225,15 +202,10 @@ describe('RunnerFactory  - Unit Tests', function () {
         it('Should fail to instantiate a binary runner: non existing binary path', function () {
             const errMessage =
                 'Please provide a valid Credential Digger location';
-            runnerConfig = {
-                type: CredentialDiggerRuntime.Binary,
-                binary: {
-                    path: faker.system.filePath(),
-                    databaseConfig: {
-                        type: DbType.Postgres,
-                    },
-                },
-            };
+            runnerConfig = generateCredentialDiggerRunnerConfig(
+                CredentialDiggerRuntime.Binary,
+                { type: DbType.Postgres },
+            );
             const fsExistsSyncStub = sinon
                 .stub(fs, 'existsSync')
                 .returns(false);
@@ -267,12 +239,10 @@ describe('RunnerFactory  - Unit Tests', function () {
         it('Should fail to instantiate a webserver runner: invalid host', function () {
             const errMessage =
                 'Please provide a valid URL of the Credential Digger Webserver';
-            runnerConfig = {
-                type: CredentialDiggerRuntime.WebServer,
-                webserver: {
-                    host: faker.system.filePath(),
-                },
-            };
+            runnerConfig = generateCredentialDiggerRunnerConfig(
+                CredentialDiggerRuntime.WebServer,
+            );
+            runnerConfig.webserver!.host = faker.system.filePath();
             try {
                 RunnerFactory.getInstance(runnerConfig);
             } catch (err) {
@@ -284,13 +254,9 @@ describe('RunnerFactory  - Unit Tests', function () {
         it('Should fail to instantiate a webserver runner: non-existing envFile', function () {
             const errMessage =
                 'Please provide a valid Credential File location';
-            runnerConfig = {
-                type: CredentialDiggerRuntime.WebServer,
-                webserver: {
-                    host: faker.internet.url(),
-                    envFile: faker.system.filePath(),
-                },
-            };
+            runnerConfig = generateCredentialDiggerRunnerConfig(
+                CredentialDiggerRuntime.WebServer,
+            );
             try {
                 RunnerFactory.getInstance(runnerConfig);
             } catch (err) {
@@ -385,22 +351,12 @@ describe('RunnerFactory  - Unit Tests', function () {
         let diagCollection: vscode.DiagnosticCollection;
 
         beforeEach(() => {
-            runnerConfig = {
-                type: CredentialDiggerRuntime.Docker,
-                docker: {
-                    containerId: faker.git.commitSha(),
-                    databaseConfig: {
-                        type: DbType.SQLite,
-                        sqlite: {
-                            filename: faker.system.filePath(),
-                        },
-                    },
-                },
-            };
+            runnerConfig = generateCredentialDiggerRunnerConfig(
+                CredentialDiggerRuntime.Docker,
+                generateDBConfig(DbType.SQLite),
+            );
             currentFile = {
-                uri: {
-                    fspath: faker.system.filePath(),
-                },
+                uri: vscode.Uri.parse(faker.system.filePath()),
                 lineAt: (line: number) => {
                     return {
                         text: faker.string.sample((line + 1) * 2),
@@ -449,9 +405,7 @@ describe('RunnerFactory  - Unit Tests', function () {
         it('Should successfully scan a file: at least one finding', async function () {
             const discoveries = generateDiscoveries(2);
             currentFile = {
-                uri: {
-                    fspath: faker.system.filePath(),
-                },
+                uri: vscode.Uri.parse(faker.system.filePath()),
                 lineAt: (line: number) => {
                     return {
                         text:
