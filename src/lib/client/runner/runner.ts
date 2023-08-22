@@ -96,6 +96,7 @@ export default abstract class Runner {
         if (!rules) {
             throw new Error('Please provide the path to the rules file');
         }
+        this.rules = vscode.Uri.parse(rules);
         switch (this.runnerType) {
             case CredentialDiggerRuntime.Docker:
                 this.config = this.config as CredentialDiggerRunnerDockerConfig;
@@ -119,6 +120,5 @@ export default abstract class Runner {
                 );
             }
         }
-        this.rules = vscode.Uri.parse(rules);
     }
 }
