@@ -157,23 +157,23 @@ export default class WebServerRunner extends Runner {
                 jar: this.cookies,
             });
         } catch (err) {
-            if (axios.isAxiosError(err)) {
-                const error = err as AxiosError<Error>;
+            if (!axios.isAxiosError(err)) {
                 LoggerFactory.getInstance().debug(
-                    `${this.getId()}: addRules: status code: ${
-                        error.response?.status
+                    `${this.getId()}: addRules: error message: ${
+                        (err as Error).message
                     }`,
                 );
-                if (error.response?.status === HttpStatusCode.Found) {
-                    return true;
-                }
                 throw err;
             }
+            const error = err as AxiosError<Error>;
             LoggerFactory.getInstance().debug(
-                `${this.getId()}: addRules: error message: ${
-                    (err as Error).message
+                `${this.getId()}: addRules: status code: ${
+                    error.response?.status
                 }`,
             );
+            if (error.response?.status === HttpStatusCode.Found) {
+                return true;
+            }
             throw err;
         }
         LoggerFactory.getInstance().debug(
@@ -201,18 +201,20 @@ export default class WebServerRunner extends Runner {
                 headers: form.getHeaders(),
             });
         } catch (err) {
+            if (!axios.isAxiosError(err)) {
+                throw err;
+            }
             const error = err as AxiosError<Error>;
             LoggerFactory.getInstance().debug(
                 `${this.getId()}: connect: status code: ${
                     error.response?.status
                 }`,
             );
-            if (error.response?.status === HttpStatusCode.Found) {
-                // Retrieve the cookies to set them for each upcoming request
-                this.cookies = error.response?.config?.jar;
-            } else {
+            if (error.response?.status !== HttpStatusCode.Found) {
                 throw err;
             }
+            // Retrieve the cookies to set them for each upcoming request
+            this.cookies = error.response?.config?.jar;
         }
         if (!this.cookies) {
             throw new Error(
