@@ -39,7 +39,7 @@ export default class WebServerRunner extends Runner {
         this.httpInstance = wrapper(
             axios.create({
                 baseURL: this.config.host,
-                timeout: 120000,
+                timeout: 120000, // 120s
                 jar: new CookieJar(),
                 maxRedirects: 0, // Disable
                 httpsAgent,
@@ -107,9 +107,7 @@ export default class WebServerRunner extends Runner {
     }
 
     public async getDiscoveries(): Promise<Discovery[]> {
-        return new Promise((resolve) => {
-            resolve(this.discoveries);
-        });
+        return Promise.resolve(this.discoveries);
     }
 
     public async cleanup(): Promise<void> {
@@ -159,17 +157,24 @@ export default class WebServerRunner extends Runner {
                 jar: this.cookies,
             });
         } catch (err) {
-            const error = err as AxiosError<Error>;
-            LoggerFactory.getInstance().debug(
-                `${this.getId()}: addRules: status code: ${
-                    error.response?.status
-                }`,
-            );
-            if (error.response?.status === HttpStatusCode.Found) {
-                return true;
-            } else {
+            if (axios.isAxiosError(err)) {
+                const error = err as AxiosError<Error>;
+                LoggerFactory.getInstance().debug(
+                    `${this.getId()}: addRules: status code: ${
+                        error.response?.status
+                    }`,
+                );
+                if (error.response?.status === HttpStatusCode.Found) {
+                    return true;
+                }
                 throw err;
             }
+            LoggerFactory.getInstance().debug(
+                `${this.getId()}: addRules: error message: ${
+                    (err as Error).message
+                }`,
+            );
+            throw err;
         }
         LoggerFactory.getInstance().debug(
             `${this.getId()}: addRules: failed to add rules to ${
