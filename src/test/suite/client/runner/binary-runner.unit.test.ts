@@ -11,6 +11,7 @@ import {
 } from '../../../../types/config';
 import {
     generateCredentialDiggerRunnerConfig,
+    generateCurrentFile,
     generateDBConfig,
     generateDiscoveries,
 } from '../../utils';
@@ -32,17 +33,7 @@ describe('BinaryRunner  - Unit Tests', function () {
 
     beforeEach(() => {
         discoveries = generateDiscoveries(2);
-        currentFile = {
-            uri: vscode.Uri.parse(faker.system.filePath()),
-            lineAt: (line: number) => {
-                return {
-                    text:
-                        faker.lorem.sentence() +
-                        discoveries[line].snippet +
-                        faker.lorem.sentence(),
-                };
-            },
-        } as unknown as vscode.TextDocument;
+        currentFile = generateCurrentFile(discoveries);
         existsSyncStub = sinon.stub(fs, 'existsSync').resolves(true);
         debugStub = sinon.stub(LoggerFactory.getInstance(), 'debug').resolves();
         cmdShellExecStub = sinon.stub(vscode, 'ShellExecution').returns({});

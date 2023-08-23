@@ -7,6 +7,7 @@ import {
     DbType,
 } from '../../types/config';
 import Utils from '../../lib/utils';
+import * as vscode from 'vscode';
 
 export function generateRawDiscovery(lineNumber?: number): RawDiscovery {
     return {
@@ -94,4 +95,22 @@ export function generateCredentialDiggerRunnerConfig(
                 },
             };
     }
+}
+
+export function generateCurrentFile(
+    discoveries?: Discovery[] | RawDiscovery[],
+): vscode.TextDocument {
+    return {
+        uri: vscode.Uri.parse(faker.system.filePath()),
+        lineAt: (line: number) => {
+            return {
+                text:
+                    discoveries && discoveries[line].snippet
+                        ? faker.lorem.sentence() +
+                          discoveries[line].snippet +
+                          faker.lorem.sentence()
+                        : faker.string.sample((line + 1) * 2),
+            };
+        },
+    } as unknown as vscode.TextDocument;
 }

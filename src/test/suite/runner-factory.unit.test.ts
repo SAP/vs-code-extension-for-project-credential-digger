@@ -16,6 +16,7 @@ import LoggerFactory from '../../lib/logger-factory';
 import * as vscode from 'vscode';
 import {
     generateCredentialDiggerRunnerConfig,
+    generateCurrentFile,
     generateDBConfig,
     generateDiscoveries,
 } from './utils';
@@ -355,14 +356,7 @@ describe('RunnerFactory  - Unit Tests', function () {
                 CredentialDiggerRuntime.Docker,
                 generateDBConfig(DbType.SQLite),
             );
-            currentFile = {
-                uri: vscode.Uri.parse(faker.system.filePath()),
-                lineAt: (line: number) => {
-                    return {
-                        text: faker.string.sample((line + 1) * 2),
-                    };
-                },
-            } as unknown as vscode.TextDocument;
+            currentFile = generateCurrentFile();
             storageUri = vscode.Uri.parse(faker.system.filePath());
             diagCollection = {
                 delete: () => true,
@@ -404,17 +398,7 @@ describe('RunnerFactory  - Unit Tests', function () {
 
         it('Should successfully scan a file: at least one finding', async function () {
             const discoveries = generateDiscoveries(2);
-            currentFile = {
-                uri: vscode.Uri.parse(faker.system.filePath()),
-                lineAt: (line: number) => {
-                    return {
-                        text:
-                            faker.lorem.sentence() +
-                            discoveries[line].snippet +
-                            faker.lorem.sentence(),
-                    };
-                },
-            } as unknown as vscode.TextDocument;
+            currentFile = generateCurrentFile(discoveries);
             const debugStub = sinon
                 .stub(LoggerFactory.getInstance(), 'debug')
                 .resolves();

@@ -17,6 +17,7 @@ import WebServerRunner from '../../../../lib/client/runner/webserver-runner';
 import * as AxiosCookieJar from 'axios-cookiejar-support';
 import {
     generateCredentialDiggerRunnerConfig,
+    generateCurrentFile,
     generateRawDiscoveries,
 } from '../../utils';
 import { Discovery, RawDiscovery } from '../../../../types/db';
@@ -34,17 +35,7 @@ describe('WebserverRunner  - Unit Tests', function () {
 
     beforeEach(() => {
         rawDiscoveries = generateRawDiscoveries(2);
-        currentFile = {
-            uri: vscode.Uri.parse(faker.system.filePath()),
-            lineAt: (line: number) => {
-                return {
-                    text:
-                        faker.lorem.sentence() +
-                        rawDiscoveries[line].snippet +
-                        faker.lorem.sentence(),
-                };
-            },
-        } as unknown as vscode.TextDocument;
+        currentFile = generateCurrentFile(rawDiscoveries);
         debugStub = sinon.stub(LoggerFactory.getInstance(), 'debug').resolves();
     });
 
@@ -67,11 +58,9 @@ describe('WebserverRunner  - Unit Tests', function () {
                 },
                 data: rawDiscoveries,
             };
-            httpWrapperStub = sinon
-                .stub(AxiosCookieJar, 'wrapper')
-                .returns({
-                    post: sinon.stub().resolves(postResponse),
-                } as unknown as AxiosInstance);
+            httpWrapperStub = sinon.stub(AxiosCookieJar, 'wrapper').returns({
+                post: sinon.stub().resolves(postResponse),
+            } as unknown as AxiosInstance);
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
@@ -94,11 +83,9 @@ describe('WebserverRunner  - Unit Tests', function () {
                 },
                 data: rawDiscoveries,
             };
-            httpWrapperStub = sinon
-                .stub(AxiosCookieJar, 'wrapper')
-                .returns({
-                    post: sinon.stub().resolves(postResponse),
-                } as unknown as AxiosInstance);
+            httpWrapperStub = sinon.stub(AxiosCookieJar, 'wrapper').returns({
+                post: sinon.stub().resolves(postResponse),
+            } as unknown as AxiosInstance);
             const connectStub = sinon
                 .stub(WebServerRunner.prototype, 'connect')
                 .resolves();
@@ -128,11 +115,9 @@ describe('WebserverRunner  - Unit Tests', function () {
                 },
                 data: [],
             };
-            httpWrapperStub = sinon
-                .stub(AxiosCookieJar, 'wrapper')
-                .returns({
-                    post: sinon.stub().resolves(postResponse),
-                } as unknown as AxiosInstance);
+            httpWrapperStub = sinon.stub(AxiosCookieJar, 'wrapper').returns({
+                post: sinon.stub().resolves(postResponse),
+            } as unknown as AxiosInstance);
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
@@ -156,11 +141,9 @@ describe('WebserverRunner  - Unit Tests', function () {
                 },
                 data: rawDiscoveries,
             };
-            httpWrapperStub = sinon
-                .stub(AxiosCookieJar, 'wrapper')
-                .returns({
-                    post: sinon.stub().resolves(postResponse),
-                } as unknown as AxiosInstance);
+            httpWrapperStub = sinon.stub(AxiosCookieJar, 'wrapper').returns({
+                post: sinon.stub().resolves(postResponse),
+            } as unknown as AxiosInstance);
             const message = `Failed to scan file ${currentFile.uri.fsPath} on ${config.host}`;
             runner = new WebServerRunner(
                 config,
@@ -194,11 +177,9 @@ describe('WebserverRunner  - Unit Tests', function () {
                 },
                 data: rawDiscoveries,
             };
-            httpWrapperStub = sinon
-                .stub(AxiosCookieJar, 'wrapper')
-                .returns({
-                    post: sinon.stub().resolves(postResponse),
-                } as unknown as AxiosInstance);
+            httpWrapperStub = sinon.stub(AxiosCookieJar, 'wrapper').returns({
+                post: sinon.stub().resolves(postResponse),
+            } as unknown as AxiosInstance);
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
@@ -240,11 +221,9 @@ describe('WebserverRunner  - Unit Tests', function () {
                 undefined,
                 postResponse,
             );
-            httpWrapperStub = sinon
-                .stub(AxiosCookieJar, 'wrapper')
-                .returns({
-                    post: sinon.stub().throws(axiosError),
-                } as unknown as AxiosInstance);
+            httpWrapperStub = sinon.stub(AxiosCookieJar, 'wrapper').returns({
+                post: sinon.stub().throws(axiosError),
+            } as unknown as AxiosInstance);
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
@@ -270,11 +249,9 @@ describe('WebserverRunner  - Unit Tests', function () {
                 undefined,
                 postResponse,
             );
-            httpWrapperStub = sinon
-                .stub(AxiosCookieJar, 'wrapper')
-                .returns({
-                    post: sinon.stub().throws(axiosError),
-                } as unknown as AxiosInstance);
+            httpWrapperStub = sinon.stub(AxiosCookieJar, 'wrapper').returns({
+                post: sinon.stub().throws(axiosError),
+            } as unknown as AxiosInstance);
             const connectStub = sinon
                 .stub(WebServerRunner.prototype, 'connect')
                 .resolves();
@@ -307,11 +284,9 @@ describe('WebserverRunner  - Unit Tests', function () {
                 undefined,
                 postResponse,
             );
-            httpWrapperStub = sinon
-                .stub(AxiosCookieJar, 'wrapper')
-                .returns({
-                    post: sinon.stub().throws(axiosError),
-                } as unknown as AxiosInstance);
+            httpWrapperStub = sinon.stub(AxiosCookieJar, 'wrapper').returns({
+                post: sinon.stub().throws(axiosError),
+            } as unknown as AxiosInstance);
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
@@ -337,11 +312,9 @@ describe('WebserverRunner  - Unit Tests', function () {
             ).webserver as CredentialDiggerRunnerWebServerConfig;
             delete config.envFile;
             const error = new Error('Failed to add rules');
-            httpWrapperStub = sinon
-                .stub(AxiosCookieJar, 'wrapper')
-                .returns({
-                    post: sinon.stub().throws(error),
-                } as unknown as AxiosInstance);
+            httpWrapperStub = sinon.stub(AxiosCookieJar, 'wrapper').returns({
+                post: sinon.stub().throws(error),
+            } as unknown as AxiosInstance);
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
@@ -363,11 +336,9 @@ describe('WebserverRunner  - Unit Tests', function () {
                 CredentialDiggerRuntime.WebServer,
             ).webserver as CredentialDiggerRunnerWebServerConfig;
             delete config.envFile;
-            httpWrapperStub = sinon
-                .stub(AxiosCookieJar, 'wrapper')
-                .returns({
-                    post: sinon.stub().resolves(),
-                } as unknown as AxiosInstance);
+            httpWrapperStub = sinon.stub(AxiosCookieJar, 'wrapper').returns({
+                post: sinon.stub().resolves(),
+            } as unknown as AxiosInstance);
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
@@ -404,11 +375,9 @@ describe('WebserverRunner  - Unit Tests', function () {
                 undefined,
                 postResponse,
             );
-            httpWrapperStub = sinon
-                .stub(AxiosCookieJar, 'wrapper')
-                .returns({
-                    post: sinon.stub().throws(axiosError),
-                } as unknown as AxiosInstance);
+            httpWrapperStub = sinon.stub(AxiosCookieJar, 'wrapper').returns({
+                post: sinon.stub().throws(axiosError),
+            } as unknown as AxiosInstance);
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
@@ -465,11 +434,9 @@ describe('WebserverRunner  - Unit Tests', function () {
                 undefined,
                 postResponse,
             );
-            httpWrapperStub = sinon
-                .stub(AxiosCookieJar, 'wrapper')
-                .returns({
-                    post: sinon.stub().throws(axiosError),
-                } as unknown as AxiosInstance);
+            httpWrapperStub = sinon.stub(AxiosCookieJar, 'wrapper').returns({
+                post: sinon.stub().throws(axiosError),
+            } as unknown as AxiosInstance);
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
@@ -501,11 +468,9 @@ describe('WebserverRunner  - Unit Tests', function () {
                 undefined,
                 postResponse,
             );
-            httpWrapperStub = sinon
-                .stub(AxiosCookieJar, 'wrapper')
-                .returns({
-                    post: sinon.stub().throws(axiosError),
-                } as unknown as AxiosInstance);
+            httpWrapperStub = sinon.stub(AxiosCookieJar, 'wrapper').returns({
+                post: sinon.stub().throws(axiosError),
+            } as unknown as AxiosInstance);
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
@@ -527,11 +492,9 @@ describe('WebserverRunner  - Unit Tests', function () {
             config = generateCredentialDiggerRunnerConfig(
                 CredentialDiggerRuntime.WebServer,
             ).webserver as CredentialDiggerRunnerWebServerConfig;
-            httpWrapperStub = sinon
-                .stub(AxiosCookieJar, 'wrapper')
-                .returns({
-                    post: sinon.stub().resolves(),
-                } as unknown as AxiosInstance);
+            httpWrapperStub = sinon.stub(AxiosCookieJar, 'wrapper').returns({
+                post: sinon.stub().resolves(),
+            } as unknown as AxiosInstance);
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
