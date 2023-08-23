@@ -327,6 +327,65 @@ describe('BinaryRunner  - Unit Tests', function () {
             expect(taskStub.callCount).to.be.eql(0);
             expect(result).to.be.false;
         });
+
+        it('Should fail to add rules: rules file path is undefined', async function () {
+            config = generateCredentialDiggerRunnerConfig(
+                CredentialDiggerRuntime.Binary,
+                generateDBConfig(DbType.SQLite),
+            ).binary as CredentialDiggerRunnerBinaryConfig;
+            const message = 'Please provide the path to the rules file';
+            runner = new BinaryRunner(config, CredentialDiggerRuntime.Binary);
+            try {
+                runner.validateAndSetRules('');
+            } catch (err) {
+                expect(err).to.be.not.null;
+                expect((err as Error).message).to.be.eql(message);
+            } finally {
+                expect(debugStub.callCount).to.be.eql(0);
+                expect(cmdShellExecStub.callCount).to.be.eql(0);
+                expect(taskStub.callCount).to.be.eql(0);
+            }
+        });
+
+        it('Should fail to add rules: postgres db config is undefined', async function () {
+            config = generateCredentialDiggerRunnerConfig(
+                CredentialDiggerRuntime.Binary,
+                { type: DbType.Postgres },
+            ).binary as CredentialDiggerRunnerBinaryConfig;
+            const message =
+                'Please provide the Credential Digger Postgres database configuration';
+            runner = new BinaryRunner(config, CredentialDiggerRuntime.Binary);
+            try {
+                runner.validateAndSetRules(rulesFileLocation);
+            } catch (err) {
+                expect(err).to.be.not.null;
+                expect((err as Error).message).to.be.eql(message);
+            } finally {
+                expect(debugStub.callCount).to.be.eql(0);
+                expect(cmdShellExecStub.callCount).to.be.eql(0);
+                expect(taskStub.callCount).to.be.eql(0);
+            }
+        });
+
+        it('Should fail to add rules: postgres db config is invalid', async function () {
+            config = generateCredentialDiggerRunnerConfig(
+                CredentialDiggerRuntime.Binary,
+                { type: DbType.Postgres, postgres: { envFile: '' } },
+            ).binary as CredentialDiggerRunnerBinaryConfig;
+            const message =
+                'Please provide the Credential Digger Postgres database environment file';
+            runner = new BinaryRunner(config, CredentialDiggerRuntime.Binary);
+            try {
+                runner.validateAndSetRules(rulesFileLocation);
+            } catch (err) {
+                expect(err).to.be.not.null;
+                expect((err as Error).message).to.be.eql(message);
+            } finally {
+                expect(debugStub.callCount).to.be.eql(0);
+                expect(cmdShellExecStub.callCount).to.be.eql(0);
+                expect(taskStub.callCount).to.be.eql(0);
+            }
+        });
     });
 
     describe('cleanup - Unit Tests', function () {
