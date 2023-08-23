@@ -7,7 +7,9 @@ import Utils from './lib/utils';
 import MetaReaderFactory from './lib/meta-reader-factory';
 
 // Called when the extension is activated
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(
+    context: vscode.ExtensionContext,
+): Promise<void> {
     // Create storageUri
     if (!context.storageUri) {
         vscode.window.showErrorMessage(
@@ -18,8 +20,10 @@ export function activate(context: vscode.ExtensionContext) {
     if (!fs.existsSync(context.storageUri.fsPath)) {
         fs.mkdirSync(context.storageUri.fsPath);
     }
-    // Create dia collection
-    const diagCollection = vscode.languages.createDiagnosticCollection('');
+    // Create diag collection
+    const diagCollection = vscode.languages.createDiagnosticCollection(
+        MetaReaderFactory.getInstance().getExtensionName(),
+    );
 
     // Show info message
     vscode.window.showInformationMessage(
@@ -31,77 +35,12 @@ export function activate(context: vscode.ExtensionContext) {
         doc: vscode.TextDocument,
         showErrorOnEmptySettings = false,
     ) => {
-        // Clone
-        const currentDoc = Utils.cloneObject(doc);
-        // Read settings
-        const settings = vscode.workspace
-            .getConfiguration()
-            .get<ExtensionConfig>('credentialDigger');
-        if (!settings || !Utils.isSettingsConfigured(settings)) {
-            if (showErrorOnEmptySettings) {
-                vscode.window.showErrorMessage(
-                    `Failed to scan file: Credential Digger extension is not configured`,
-                );
-            }
-            return;
-        }
-        fs.stat(currentDoc.uri.fsPath, async (err, stats) => {
-            if (err || !stats.isFile()) {
-                return;
-            }
-            let id = null;
-            try {
-                if (!context.storageUri) {
-                    throw new Error('Extension storage is undefined');
-                }
-                // Scan
-                const runner = RunnerFactory.getInstance(
-                    settings.credentialDiggerRunner,
-                );
-                id = runner.getId();
-                await runner.scan(
-                    currentDoc,
-                    context.storageUri,
-                    diagCollection,
-                );
-            } catch (err) {
-                LoggerFactory.getInstance().error(
-                    `${id}: Error occurred when scanning ${currentDoc.uri.fsPath}: ${err}`,
-                );
-                vscode.window.showErrorMessage(
-                    `Failed to scan ${currentDoc.uri.fsPath} (${id})`,
-                );
-            }
-        });
+        await scan(context, diagCollection, doc, showErrorOnEmptySettings);
     };
 
     // Define add rules action
     const addRulesHandler = async () => {
-        let id = null;
-        // Read settings
-        let settings = vscode.workspace
-            .getConfiguration()
-            .get<ExtensionConfig>('credentialDigger');
-        if (!Utils.isSettingsConfigured(settings)) {
-            vscode.window.showErrorMessage(
-                'Failed to add rules: Credential Digger extension is not configured',
-            );
-            return;
-        }
-        settings = settings as ExtensionConfig;
-        try {
-            // Add Rules
-            const runner = RunnerFactory.getInstance(
-                settings.credentialDiggerRunner,
-            );
-            id = runner.getId();
-            runner.addRules(settings.rules ?? '');
-        } catch (err) {
-            LoggerFactory.getInstance().error(
-                `${id}: Error occurred when adding rules: ${err}`,
-            );
-            vscode.window.showErrorMessage(`Failed to add rules (${id})`);
-        }
+        await addRules();
     };
 
     // Subscribe to open/save document events
@@ -114,16 +53,10 @@ export function activate(context: vscode.ExtensionContext) {
     let disposable = vscode.commands.registerCommand(
         MetaReaderFactory.getInstance().getExtensionScanCommand(),
         async () => {
-            const currentFile = vscode.window.activeTextEditor?.document;
-            if (currentFile?.uri) {
-                await scanHandler(currentFile, true);
-            } else {
-                vscode.window.showErrorMessage('Please select a file to scan');
-            }
+            await scanSelectedFile(scanHandler);
         },
     );
     context.subscriptions.push(disposable);
-
     disposable = vscode.commands.registerCommand(
         MetaReaderFactory.getInstance().getExtensionAddRulesCommand(),
         async () => {
@@ -134,6 +67,94 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 // This method is called when the extension is deactivated
-export function deactivate() {
+export function deactivate(): void {
     /* Deactivate the extension */
+}
+
+export async function scan(
+    context: vscode.ExtensionContext,
+    diagCollection: vscode.DiagnosticCollection,
+    doc: vscode.TextDocument,
+    showErrorOnEmptySettings = false,
+): Promise<void> {
+    // Clone
+    const currentDoc = Utils.cloneObject(doc);
+    // Read settings
+    let settings = vscode.workspace
+        .getConfiguration()
+        .get<ExtensionConfig>('credentialDigger');
+    if (!Utils.isSettingsConfigured(settings)) {
+        if (showErrorOnEmptySettings) {
+            vscode.window.showErrorMessage(
+                `Failed to scan file: Credential Digger extension is not configured`,
+            );
+        }
+        return;
+    }
+    settings = settings as ExtensionConfig;
+    let id = null;
+    try {
+        const stats = await fs.promises.stat(currentDoc.uri.fsPath);
+        if (!stats.isFile()) {
+            return;
+        }
+        if (!context.storageUri) {
+            throw new Error('Extension storage is undefined');
+        }
+        // Scan
+        const runner = RunnerFactory.getInstance(
+            settings.credentialDiggerRunner,
+        );
+        id = runner.getId();
+        await runner.scan(currentDoc, context.storageUri, diagCollection);
+    } catch (err) {
+        LoggerFactory.getInstance().error(
+            `${id}: Error occurred when scanning ${currentDoc.uri.fsPath}: ${err}`,
+        );
+        vscode.window.showErrorMessage(
+            `Failed to scan ${currentDoc.uri.fsPath} (${id})`,
+        );
+    }
+}
+
+export async function addRules(): Promise<void> {
+    let id = null;
+    // Read settings
+    let settings = vscode.workspace
+        .getConfiguration()
+        .get<ExtensionConfig>('credentialDigger');
+    if (!Utils.isSettingsConfigured(settings)) {
+        vscode.window.showErrorMessage(
+            'Failed to add rules: Credential Digger extension is not configured',
+        );
+        return;
+    }
+    settings = settings as ExtensionConfig;
+    try {
+        // Add Rules
+        const runner = RunnerFactory.getInstance(
+            settings.credentialDiggerRunner,
+        );
+        id = runner.getId();
+        runner.addRules(settings.rules ?? '');
+    } catch (err) {
+        LoggerFactory.getInstance().error(
+            `${id}: Error occurred when adding rules: ${err}`,
+        );
+        vscode.window.showErrorMessage(`Failed to add rules (${id})`);
+    }
+}
+
+export async function scanSelectedFile(
+    callback: (
+        doc: vscode.TextDocument,
+        showErrorOnEmptySettings: boolean,
+    ) => Promise<void>,
+): Promise<void> {
+    const currentFile = vscode.window.activeTextEditor?.document;
+    if (currentFile?.uri) {
+        await callback(currentFile, true);
+    } else {
+        vscode.window.showErrorMessage('Please select a file to scan');
+    }
 }
