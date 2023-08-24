@@ -230,7 +230,7 @@ describe('Utils - Unit Tests', function () {
     describe('parseDiscoveriesCSVFile - Unit Tests', function () {
         it('Should parse discoveries csv file successfully', async function () {
             const result = await Utils.parseDiscoveriesCSVFile(
-                resolve('./src/test/unit/data/raw-discoveries.csv'),
+                resolve(__dirname, './data/raw-discoveries.csv'),
             );
             expect(result.length).to.be.eql(5);
             result.forEach((d) => {
@@ -248,6 +248,16 @@ describe('Utils - Unit Tests', function () {
                 expect(d.rule?.category).to.be.not.null;
                 expect(d.rule?.description).to.be.not.null;
             });
+        });
+    });
+
+    describe('createHash - Unit Tests', function () {
+        it('Should create hash successfully', async function () {
+            const data = faker.string.alpha(10);
+            const length = 4;
+            const result = await Utils.createHash(data, length);
+            expect(result.length).to.be.eql(2 * length);
+            expect(result).to.be.not.eql(data);
         });
     });
 });
