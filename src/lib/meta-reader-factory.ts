@@ -1,6 +1,7 @@
-import { resolve } from 'path';
-import { MetaData } from '../types/meta-data';
 import { readFileSync } from 'fs';
+import { resolve } from 'path';
+
+import { MetaData } from '../types/meta-data';
 
 export default class MetaReaderFactory {
     private static instance: MetaReaderFactory;

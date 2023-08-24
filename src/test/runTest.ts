@@ -1,5 +1,5 @@
-import { resolve } from 'path';
 import { tmpdir } from 'os';
+import { resolve } from 'path';
 
 import { runTests } from '@vscode/test-electron';
 

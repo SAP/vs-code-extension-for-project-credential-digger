@@ -1,19 +1,20 @@
-import { Discovery } from '../../../types/db';
+import { existsSync, promises } from 'fs';
+import { ShellExecution, Task, TaskScope, TextDocument, Uri } from 'vscode';
+
 import Runner from './runner';
 import {
     CredentialDiggerRunnerBinaryConfig,
     DbType,
 } from '../../../types/config';
-import { promises, existsSync } from 'fs';
-import { ShellExecution, Task, TaskScope, TextDocument, Uri } from 'vscode';
-import { executeTask, createHash, parseDiscoveriesCSVFile } from '../../utils';
-import LoggerFactory from '../../logger-factory';
+import { Discovery } from '../../../types/db';
 import {
     CredentialDiggerTaskDefinitionType,
     CredentialDiggerTaskGroup,
     CredentialDiggerTasks,
     TaskProblemMatcher,
 } from '../../../types/task';
+import LoggerFactory from '../../logger-factory';
+import { createHash, executeTask, parseDiscoveriesCSVFile } from '../../utils';
 
 export default class BinaryRunner extends Runner {
     public async scan(): Promise<number> {

@@ -1,13 +1,15 @@
+import { TextDocument, Uri } from 'vscode';
+
 import { faker } from '@faker-js/faker';
-import { Discovery, RawDiscovery, State } from '../../types/db';
+
+import { convertRawToDiscovery } from '../../lib/utils';
 import {
     CredentialDiggerRunner,
     CredentialDiggerRuntime,
     DbConfig,
     DbType,
 } from '../../types/config';
-import { convertRawToDiscovery } from '../../lib/utils';
-import { TextDocument, Uri } from 'vscode';
+import { Discovery, RawDiscovery, State } from '../../types/db';
 
 export function generateRawDiscovery(lineNumber?: number): RawDiscovery {
     return {

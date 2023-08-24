@@ -1,25 +1,28 @@
-import { faker } from '@faker-js/faker';
-import {
-    CredentialDiggerRunner,
-    CredentialDiggerRunnerBinaryConfig,
-    CredentialDiggerRuntime,
-    DbConfig,
-    DbType,
-    SQLiteDbConfig,
-} from '../../types/config';
-import * as sinon from 'sinon';
-import RunnerFactory from '../../lib/runner-factory';
-import { expect } from 'chai';
 import * as fs from 'fs';
-import DockerRunner from '../../lib/client/runner/docker-runner';
-import LoggerFactory from '../../lib/logger-factory';
-import { DiagnosticCollection, Uri, TextDocument, window } from 'vscode';
+import { DiagnosticCollection, TextDocument, Uri, window } from 'vscode';
+
+import { faker } from '@faker-js/faker';
+import { expect } from 'chai';
+import * as sinon from 'sinon';
+
 import {
     generateCredentialDiggerRunnerConfig,
     generateCurrentFile,
     generateDBConfig,
     generateDiscoveries,
 } from './utils';
+import DockerRunner from '../../lib/client/runner/docker-runner';
+import LoggerFactory from '../../lib/logger-factory';
+import RunnerFactory from '../../lib/runner-factory';
+import {
+    CredentialDiggerRunner,
+    CredentialDiggerRunnerBinaryConfig,
+    CredentialDiggerRunnerWebServerConfig,
+    CredentialDiggerRuntime,
+    DbConfig,
+    DbType,
+    SQLiteDbConfig,
+} from '../../types/config';
 
 describe('RunnerFactory  - Unit Tests', function () {
     let runnerConfig: CredentialDiggerRunner;
@@ -243,7 +246,9 @@ describe('RunnerFactory  - Unit Tests', function () {
             runnerConfig = generateCredentialDiggerRunnerConfig(
                 CredentialDiggerRuntime.WebServer,
             );
-            runnerConfig.webserver!.host = faker.system.filePath();
+            (
+                runnerConfig.webserver as CredentialDiggerRunnerWebServerConfig
+            ).host = faker.system.filePath();
             try {
                 RunnerFactory.getInstance(runnerConfig);
             } catch (err) {

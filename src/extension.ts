@@ -1,18 +1,19 @@
-import {
-    ExtensionContext,
-    DiagnosticCollection,
-    window,
-    languages,
-    TextDocument,
-    workspace,
-    commands,
-} from 'vscode';
-import { ExtensionConfig } from './types/config';
-import RunnerFactory from './lib/runner-factory';
 import { existsSync, mkdirSync, promises } from 'fs';
+import {
+    DiagnosticCollection,
+    ExtensionContext,
+    TextDocument,
+    commands,
+    languages,
+    window,
+    workspace,
+} from 'vscode';
+
 import LoggerFactory from './lib/logger-factory';
-import { cloneObject, isSettingsConfigured } from './lib/utils';
 import MetaReaderFactory from './lib/meta-reader-factory';
+import RunnerFactory from './lib/runner-factory';
+import { cloneObject, isSettingsConfigured } from './lib/utils';
+import { ExtensionConfig } from './types/config';
 
 // Called when the extension is activated
 export async function activate(context: ExtensionContext): Promise<void> {

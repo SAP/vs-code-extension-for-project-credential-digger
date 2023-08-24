@@ -1,11 +1,13 @@
-import { expect } from 'chai';
-import * as sinon from 'sinon';
-import { describe, it } from 'mocha';
-import MetaReaderFactory from '../../lib/meta-reader-factory';
-import { faker } from '@faker-js/faker';
 import { LogOutputChannel, window } from 'vscode';
+
+import { faker } from '@faker-js/faker';
 import * as vscodeLogger from '@vscode-logging/logger';
+import { expect } from 'chai';
+import { describe, it } from 'mocha';
+import * as sinon from 'sinon';
+
 import LoggerFactory from '../../lib/logger-factory';
+import MetaReaderFactory from '../../lib/meta-reader-factory';
 
 describe('LoggerFactory - Unit Tests', function () {
     let messages: string[];

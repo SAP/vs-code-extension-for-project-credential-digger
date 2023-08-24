@@ -1,6 +1,7 @@
 import { expect } from 'chai';
-import * as sinon from 'sinon';
 import { describe, it } from 'mocha';
+import * as sinon from 'sinon';
+
 import MetaReaderFactory from '../../lib/meta-reader-factory';
 
 describe('MetaReaderFactory - Unit Tests', function () {

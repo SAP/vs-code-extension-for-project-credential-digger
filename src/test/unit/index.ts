@@ -1,6 +1,7 @@
 import { join, resolve } from 'path';
-import * as Mocha from 'mocha';
+
 import * as glob from 'glob';
+import * as Mocha from 'mocha';
 
 function setupCoverage() {
     // eslint-disable-next-line @typescript-eslint/no-var-requires

@@ -1,5 +1,7 @@
-import { IVSCodeExtLogger, getExtensionLogger } from '@vscode-logging/logger';
 import { window } from 'vscode';
+
+import { IVSCodeExtLogger, getExtensionLogger } from '@vscode-logging/logger';
+
 import MetaReaderFactory from './meta-reader-factory';
 
 export default class LoggerFactory {

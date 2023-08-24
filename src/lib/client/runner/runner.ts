@@ -1,3 +1,5 @@
+import { TextDocument, Uri } from 'vscode';
+
 import {
     CredentialDiggerRunnerBinaryConfig,
     CredentialDiggerRunnerConfig,
@@ -6,7 +8,6 @@ import {
     DbType,
 } from '../../../types/config';
 import { Discovery } from '../../../types/db';
-import { TextDocument, Uri } from 'vscode';
 import { generateUniqUuid, isNullOrUndefinedOrEmptyObject } from '../../utils';
 
 export default abstract class Runner {

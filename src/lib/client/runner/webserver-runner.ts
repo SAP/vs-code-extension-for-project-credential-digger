@@ -1,19 +1,26 @@
-import { Discovery } from '../../../types/db';
+import { createReadStream, existsSync } from 'fs';
+import { Agent } from 'node:https';
+import { resolve } from 'path';
+import { TextDocument, Uri } from 'vscode';
+
+import axios, {
+    AxiosError,
+    AxiosInstance,
+    isAxiosError,
+    HttpStatusCode,
+} from 'axios';
+import { wrapper } from 'axios-cookiejar-support';
+import * as dotenv from 'dotenv';
+import * as FormData from 'form-data';
+import { CookieJar } from 'tough-cookie';
+
 import Runner from './runner';
-import axios, { AxiosError, AxiosInstance, HttpStatusCode } from 'axios';
 import {
     CredentialDiggerRunnerWebServerConfig,
     CredentialDiggerRuntime,
 } from '../../../types/config';
-import { TextDocument, Uri } from 'vscode';
-import * as dotenv from 'dotenv';
-import { resolve } from 'path';
-import { createReadStream, existsSync } from 'fs';
-import { wrapper } from 'axios-cookiejar-support';
-import { CookieJar } from 'tough-cookie';
+import { Discovery } from '../../../types/db';
 import LoggerFactory from '../../logger-factory';
-import { Agent } from 'node:https';
-import * as FormData from 'form-data';
 import { convertRawToDiscovery } from '../../utils';
 
 export default class WebServerRunner extends Runner {
@@ -155,7 +162,7 @@ export default class WebServerRunner extends Runner {
                 jar: this.cookies,
             });
         } catch (err) {
-            if (!axios.isAxiosError(err)) {
+            if (!isAxiosError(err)) {
                 LoggerFactory.getInstance().debug(
                     `${this.getId()}: addRules: error message: ${
                         (err as Error).message
@@ -199,7 +206,7 @@ export default class WebServerRunner extends Runner {
                 headers: form.getHeaders(),
             });
         } catch (err) {
-            if (!axios.isAxiosError(err)) {
+            if (!isAxiosError(err)) {
                 throw err;
             }
             const error = err as AxiosError<Error>;

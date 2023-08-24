@@ -1,20 +1,21 @@
-import { dirname } from 'path';
-import { Discovery } from '../../../types/db';
-import Runner from './runner';
 import { promises } from 'fs';
-import LoggerFactory from '../../logger-factory';
-import { executeTask, createHash, parseDiscoveriesCSVFile } from '../../utils';
-import { Uri, TextDocument, ShellExecution, Task, TaskScope } from 'vscode';
+import { dirname } from 'path';
+import { ShellExecution, Task, TaskScope, TextDocument, Uri } from 'vscode';
+
+import Runner from './runner';
 import {
     CredentialDiggerRunnerDockerConfig,
     DbType,
 } from '../../../types/config';
+import { Discovery } from '../../../types/db';
 import {
     CredentialDiggerTaskDefinitionType,
     CredentialDiggerTaskGroup,
     CredentialDiggerTasks,
     TaskProblemMatcher,
 } from '../../../types/task';
+import LoggerFactory from '../../logger-factory';
+import { createHash, executeTask, parseDiscoveriesCSVFile } from '../../utils';
 
 export default class DockerRunner extends Runner {
     private containerWorkingDir = '/data/credentialDigger';

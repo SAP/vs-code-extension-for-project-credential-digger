@@ -1,29 +1,32 @@
-import { expect } from 'chai';
-import { faker } from '@faker-js/faker';
-import * as sinon from 'sinon';
+import * as fs from 'fs';
 import { TextDocument } from 'vscode';
-import { describe, it, beforeEach, afterEach } from 'mocha';
-import axios, {
+
+import { faker } from '@faker-js/faker';
+import {
     AxiosError,
     AxiosInstance,
     AxiosResponse,
     HttpStatusCode,
+    isAxiosError,
 } from 'axios';
+import * as AxiosCookieJar from 'axios-cookiejar-support';
+import { expect } from 'chai';
+import { afterEach, beforeEach, describe, it } from 'mocha';
+import * as sinon from 'sinon';
+
+import WebServerRunner from '../../../../lib/client/runner/webserver-runner';
+import LoggerFactory from '../../../../lib/logger-factory';
+import { convertRawToDiscovery } from '../../../../lib/utils';
 import {
     CredentialDiggerRunnerWebServerConfig,
     CredentialDiggerRuntime,
 } from '../../../../types/config';
-import WebServerRunner from '../../../../lib/client/runner/webserver-runner';
-import * as AxiosCookieJar from 'axios-cookiejar-support';
+import { Discovery, RawDiscovery } from '../../../../types/db';
 import {
     generateCredentialDiggerRunnerConfig,
     generateCurrentFile,
     generateRawDiscoveries,
 } from '../../utils';
-import { Discovery, RawDiscovery } from '../../../../types/db';
-import LoggerFactory from '../../../../lib/logger-factory';
-import * as fs from 'fs';
-import { convertRawToDiscovery } from '../../../../lib/utils';
 
 describe('WebserverRunner  - Unit Tests', function () {
     let currentFile: TextDocument;
@@ -306,7 +309,7 @@ describe('WebserverRunner  - Unit Tests', function () {
                 await runner.addRules();
             } catch (err) {
                 expect(err).to.be.not.null;
-                expect(axios.isAxiosError(err)).to.be.true;
+                expect(isAxiosError(err)).to.be.true;
                 expect((err as AxiosError<Error>).response).to.be.eql(
                     postResponse,
                 );
@@ -335,7 +338,7 @@ describe('WebserverRunner  - Unit Tests', function () {
                 await runner.addRules();
             } catch (err) {
                 expect(err).to.be.not.null;
-                expect(axios.isAxiosError(err)).to.be.false;
+                expect(isAxiosError(err)).to.be.false;
             } finally {
                 expect(httpWrapperStub.callCount).to.be.eql(1);
                 expect(loggerInstance.callCount).to.be.eql(2);
@@ -460,7 +463,7 @@ describe('WebserverRunner  - Unit Tests', function () {
                 result = await runner.connect();
             } catch (err) {
                 expect(err).to.be.not.null;
-                expect(axios.isAxiosError(err)).to.be.true;
+                expect(isAxiosError(err)).to.be.true;
                 expect((err as AxiosError).response).to.be.eql(postResponse);
             } finally {
                 expect(existsSyncStub.callCount).to.be.eql(1);
@@ -495,7 +498,7 @@ describe('WebserverRunner  - Unit Tests', function () {
                 result = await runner.connect();
             } catch (err) {
                 expect(err).to.be.not.null;
-                expect(axios.isAxiosError(err)).to.be.true;
+                expect(isAxiosError(err)).to.be.true;
                 expect((err as AxiosError).response).to.be.eql(postResponse);
             } finally {
                 expect(existsSyncStub.callCount).to.be.eql(1);
@@ -521,7 +524,7 @@ describe('WebserverRunner  - Unit Tests', function () {
             } catch (err) {
                 const message = `Failed connect to ${config.host} using the provided credentials stored in ${config.envFile}`;
                 expect(err).to.be.not.null;
-                expect(axios.isAxiosError(err)).to.be.false;
+                expect(isAxiosError(err)).to.be.false;
                 expect((err as Error).message).to.be.eql(message);
             } finally {
                 expect(existsSyncStub.callCount).to.be.eql(1);

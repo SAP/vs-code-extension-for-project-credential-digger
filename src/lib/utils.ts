@@ -1,11 +1,13 @@
 import { createReadStream } from 'fs';
-import { parse } from 'csv-parse';
-import { Discovery, RawDiscovery } from '../types/db';
+import { Task, TaskPanelKind, TaskRevealKind, tasks } from 'vscode';
+
 import { hash } from 'argon2';
+import { parse } from 'csv-parse';
 import { cloneDeep } from 'lodash';
-import { TaskRevealKind, TaskPanelKind, Task, tasks } from 'vscode';
 import { v4 } from 'uuid';
+
 import { ExtensionConfig } from '../types/config';
+import { Discovery, RawDiscovery } from '../types/db';
 
 export async function executeTask(task: Task): Promise<number | undefined> {
     // Generate a uniq id for the task to check on

@@ -1,14 +1,20 @@
-import { expect } from 'chai';
-import { faker } from '@faker-js/faker';
-import * as sinon from 'sinon';
+import { promises } from 'fs';
+import { dirname } from 'path';
 import * as vscode from 'vscode';
-import { describe, it, beforeEach, afterEach } from 'mocha';
+
+import { faker } from '@faker-js/faker';
+import { expect } from 'chai';
+import { afterEach, beforeEach, describe, it } from 'mocha';
+import * as sinon from 'sinon';
+
+import DockerRunner from '../../../../lib/client/runner/docker-runner';
+import LoggerFactory from '../../../../lib/logger-factory';
+import * as Utils from '../../../../lib/utils';
 import {
     CredentialDiggerRunnerDockerConfig,
     CredentialDiggerRuntime,
     DbType,
 } from '../../../../types/config';
-import DockerRunner from '../../../../lib/client/runner/docker-runner';
 import { Discovery } from '../../../../types/db';
 import {
     generateCredentialDiggerRunnerConfig,
@@ -16,10 +22,6 @@ import {
     generateDBConfig,
     generateDiscoveries,
 } from '../../utils';
-import LoggerFactory from '../../../../lib/logger-factory';
-import * as Utils from '../../../../lib/utils';
-import { dirname } from 'path';
-import { promises } from 'fs';
 
 describe('DockerRunner  - Unit Tests', function () {
     const containerWorkingDir = '/data/credentialDigger';

@@ -1,24 +1,26 @@
-import { expect } from 'chai';
-import { faker } from '@faker-js/faker';
-import * as sinon from 'sinon';
+import * as fs from 'fs';
 import * as vscode from 'vscode';
-import { describe, it, beforeEach, afterEach } from 'mocha';
+
+import { faker } from '@faker-js/faker';
+import { expect } from 'chai';
+import { afterEach, beforeEach, describe, it } from 'mocha';
+import * as sinon from 'sinon';
+
 import BinaryRunner from '../../../../lib/client/runner/binary-runner';
+import LoggerFactory from '../../../../lib/logger-factory';
+import * as Utils from '../../../../lib/utils';
 import {
     CredentialDiggerRunnerBinaryConfig,
     CredentialDiggerRuntime,
     DbType,
 } from '../../../../types/config';
+import { Discovery } from '../../../../types/db';
 import {
     generateCredentialDiggerRunnerConfig,
     generateCurrentFile,
     generateDBConfig,
     generateDiscoveries,
 } from '../../utils';
-import LoggerFactory from '../../../../lib/logger-factory';
-import * as Utils from '../../../../lib/utils';
-import { Discovery } from '../../../../types/db';
-import * as fs from 'fs';
 
 describe('BinaryRunner  - Unit Tests', function () {
     let currentFile: vscode.TextDocument;

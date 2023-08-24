@@ -1,37 +1,39 @@
-import {
-    TextDocument,
-    ExtensionContext,
-    DiagnosticCollection,
-    Uri,
-    workspace,
-    WorkspaceConfiguration,
-    window,
-    TextEditor,
-    languages,
-    commands,
-    Disposable,
-} from 'vscode';
-import { describe, it } from 'mocha';
-import { expect } from 'chai';
-import * as sinon from 'sinon';
 import * as fs from 'fs';
 import {
-    scan,
-    activate,
-    deactivate,
-    scanSelectedFile,
-    addRules,
-} from '../../extension';
+    DiagnosticCollection,
+    Disposable,
+    ExtensionContext,
+    TextDocument,
+    TextEditor,
+    Uri,
+    WorkspaceConfiguration,
+    commands,
+    languages,
+    window,
+    workspace,
+} from 'vscode';
+
+import { faker } from '@faker-js/faker';
+import { expect } from 'chai';
+import { describe, it } from 'mocha';
+import * as sinon from 'sinon';
+
 import {
     generateCredentialDiggerRunnerConfig,
     generateCurrentFile,
 } from './utils';
-import { CredentialDiggerRuntime, ExtensionConfig } from '../../types/config';
-import RunnerFactory from '../../lib/runner-factory';
-import { faker } from '@faker-js/faker';
-import * as Utils from '../../lib/utils';
+import {
+    activate,
+    addRules,
+    deactivate,
+    scan,
+    scanSelectedFile,
+} from '../../extension';
 import LoggerFactory from '../../lib/logger-factory';
 import MetaReaderFactory from '../../lib/meta-reader-factory';
+import RunnerFactory from '../../lib/runner-factory';
+import * as Utils from '../../lib/utils';
+import { CredentialDiggerRuntime, ExtensionConfig } from '../../types/config';
 
 describe('Extension - Unit Tests', function () {
     let currentFile: TextDocument;

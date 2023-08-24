@@ -1,24 +1,26 @@
-import { expect } from 'chai';
-import { faker } from '@faker-js/faker';
-import * as sinon from 'sinon';
 import { basename, resolve } from 'path';
-import { Task, TaskScope, TaskProcessEndEvent, tasks } from 'vscode';
+import { Task, TaskProcessEndEvent, TaskScope, tasks } from 'vscode';
+
+import { faker } from '@faker-js/faker';
+import { expect } from 'chai';
+import { beforeEach, describe, it } from 'mocha';
+import * as sinon from 'sinon';
+
+import { generateRawDiscovery } from './utils';
 import {
-    executeTask,
-    createHash,
-    parseDiscoveriesCSVFile,
-    cloneObject,
-    isSettingsConfigured,
-    isNullOrUndefinedOrEmptyObject,
     TaskUtils,
+    cloneObject,
+    createHash,
+    executeTask,
+    isNullOrUndefinedOrEmptyObject,
+    isSettingsConfigured,
+    parseDiscoveriesCSVFile,
 } from '../../lib/utils';
-import { describe, it, beforeEach } from 'mocha';
 import {
     CredentialDiggerRuntime,
     DbType,
     ExtensionConfig,
 } from '../../types/config';
-import { generateRawDiscovery } from './utils';
 import { State } from '../../types/db';
 
 describe('Utils - Unit Tests', function () {

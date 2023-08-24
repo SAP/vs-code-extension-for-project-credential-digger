@@ -1,24 +1,25 @@
 import {
+    Diagnostic,
+    DiagnosticCollection,
+    DiagnosticSeverity,
+    Range,
+    TextDocument,
+    Uri,
+    window,
+} from 'vscode';
+
+import BinaryRunner from './client/runner/binary-runner';
+import DockerRunner from './client/runner/docker-runner';
+import Runner from './client/runner/runner';
+import WebServerRunner from './client/runner/webserver-runner';
+import LoggerFactory from './logger-factory';
+import {
     CredentialDiggerRunner,
     CredentialDiggerRunnerBinaryConfig,
     CredentialDiggerRunnerDockerConfig,
     CredentialDiggerRunnerWebServerConfig,
     CredentialDiggerRuntime,
 } from '../types/config';
-import BinaryRunner from './client/runner/binary-runner';
-import Runner from './client/runner/runner';
-import DockerRunner from './client/runner/docker-runner';
-import {
-    TextDocument,
-    Uri,
-    DiagnosticCollection,
-    Range,
-    Diagnostic,
-    DiagnosticSeverity,
-    window,
-} from 'vscode';
-import LoggerFactory from './logger-factory';
-import WebServerRunner from './client/runner/webserver-runner';
 
 export default class RunnerFactory {
     private runner: Runner;
