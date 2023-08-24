@@ -12,7 +12,7 @@ export async function activate(
 ): Promise<void> {
     // Create storageUri
     if (!context.storageUri) {
-        vscode.window.showErrorMessage(
+        await vscode.window.showErrorMessage(
             `Failed to activate ${MetaReaderFactory.getInstance().getExtensionName()}`,
         );
         return;
@@ -26,7 +26,7 @@ export async function activate(
     );
 
     // Show info message
-    vscode.window.showInformationMessage(
+    await vscode.window.showInformationMessage(
         `${MetaReaderFactory.getInstance().getExtensionName()} is now active!`,
     );
 
@@ -85,7 +85,7 @@ export async function scan(
         .get<ExtensionConfig>('credentialDigger');
     if (!Utils.isSettingsConfigured(settings)) {
         if (showErrorOnEmptySettings) {
-            vscode.window.showErrorMessage(
+            await vscode.window.showErrorMessage(
                 `Failed to scan file: Credential Digger extension is not configured`,
             );
         }
@@ -111,7 +111,7 @@ export async function scan(
         LoggerFactory.getInstance().error(
             `${id}: Error occurred when scanning ${currentDoc.uri.fsPath}: ${err}`,
         );
-        vscode.window.showErrorMessage(
+        await vscode.window.showErrorMessage(
             `Failed to scan ${currentDoc.uri.fsPath} (${id})`,
         );
     }
@@ -124,7 +124,7 @@ export async function addRules(): Promise<void> {
         .getConfiguration()
         .get<ExtensionConfig>('credentialDigger');
     if (!Utils.isSettingsConfigured(settings)) {
-        vscode.window.showErrorMessage(
+        await vscode.window.showErrorMessage(
             'Failed to add rules: Credential Digger extension is not configured',
         );
         return;
@@ -141,7 +141,7 @@ export async function addRules(): Promise<void> {
         LoggerFactory.getInstance().error(
             `${id}: Error occurred when adding rules: ${err}`,
         );
-        vscode.window.showErrorMessage(`Failed to add rules (${id})`);
+        await vscode.window.showErrorMessage(`Failed to add rules (${id})`);
     }
 }
 
@@ -155,6 +155,6 @@ export async function scanSelectedFile(
     if (currentFile?.uri) {
         await callback(currentFile, true);
     } else {
-        vscode.window.showErrorMessage('Please select a file to scan');
+        await vscode.window.showErrorMessage('Please select a file to scan');
     }
 }
