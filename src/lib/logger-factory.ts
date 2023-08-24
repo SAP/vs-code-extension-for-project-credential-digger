@@ -14,7 +14,7 @@ export default class LoggerFactory {
         this.logger = getExtensionLogger({
             extName: this.extensionName,
             level: 'debug',
-            logOutputChannel: logOutputChannel,
+            logOutputChannel,
             sourceLocationTracking: false,
             logConsole: true,
         });
@@ -27,27 +27,27 @@ export default class LoggerFactory {
         return LoggerFactory.instance;
     }
 
-    public fatal(msg: string) {
+    public fatal(msg: string): void {
         this.logger.fatal(msg);
     }
 
-    public error(msg: string) {
+    public error(msg: string): void {
         this.logger.error(msg);
     }
 
-    public warn(msg: string) {
+    public warn(msg: string): void {
         this.logger.warn(msg);
     }
 
-    public info(msg: string) {
+    public info(msg: string): void {
         this.logger.info(msg);
     }
 
-    public debug(msg: string) {
+    public debug(msg: string): void {
         this.logger.debug(msg);
     }
 
-    public trace(msg: string) {
+    public trace(msg: string): void {
         this.logger.trace(msg);
     }
 }
