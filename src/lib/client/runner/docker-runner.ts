@@ -3,7 +3,7 @@ import { Discovery } from '../../../types/db';
 import Runner from './runner';
 import { promises } from 'fs';
 import LoggerFactory from '../../logger-factory';
-import Utils from '../../utils';
+import { executeTask, createHash, parseDiscoveriesCSVFile } from '../../utils';
 import { Uri, TextDocument, ShellExecution, Task, TaskScope } from 'vscode';
 import {
     CredentialDiggerRunnerDockerConfig,
@@ -61,7 +61,7 @@ export default class DockerRunner extends Runner {
             TaskProblemMatcher.Docker,
         );
 
-        let exitCode = await Utils.executeTask(triggerTask);
+        let exitCode = await executeTask(triggerTask);
         LoggerFactory.getInstance().debug(
             `${this.getId()}: scan: exit code: ${exitCode}`,
         );
@@ -82,7 +82,7 @@ export default class DockerRunner extends Runner {
             return discoveries;
         }
         const filename =
-            (await Utils.createHash(this.fileLocation.fsPath, 8)) + '.csv';
+            (await createHash(this.fileLocation.fsPath, 8)) + '.csv';
         this.discoveriesLocalFileLocation = Uri.joinPath(storagePath, filename);
         this.discoveriesFileLocation = Uri.joinPath(
             Uri.parse(this.containerWorkingDir),
@@ -120,13 +120,13 @@ export default class DockerRunner extends Runner {
             TaskProblemMatcher.Docker,
         );
 
-        const exitCode = await Utils.executeTask(triggerTask);
+        const exitCode = await executeTask(triggerTask);
         LoggerFactory.getInstance().debug(
             `${this.getId()}: getDiscoveries: exit code: ${exitCode}`,
         );
         if (exitCode === 0) {
             // Parse result file
-            discoveries = await Utils.parseDiscoveriesCSVFile(
+            discoveries = await parseDiscoveriesCSVFile(
                 this.discoveriesLocalFileLocation.fsPath,
             );
         }
@@ -160,7 +160,7 @@ export default class DockerRunner extends Runner {
                 new ShellExecution(`${commands.join('; ')}`),
                 TaskProblemMatcher.Docker,
             );
-            const exitCode = await Utils.executeTask(triggerTask);
+            const exitCode = await executeTask(triggerTask);
             LoggerFactory.getInstance().debug(
                 `${this.getId()}: cleanup: exit code: ${exitCode}`,
             );
@@ -224,7 +224,7 @@ export default class DockerRunner extends Runner {
             cmdShellExec,
             TaskProblemMatcher.Docker,
         );
-        const exitCode = await Utils.executeTask(triggerTask);
+        const exitCode = await executeTask(triggerTask);
         LoggerFactory.getInstance().debug(
             `${this.getId()}: addRules: exit code: ${exitCode}`,
         );

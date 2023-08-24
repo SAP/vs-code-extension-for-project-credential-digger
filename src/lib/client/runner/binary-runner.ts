@@ -6,7 +6,7 @@ import {
 } from '../../../types/config';
 import { promises, existsSync } from 'fs';
 import { ShellExecution, Task, TaskScope, TextDocument, Uri } from 'vscode';
-import Utils from '../../utils';
+import { executeTask, createHash, parseDiscoveriesCSVFile } from '../../utils';
 import LoggerFactory from '../../logger-factory';
 import {
     CredentialDiggerTaskDefinitionType,
@@ -40,7 +40,7 @@ export default class BinaryRunner extends Runner {
             cmdShellExec,
             TaskProblemMatcher.Shell,
         );
-        const exitCode = await Utils.executeTask(triggerTask);
+        const exitCode = await executeTask(triggerTask);
         LoggerFactory.getInstance().debug(
             `${this.getId()}: scan: exit code: ${exitCode}`,
         );
@@ -55,7 +55,7 @@ export default class BinaryRunner extends Runner {
             return discoveries;
         }
         const filename =
-            (await Utils.createHash(this.fileLocation.fsPath, 8)) + '.csv';
+            (await createHash(this.fileLocation.fsPath, 8)) + '.csv';
         this.discoveriesFileLocation = Uri.joinPath(storagePath, filename);
         // Get discoveries
         let cmd = `${this.config.path} get_discoveries --with_rules --save "${this.discoveriesFileLocation.fsPath}" "${this.fileLocation.fsPath}"`;
@@ -79,13 +79,13 @@ export default class BinaryRunner extends Runner {
             cmdShellExec,
             TaskProblemMatcher.Shell,
         );
-        const exitCode = await Utils.executeTask(triggerTask);
+        const exitCode = await executeTask(triggerTask);
         LoggerFactory.getInstance().debug(
             `${this.getId()}: getDiscoveries: exit code: ${exitCode}`,
         );
         if (exitCode && exitCode > 0) {
             // Parse result file
-            discoveries = await Utils.parseDiscoveriesCSVFile(
+            discoveries = await parseDiscoveriesCSVFile(
                 this.discoveriesFileLocation.fsPath,
             );
         }
@@ -141,7 +141,7 @@ export default class BinaryRunner extends Runner {
             cmdShellExec,
             TaskProblemMatcher.Shell,
         );
-        const exitCode = await Utils.executeTask(triggerTask);
+        const exitCode = await executeTask(triggerTask);
         LoggerFactory.getInstance().debug(
             `${this.getId()}: addRules: exit code: ${exitCode}`,
         );

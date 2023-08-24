@@ -17,7 +17,7 @@ import {
     generateDiscoveries,
 } from '../../utils';
 import LoggerFactory from '../../../../lib/logger-factory';
-import Utils from '../../../../lib/utils';
+import * as Utils from '../../../../lib/utils';
 import { dirname } from 'path';
 import { promises } from 'fs';
 

@@ -11,7 +11,7 @@ import { ExtensionConfig } from './types/config';
 import RunnerFactory from './lib/runner-factory';
 import { existsSync, mkdirSync, promises } from 'fs';
 import LoggerFactory from './lib/logger-factory';
-import Utils from './lib/utils';
+import { cloneObject, isSettingsConfigured } from './lib/utils';
 import MetaReaderFactory from './lib/meta-reader-factory';
 
 // Called when the extension is activated
@@ -84,12 +84,12 @@ export async function scan(
     showErrorOnEmptySettings = false,
 ): Promise<void> {
     // Clone
-    const currentDoc = Utils.cloneObject(doc);
+    const currentDoc = cloneObject(doc);
     // Read settings
     let settings = workspace
         .getConfiguration()
         .get<ExtensionConfig>('credentialDigger');
-    if (!Utils.isSettingsConfigured(settings)) {
+    if (!isSettingsConfigured(settings)) {
         if (showErrorOnEmptySettings) {
             await window.showErrorMessage(
                 `Failed to scan file: Credential Digger extension is not configured`,
@@ -129,7 +129,7 @@ export async function addRules(): Promise<void> {
     let settings = workspace
         .getConfiguration()
         .get<ExtensionConfig>('credentialDigger');
-    if (!Utils.isSettingsConfigured(settings)) {
+    if (!isSettingsConfigured(settings)) {
         await window.showErrorMessage(
             'Failed to add rules: Credential Digger extension is not configured',
         );

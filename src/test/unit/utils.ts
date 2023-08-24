@@ -6,7 +6,7 @@ import {
     DbConfig,
     DbType,
 } from '../../types/config';
-import Utils from '../../lib/utils';
+import { convertRawToDiscovery } from '../../lib/utils';
 import { TextDocument, Uri } from 'vscode';
 
 export function generateRawDiscovery(lineNumber?: number): RawDiscovery {
@@ -29,9 +29,7 @@ export function generateRawDiscovery(lineNumber?: number): RawDiscovery {
 export function generateDiscoveries(count: number): Discovery[] {
     const discoveries = [];
     for (let x = 0; x < count; x++) {
-        discoveries.push(
-            Utils.convertRawToDiscovery(generateRawDiscovery(x + 1)),
-        );
+        discoveries.push(convertRawToDiscovery(generateRawDiscovery(x + 1)));
     }
     return discoveries;
 }

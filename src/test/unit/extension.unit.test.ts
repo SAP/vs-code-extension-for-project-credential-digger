@@ -29,7 +29,7 @@ import {
 import { CredentialDiggerRuntime, ExtensionConfig } from '../../types/config';
 import RunnerFactory from '../../lib/runner-factory';
 import { faker } from '@faker-js/faker';
-import Utils from '../../lib/utils';
+import * as Utils from '../../lib/utils';
 import LoggerFactory from '../../lib/logger-factory';
 import MetaReaderFactory from '../../lib/meta-reader-factory';
 

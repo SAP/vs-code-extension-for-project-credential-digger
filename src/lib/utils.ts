@@ -7,146 +7,140 @@ import { TaskRevealKind, TaskPanelKind, Task, tasks } from 'vscode';
 import { v4 } from 'uuid';
 import { ExtensionConfig } from '../types/config';
 
-export default class Utils {
-    public static async executeTask(task: Task): Promise<number | undefined> {
-        // Generate a uniq id for the task to check on
-        task.definition['taskId'] = Utils.generateUniqNumber();
-        // Set defaults
-        task.isBackground = true;
-        task.presentationOptions = {
-            reveal: TaskRevealKind.Silent,
-            echo: true,
-            focus: false,
-            panel: TaskPanelKind.Shared,
-            showReuseMessage: false,
-            clear: true,
-        };
-        // Execute
-        await tasks.executeTask(task);
-        return await Utils.getTaskExitCode(task);
-    }
+export async function executeTask(task: Task): Promise<number | undefined> {
+    // Generate a uniq id for the task to check on
+    task.definition['taskId'] = generateUniqNumber();
+    // Set defaults
+    task.isBackground = true;
+    task.presentationOptions = {
+        reveal: TaskRevealKind.Silent,
+        echo: true,
+        focus: false,
+        panel: TaskPanelKind.Shared,
+        showReuseMessage: false,
+        clear: true,
+    };
+    // Execute
+    await tasks.executeTask(task);
+    return await TaskUtils.getTaskExitCode(task);
+}
 
-    public static convertRawToDiscovery(record: RawDiscovery): Discovery {
-        return {
-            id: parseInt(record.id),
-            filename: record.file_name,
-            commitId: record.commit_id,
-            lineNumber: parseInt(record.line_number),
-            snippet: record.snippet,
-            repoUrl: record.repo_url,
-            ruleId: parseInt(record.rule_id),
-            state: record.state,
-            timestamp: record.timestamp,
-            rule: {
-                id: parseInt(record.rule_id),
-                regex: record.rule_regex,
-                category: record.rule_category,
-                description: record.rule_description,
-            },
-        };
-    }
+export function convertRawToDiscovery(record: RawDiscovery): Discovery {
+    return {
+        id: parseInt(record.id),
+        filename: record.file_name,
+        commitId: record.commit_id,
+        lineNumber: parseInt(record.line_number),
+        snippet: record.snippet,
+        repoUrl: record.repo_url,
+        ruleId: parseInt(record.rule_id),
+        state: record.state,
+        timestamp: record.timestamp,
+        rule: {
+            id: parseInt(record.rule_id),
+            regex: record.rule_regex,
+            category: record.rule_category,
+            description: record.rule_description,
+        },
+    };
+}
 
-    public static async parseDiscoveriesCSVFile(
-        fileLocation: string,
-    ): Promise<Discovery[]> {
-        const records = [];
-        const parser = createReadStream(fileLocation).pipe(
-            parse({
-                columns: true,
-                encoding: 'utf-8',
-                delimiter: ',',
-            }),
-        );
-        for await (const record of parser) {
-            records.push(Utils.convertRawToDiscovery(record));
-        }
-        return records;
+export async function parseDiscoveriesCSVFile(
+    fileLocation: string,
+): Promise<Discovery[]> {
+    const records = [];
+    const parser = createReadStream(fileLocation).pipe(
+        parse({
+            columns: true,
+            encoding: 'utf-8',
+            delimiter: ',',
+        }),
+    );
+    for await (const record of parser) {
+        records.push(convertRawToDiscovery(record));
     }
+    return records;
+}
 
-    public static async createHash(
-        data: string,
-        length: number,
-    ): Promise<string> {
-        return (await hash(data, { raw: true, hashLength: length })).toString(
-            'hex',
-        );
+export async function createHash(
+    data: string,
+    length: number,
+): Promise<string> {
+    return (await hash(data, { raw: true, hashLength: length })).toString(
+        'hex',
+    );
+}
+
+export function cloneObject<T>(object: T): T {
+    if (!object) {
+        return object;
     }
+    return cloneDeep(object);
+}
 
-    public static cloneObject<T>(object: T): T {
-        if (!object) {
-            return object;
-        }
-        return cloneDeep(object);
+export function generateUniqNumber(): number {
+    return Math.floor(Date.now() / 1000);
+}
+
+export function generateUniqUuid(): string {
+    return v4();
+}
+
+export function isSettingsConfigured(
+    settings: ExtensionConfig | undefined,
+): boolean {
+    // Settings not configured
+    if (isNullOrUndefinedOrEmptyObject(settings)) {
+        return false;
     }
-
-    public static generateUniqNumber(): number {
-        return Math.floor(Date.now() / 1000);
+    // Runner is not configured
+    if (isNullOrUndefinedOrEmptyObject(settings?.credentialDiggerRunner)) {
+        return false;
     }
-
-    public static generateUniqUuid(): string {
-        return v4();
+    // Runner type is not set
+    if (!settings?.credentialDiggerRunner.type) {
+        return false;
     }
-
-    public static isSettingsConfigured(
-        settings: ExtensionConfig | undefined,
-    ): boolean {
-        // Settings not configured
-        if (Utils.isNullOrUndefinedOrEmptyObject(settings)) {
-            return false;
-        }
-        // Runner is not configured
-        if (
-            Utils.isNullOrUndefinedOrEmptyObject(
-                settings?.credentialDiggerRunner,
-            )
-        ) {
-            return false;
-        }
-        // Runner type is not set
-        if (!settings?.credentialDiggerRunner.type) {
-            return false;
-        }
-        // All Runner objects are not set
-        if (
-            Utils.isNullOrUndefinedOrEmptyObject(
-                settings.credentialDiggerRunner.binary,
-            ) &&
-            Utils.isNullOrUndefinedOrEmptyObject(
-                settings.credentialDiggerRunner.docker,
-            ) &&
-            Utils.isNullOrUndefinedOrEmptyObject(
-                settings.credentialDiggerRunner.webserver,
-            )
-        ) {
-            return false;
-        }
-        // Runner type does not match runner object
-        if (
-            Utils.isNullOrUndefinedOrEmptyObject(
-                settings.credentialDiggerRunner[
-                    settings.credentialDiggerRunner.type
-                ],
-            )
-        ) {
-            return false;
-        }
-        return true;
+    // All Runner objects are not set
+    if (
+        isNullOrUndefinedOrEmptyObject(
+            settings.credentialDiggerRunner.binary,
+        ) &&
+        isNullOrUndefinedOrEmptyObject(
+            settings.credentialDiggerRunner.docker,
+        ) &&
+        isNullOrUndefinedOrEmptyObject(
+            settings.credentialDiggerRunner.webserver,
+        )
+    ) {
+        return false;
     }
-
-    public static isNullOrUndefined(obj: unknown): boolean {
-        return obj == null;
+    // Runner type does not match runner object
+    if (
+        isNullOrUndefinedOrEmptyObject(
+            settings.credentialDiggerRunner[
+                settings.credentialDiggerRunner.type
+            ],
+        )
+    ) {
+        return false;
     }
+    return true;
+}
 
-    public static isEmptyObject(obj: object): boolean {
-        return !Object.keys(obj).length;
-    }
+export function isNullOrUndefined(obj: unknown): boolean {
+    return obj == null;
+}
 
-    public static isNullOrUndefinedOrEmptyObject(obj: unknown): boolean {
-        return (
-            Utils.isNullOrUndefined(obj) || Utils.isEmptyObject(obj as object)
-        );
-    }
+export function isEmptyObject(obj: object): boolean {
+    return !Object.keys(obj).length;
+}
 
+export function isNullOrUndefinedOrEmptyObject(obj: unknown): boolean {
+    return isNullOrUndefined(obj) || isEmptyObject(obj as object);
+}
+
+export class TaskUtils {
     public static async getTaskExitCode(
         task: Task,
     ): Promise<number | undefined> {

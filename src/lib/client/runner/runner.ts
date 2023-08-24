@@ -7,7 +7,7 @@ import {
 } from '../../../types/config';
 import { Discovery } from '../../../types/db';
 import { TextDocument, Uri } from 'vscode';
-import Utils from '../../utils';
+import { generateUniqUuid, isNullOrUndefinedOrEmptyObject } from '../../utils';
 
 export default abstract class Runner {
     private id: string;
@@ -26,7 +26,7 @@ export default abstract class Runner {
         this.runnerType = runnerType;
         this.config = config;
         // Generate a uniq uuid
-        this.id = Utils.generateUniqUuid();
+        this.id = generateUniqUuid();
         // Validate config
         this.validateConfig();
     }
@@ -48,7 +48,7 @@ export default abstract class Runner {
     public abstract cleanup(): Promise<void>;
     public abstract addRules(): Promise<boolean>;
     protected validateConfig(): void {
-        if (Utils.isNullOrUndefinedOrEmptyObject(this.config)) {
+        if (isNullOrUndefinedOrEmptyObject(this.config)) {
             throw new Error(
                 'Please provide the Credential Digger configuration',
             );

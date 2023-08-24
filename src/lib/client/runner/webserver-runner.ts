@@ -14,7 +14,7 @@ import { CookieJar } from 'tough-cookie';
 import LoggerFactory from '../../logger-factory';
 import { Agent } from 'node:https';
 import * as FormData from 'form-data';
-import Utils from '../../utils';
+import { convertRawToDiscovery } from '../../utils';
 
 export default class WebServerRunner extends Runner {
     private discoveries: Discovery[] = [];
@@ -88,7 +88,7 @@ export default class WebServerRunner extends Runner {
         ) {
             // Convert discoveries
             for (const d of resp.data) {
-                this.discoveries.push(Utils.convertRawToDiscovery(d));
+                this.discoveries.push(convertRawToDiscovery(d));
             }
         } else {
             throw new Error(

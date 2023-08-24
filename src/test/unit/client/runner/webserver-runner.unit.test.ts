@@ -23,7 +23,7 @@ import {
 import { Discovery, RawDiscovery } from '../../../../types/db';
 import LoggerFactory from '../../../../lib/logger-factory';
 import * as fs from 'fs';
-import Utils from '../../../../lib/utils';
+import { convertRawToDiscovery } from '../../../../lib/utils';
 
 describe('WebserverRunner  - Unit Tests', function () {
     let currentFile: TextDocument;
@@ -196,7 +196,7 @@ describe('WebserverRunner  - Unit Tests', function () {
             result = await runner.getDiscoveries();
             const discoveries: Discovery[] = [];
             rawDiscoveries.forEach((d) => {
-                discoveries.push(Utils.convertRawToDiscovery(d));
+                discoveries.push(convertRawToDiscovery(d));
             });
             expect(httpWrapperStub.callCount).to.be.eql(1);
             expect(loggerInstance.callCount).to.be.eql(3);

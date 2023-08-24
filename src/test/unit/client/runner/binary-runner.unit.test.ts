@@ -16,7 +16,7 @@ import {
     generateDiscoveries,
 } from '../../utils';
 import LoggerFactory from '../../../../lib/logger-factory';
-import Utils from '../../../../lib/utils';
+import * as Utils from '../../../../lib/utils';
 import { Discovery } from '../../../../types/db';
 import * as fs from 'fs';
 
