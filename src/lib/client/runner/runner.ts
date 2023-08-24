@@ -6,17 +6,17 @@ import {
     DbType,
 } from '../../../types/config';
 import { Discovery } from '../../../types/db';
-import * as vscode from 'vscode';
+import { TextDocument, Uri } from 'vscode';
 import Utils from '../../utils';
 
 export default abstract class Runner {
     private id: string;
     protected runnerType: CredentialDiggerRuntime;
     protected config: CredentialDiggerRunnerConfig;
-    protected currentFile: vscode.TextDocument | undefined;
-    protected fileLocation!: vscode.Uri;
-    protected discoveriesFileLocation!: vscode.Uri;
-    protected rules: vscode.Uri | undefined;
+    protected currentFile: TextDocument | undefined;
+    protected fileLocation!: Uri;
+    protected discoveriesFileLocation!: Uri;
+    protected rules: Uri | undefined;
 
     public constructor(
         config: CredentialDiggerRunnerConfig,
@@ -31,11 +31,11 @@ export default abstract class Runner {
         this.validateConfig();
     }
 
-    public getCurrentFile(): vscode.TextDocument {
-        return this.currentFile as vscode.TextDocument;
+    public getCurrentFile(): TextDocument {
+        return this.currentFile as TextDocument;
     }
 
-    public setCurrentFile(currentFile: vscode.TextDocument) {
+    public setCurrentFile(currentFile: TextDocument) {
         this.currentFile = currentFile;
     }
 
@@ -44,9 +44,7 @@ export default abstract class Runner {
     }
 
     public abstract scan(): Promise<number>;
-    public abstract getDiscoveries(
-        storagePath: vscode.Uri,
-    ): Promise<Discovery[]>;
+    public abstract getDiscoveries(storagePath: Uri): Promise<Discovery[]>;
     public abstract cleanup(): Promise<void>;
     public abstract addRules(): Promise<boolean>;
     protected validateConfig(): void {
@@ -96,7 +94,7 @@ export default abstract class Runner {
         if (!rules) {
             throw new Error('Please provide the path to the rules file');
         }
-        this.rules = vscode.Uri.parse(rules);
+        this.rules = Uri.parse(rules);
         switch (this.runnerType) {
             case CredentialDiggerRuntime.Docker:
                 this.config = this.config as CredentialDiggerRunnerDockerConfig;

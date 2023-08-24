@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { faker } from '@faker-js/faker';
 import * as sinon from 'sinon';
-import * as vscode from 'vscode';
+import { Task, TaskScope, TaskProcessEndEvent, tasks } from 'vscode';
 import Utils from '../../lib/utils';
 import { describe, it, beforeEach } from 'mocha';
 import {
@@ -17,22 +17,22 @@ describe('Utils - Unit Tests', function () {
     });
 
     describe('executeTask - Unit Tests', function () {
-        let task: vscode.Task;
+        let task: Task;
 
         beforeEach(function () {
-            task = new vscode.Task(
+            task = new Task(
                 {
                     type: faker.person.jobType(),
                     scanId: faker.string.uuid(),
                 },
-                vscode.TaskScope.Workspace,
+                TaskScope.Workspace,
                 faker.person.fullName(),
                 faker.system.fileName(),
             );
         });
 
         it('Should execute task successfully', async function () {
-            const taskEndEvent: vscode.TaskProcessEndEvent = {
+            const taskEndEvent: TaskProcessEndEvent = {
                 exitCode: faker.number.int(),
                 execution: {
                     task,
@@ -41,9 +41,7 @@ describe('Utils - Unit Tests', function () {
                     },
                 },
             };
-            const executeTaskStub = sinon
-                .stub(vscode.tasks, 'executeTask')
-                .resolves();
+            const executeTaskStub = sinon.stub(tasks, 'executeTask').resolves();
             const getTaskExitCodeStub = sinon
                 .stub(Utils, 'getTaskExitCode')
                 .withArgs(task)
@@ -59,7 +57,7 @@ describe('Utils - Unit Tests', function () {
         it('Should throw an exception when it fails to execute the task', async function () {
             const error = new Error('Failed to start new process');
             const executeTaskStub = sinon
-                .stub(vscode.tasks, 'executeTask')
+                .stub(tasks, 'executeTask')
                 .throws(error);
             const getTaskExitCodeStub = sinon
                 .stub(Utils, 'getTaskExitCode')
@@ -76,9 +74,7 @@ describe('Utils - Unit Tests', function () {
         });
 
         it('should return undefined when it fails to find the task', async function () {
-            const executeTaskStub = sinon
-                .stub(vscode.tasks, 'executeTask')
-                .resolves();
+            const executeTaskStub = sinon.stub(tasks, 'executeTask').resolves();
             const getTaskExitCodeStub = sinon
                 .stub(Utils, 'getTaskExitCode')
                 .withArgs(task)

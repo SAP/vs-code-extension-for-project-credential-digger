@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { faker } from '@faker-js/faker';
 import * as sinon from 'sinon';
-import * as vscode from 'vscode';
+import { TextDocument } from 'vscode';
 import { describe, it, beforeEach, afterEach } from 'mocha';
 import axios, {
     AxiosError,
@@ -26,7 +26,7 @@ import * as fs from 'fs';
 import Utils from '../../../../lib/utils';
 
 describe('WebserverRunner  - Unit Tests', function () {
-    let currentFile: vscode.TextDocument;
+    let currentFile: TextDocument;
     let config: CredentialDiggerRunnerWebServerConfig;
     let rawDiscoveries: RawDiscovery[];
     let runner: WebServerRunner;

@@ -1,17 +1,14 @@
-import * as vscode from 'vscode';
-import * as fs from 'fs';
+import { createReadStream } from 'fs';
 import { parse } from 'csv-parse';
 import { Discovery, RawDiscovery } from '../types/db';
-import * as argon2 from 'argon2';
-import * as _ from 'lodash';
-import { TaskRevealKind, TaskPanelKind } from 'vscode';
-import * as uuid from 'uuid';
+import { hash } from 'argon2';
+import { cloneDeep } from 'lodash';
+import { TaskRevealKind, TaskPanelKind, Task, tasks } from 'vscode';
+import { v4 } from 'uuid';
 import { ExtensionConfig } from '../types/config';
 
 export default class Utils {
-    public static async executeTask(
-        task: vscode.Task,
-    ): Promise<number | undefined> {
+    public static async executeTask(task: Task): Promise<number | undefined> {
         // Generate a uniq id for the task to check on
         task.definition['taskId'] = Utils.generateUniqNumber();
         // Set defaults
@@ -25,7 +22,7 @@ export default class Utils {
             clear: true,
         };
         // Execute
-        await vscode.tasks.executeTask(task);
+        await tasks.executeTask(task);
         return await Utils.getTaskExitCode(task);
     }
 
@@ -53,7 +50,7 @@ export default class Utils {
         fileLocation: string,
     ): Promise<Discovery[]> {
         const records = [];
-        const parser = fs.createReadStream(fileLocation).pipe(
+        const parser = createReadStream(fileLocation).pipe(
             parse({
                 columns: true,
                 encoding: 'utf-8',
@@ -70,16 +67,16 @@ export default class Utils {
         data: string,
         length: number,
     ): Promise<string> {
-        return (
-            await argon2.hash(data, { raw: true, hashLength: length })
-        ).toString('hex');
+        return (await hash(data, { raw: true, hashLength: length })).toString(
+            'hex',
+        );
     }
 
     public static cloneObject<T>(object: T): T {
         if (!object) {
             return object;
         }
-        return _.cloneDeep(object);
+        return cloneDeep(object);
     }
 
     public static generateUniqNumber(): number {
@@ -87,7 +84,7 @@ export default class Utils {
     }
 
     public static generateUniqUuid(): string {
-        return uuid.v4();
+        return v4();
     }
 
     public static isSettingsConfigured(
@@ -151,10 +148,10 @@ export default class Utils {
     }
 
     public static async getTaskExitCode(
-        task: vscode.Task,
+        task: Task,
     ): Promise<number | undefined> {
         return new Promise<number | undefined>((resolve) => {
-            const disposable = vscode.tasks.onDidEndTaskProcess((e) => {
+            const disposable = tasks.onDidEndTaskProcess((e) => {
                 if (
                     e.execution.task.definition.type === task.definition.type &&
                     e.execution.task.definition.taskId ===

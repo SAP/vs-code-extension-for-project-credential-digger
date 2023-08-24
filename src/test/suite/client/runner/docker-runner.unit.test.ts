@@ -18,8 +18,8 @@ import {
 } from '../../utils';
 import LoggerFactory from '../../../../lib/logger-factory';
 import Utils from '../../../../lib/utils';
-import * as path from 'path';
-import * as fs from 'fs';
+import { dirname } from 'path';
+import { promises } from 'fs';
 
 describe('DockerRunner  - Unit Tests', function () {
     const containerWorkingDir = '/data/credentialDigger';
@@ -65,7 +65,7 @@ describe('DockerRunner  - Unit Tests', function () {
             result = await runner.scan();
             const expectedCmd = `docker exec "${
                 config.containerId
-            }" mkdir -p "${path.dirname(fileLocation.fsPath)}" && docker cp "${
+            }" mkdir -p "${dirname(fileLocation.fsPath)}" && docker cp "${
                 currentFile.uri.fsPath
             }" "${config.containerId}:${fileLocation.fsPath}" && docker exec "${
                 config.containerId
@@ -95,7 +95,7 @@ describe('DockerRunner  - Unit Tests', function () {
             result = await runner.scan();
             const expectedCmd = `docker exec "${
                 config.containerId
-            }" mkdir -p "${path.dirname(fileLocation.fsPath)}" && docker cp "${
+            }" mkdir -p "${dirname(fileLocation.fsPath)}" && docker cp "${
                 currentFile.uri.fsPath
             }" "${config.containerId}:${fileLocation.fsPath}" && docker exec "${
                 config.containerId
@@ -174,7 +174,7 @@ describe('DockerRunner  - Unit Tests', function () {
             expect(parseDiscoveriesCSVFileStub.callCount).to.be.eql(1);
             expect(result).to.be.eql(discoveries);
             // Cleanup
-            const rmStub = sinon.stub(fs.promises, 'rm').resolves();
+            const rmStub = sinon.stub(promises, 'rm').resolves();
             await runner.cleanup();
             expectedCmd = `docker exec "${config.containerId}" rm -f "${fileLocation.fsPath}"; docker exec "${config.containerId}" rm -f "${discoveriesFileLocation.fsPath}"`;
             expect(debugStub.callCount).to.be.eql(3);
@@ -265,9 +265,9 @@ describe('DockerRunner  - Unit Tests', function () {
             result = await runner.addRules();
             const expectedCmd = `docker exec "${
                 config.containerId
-            }" mkdir -p "${path.dirname(
-                rulesFileLocation.fsPath,
-            )}" && docker cp "${rules.fsPath}" "${config.containerId}:${
+            }" mkdir -p "${dirname(rulesFileLocation.fsPath)}" && docker cp "${
+                rules.fsPath
+            }" "${config.containerId}:${
                 rulesFileLocation.fsPath
             }" && docker exec "${
                 config.containerId
@@ -293,9 +293,9 @@ describe('DockerRunner  - Unit Tests', function () {
             result = await runner.addRules();
             const expectedCmd = `docker exec "${
                 config.containerId
-            }" mkdir -p "${path.dirname(
-                rulesFileLocation.fsPath,
-            )}" && docker cp "${rules.fsPath}" "${config.containerId}:${
+            }" mkdir -p "${dirname(rulesFileLocation.fsPath)}" && docker cp "${
+                rules.fsPath
+            }" "${config.containerId}:${
                 rulesFileLocation.fsPath
             }" && docker exec "${
                 config.containerId

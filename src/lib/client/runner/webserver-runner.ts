@@ -5,14 +5,14 @@ import {
     CredentialDiggerRunnerWebServerConfig,
     CredentialDiggerRuntime,
 } from '../../../types/config';
-import * as vscode from 'vscode';
+import { TextDocument, Uri } from 'vscode';
 import * as dotenv from 'dotenv';
-import * as path from 'path';
-import * as fs from 'fs';
+import { resolve } from 'path';
+import { createReadStream, existsSync } from 'fs';
 import { wrapper } from 'axios-cookiejar-support';
 import { CookieJar } from 'tough-cookie';
 import LoggerFactory from '../../logger-factory';
-import * as https from 'node:https';
+import { Agent } from 'node:https';
 import * as FormData from 'form-data';
 import Utils from '../../utils';
 
@@ -31,7 +31,7 @@ export default class WebServerRunner extends Runner {
         // Create httpsAgent
         let httpsAgent;
         if (this.config.host.startsWith('https')) {
-            httpsAgent = new https.Agent({
+            httpsAgent = new Agent({
                 rejectUnauthorized: false,
             });
         }
@@ -49,7 +49,7 @@ export default class WebServerRunner extends Runner {
         if (this.config.envFile) {
             this.secureConnection = true;
             dotenv.config({
-                path: path.resolve(this.config.envFile),
+                path: resolve(this.config.envFile),
             });
         }
     }
@@ -68,9 +68,7 @@ export default class WebServerRunner extends Runner {
         form.append('forceScan', 'force');
         form.append(
             'filename',
-            fs.createReadStream(
-                (this.currentFile as vscode.TextDocument).uri.fsPath,
-            ),
+            createReadStream((this.currentFile as TextDocument).uri.fsPath),
         );
         LoggerFactory.getInstance().debug(
             `${this.getId()}: scan: sending file ${
@@ -129,7 +127,7 @@ export default class WebServerRunner extends Runner {
             );
         }
 
-        if (this.config.envFile && !fs.existsSync(this.config.envFile)) {
+        if (this.config.envFile && !existsSync(this.config.envFile)) {
             throw new Error('Please provide a valid Credential File location');
         }
     }
@@ -150,7 +148,7 @@ export default class WebServerRunner extends Runner {
             const form = new FormData();
             form.append(
                 'filename',
-                fs.createReadStream((this.rules as vscode.Uri).fsPath),
+                createReadStream((this.rules as Uri).fsPath),
             );
             await this.httpInstance.post('/upload_rule', form, {
                 headers: form.getHeaders(),

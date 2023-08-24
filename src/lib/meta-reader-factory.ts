@@ -1,11 +1,14 @@
 import { resolve } from 'path';
 import { MetaData } from '../types/meta-data';
+import { readFileSync } from 'fs';
 
 export default class MetaReaderFactory {
     private static instance: MetaReaderFactory;
     private readonly data: MetaData;
     private constructor() {
-        this.data = require(resolve(__dirname, '../..', 'package.json'));
+        this.data = JSON.parse(
+            readFileSync(resolve(__dirname, '../..', 'package.json'), 'utf8'),
+        );
     }
 
     public static getInstance(): MetaReaderFactory {

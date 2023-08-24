@@ -8,7 +8,15 @@ import {
 import BinaryRunner from './client/runner/binary-runner';
 import Runner from './client/runner/runner';
 import DockerRunner from './client/runner/docker-runner';
-import * as vscode from 'vscode';
+import {
+    TextDocument,
+    Uri,
+    DiagnosticCollection,
+    Range,
+    Diagnostic,
+    DiagnosticSeverity,
+    window,
+} from 'vscode';
 import LoggerFactory from './logger-factory';
 import WebServerRunner from './client/runner/webserver-runner';
 
@@ -47,9 +55,9 @@ export default class RunnerFactory {
     }
 
     public async scan(
-        currentFile: vscode.TextDocument,
-        storageUri: vscode.Uri,
-        diagCollection: vscode.DiagnosticCollection,
+        currentFile: TextDocument,
+        storageUri: Uri,
+        diagCollection: DiagnosticCollection,
     ) {
         this.runner.setCurrentFile(currentFile);
         LoggerFactory.getInstance().debug(
@@ -78,16 +86,16 @@ export default class RunnerFactory {
                     \nSnippet: "${d.snippet}"
                     \nRule: "${d.rule?.regex}"
                     \nCategory: "${d.rule?.category}"`;
-                    const range = new vscode.Range(
+                    const range = new Range(
                         d.lineNumber - 1,
                         colStart,
                         d.lineNumber - 1,
                         colEnd,
                     );
-                    const diag: vscode.Diagnostic = {
+                    const diag: Diagnostic = {
                         message,
                         range,
-                        severity: vscode.DiagnosticSeverity.Warning,
+                        severity: DiagnosticSeverity.Warning,
                         source: 'CredentialDigger',
                     };
                     diags.push(diag);
@@ -118,11 +126,11 @@ export default class RunnerFactory {
         // Add rules
         const success = await this.runner.addRules();
         if (success) {
-            await vscode.window.showInformationMessage(
+            await window.showInformationMessage(
                 `Scanning rules added successfully to the database (${this.getId()})`,
             );
         } else {
-            await vscode.window.showErrorMessage(
+            await window.showErrorMessage(
                 `Failed to add the scanning rules to the database (${this.getId()})`,
             );
         }

@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { Discovery, RawDiscovery, Rule, State } from '../../types/db';
+import { Discovery, RawDiscovery, State } from '../../types/db';
 import {
     CredentialDiggerRunner,
     CredentialDiggerRuntime,
@@ -7,7 +7,7 @@ import {
     DbType,
 } from '../../types/config';
 import Utils from '../../lib/utils';
-import * as vscode from 'vscode';
+import { TextDocument, Uri } from 'vscode';
 
 export function generateRawDiscovery(lineNumber?: number): RawDiscovery {
     return {
@@ -99,10 +99,10 @@ export function generateCredentialDiggerRunnerConfig(
 
 export function generateCurrentFile(
     discoveries?: Discovery[] | RawDiscovery[],
-): vscode.TextDocument {
+): TextDocument {
     const isEmpty = discoveries?.length;
     return {
-        uri: vscode.Uri.parse(faker.system.filePath()),
+        uri: Uri.parse(faker.system.filePath()),
         lineAt: (line: number) => {
             return {
                 text:
@@ -113,5 +113,5 @@ export function generateCurrentFile(
                         : faker.string.sample((line + 1) * 2),
             };
         },
-    } as unknown as vscode.TextDocument;
+    } as unknown as TextDocument;
 }

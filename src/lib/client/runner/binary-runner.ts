@@ -4,8 +4,8 @@ import {
     CredentialDiggerRunnerBinaryConfig,
     DbType,
 } from '../../../types/config';
-import * as fs from 'fs';
-import * as vscode from 'vscode';
+import { promises, existsSync } from 'fs';
+import { ShellExecution, Task, TaskScope, TextDocument, Uri } from 'vscode';
 import Utils from '../../utils';
 import LoggerFactory from '../../logger-factory';
 import {
@@ -27,14 +27,14 @@ export default class BinaryRunner extends Runner {
             `${this.getId()}: scan: command: ${cmd}`,
         );
         // Trigger
-        const cmdShellExec = new vscode.ShellExecution(cmd);
-        const triggerTask = new vscode.Task(
+        const cmdShellExec = new ShellExecution(cmd);
+        const triggerTask = new Task(
             {
                 type: CredentialDiggerTaskDefinitionType.Scan,
                 group: CredentialDiggerTaskGroup,
                 scanId: this.getId(),
             },
-            vscode.TaskScope.Workspace,
+            TaskScope.Workspace,
             CredentialDiggerTasks.scan.name,
             CredentialDiggerTasks.scan.description,
             cmdShellExec,
@@ -47,7 +47,7 @@ export default class BinaryRunner extends Runner {
         return exitCode ?? 0;
     }
 
-    public async getDiscoveries(storagePath: vscode.Uri): Promise<Discovery[]> {
+    public async getDiscoveries(storagePath: Uri): Promise<Discovery[]> {
         let discoveries: Discovery[] = [];
         this.config = this.config as CredentialDiggerRunnerBinaryConfig;
         // Save the discoveries file in the extension workspace
@@ -56,10 +56,7 @@ export default class BinaryRunner extends Runner {
         }
         const filename =
             (await Utils.createHash(this.fileLocation.fsPath, 8)) + '.csv';
-        this.discoveriesFileLocation = vscode.Uri.joinPath(
-            storagePath,
-            filename,
-        );
+        this.discoveriesFileLocation = Uri.joinPath(storagePath, filename);
         // Get discoveries
         let cmd = `${this.config.path} get_discoveries --with_rules --save "${this.discoveriesFileLocation.fsPath}" "${this.fileLocation.fsPath}"`;
         if (this.config.databaseConfig.type === DbType.SQLite) {
@@ -69,14 +66,14 @@ export default class BinaryRunner extends Runner {
             `${this.getId()}: getDiscoveries: command: ${cmd}`,
         );
         // Trigger
-        const cmdShellExec = new vscode.ShellExecution(cmd);
-        const triggerTask = new vscode.Task(
+        const cmdShellExec = new ShellExecution(cmd);
+        const triggerTask = new Task(
             {
                 type: CredentialDiggerTaskDefinitionType.Discoveries,
                 group: CredentialDiggerTaskGroup,
                 scanId: this.getId(),
             },
-            vscode.TaskScope.Workspace,
+            TaskScope.Workspace,
             CredentialDiggerTasks.discoveries.name,
             CredentialDiggerTasks.discoveries.description,
             cmdShellExec,
@@ -98,7 +95,7 @@ export default class BinaryRunner extends Runner {
     public async cleanup(): Promise<void> {
         // Cleanup the discoveries file
         if (this.discoveriesFileLocation) {
-            await fs.promises.rm(this.discoveriesFileLocation.fsPath);
+            await promises.rm(this.discoveriesFileLocation.fsPath);
         }
     }
 
@@ -109,7 +106,7 @@ export default class BinaryRunner extends Runner {
             throw new Error('Please provide the Credential Digger location');
         }
 
-        if (!fs.existsSync(this.config.path)) {
+        if (!existsSync(this.config.path)) {
             throw new Error(
                 'Please provide a valid Credential Digger location',
             );
@@ -131,14 +128,14 @@ export default class BinaryRunner extends Runner {
             `${this.getId()}: addRules: command: ${cmd}`,
         );
         // Trigger
-        const cmdShellExec = new vscode.ShellExecution(cmd);
-        const triggerTask = new vscode.Task(
+        const cmdShellExec = new ShellExecution(cmd);
+        const triggerTask = new Task(
             {
                 type: CredentialDiggerTaskDefinitionType.AddRules,
                 group: CredentialDiggerTaskGroup,
                 scanId: this.getId(),
             },
-            vscode.TaskScope.Workspace,
+            TaskScope.Workspace,
             CredentialDiggerTasks.addRules.name,
             CredentialDiggerTasks.addRules.description,
             cmdShellExec,
@@ -151,8 +148,8 @@ export default class BinaryRunner extends Runner {
         return exitCode === 0;
     }
 
-    public setCurrentFile(currentFile: vscode.TextDocument) {
+    public setCurrentFile(currentFile: TextDocument) {
         super.setCurrentFile(currentFile);
-        this.fileLocation = (this.currentFile as vscode.TextDocument).uri;
+        this.fileLocation = (this.currentFile as TextDocument).uri;
     }
 }

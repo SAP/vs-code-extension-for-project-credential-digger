@@ -13,7 +13,7 @@ import { expect } from 'chai';
 import * as fs from 'fs';
 import DockerRunner from '../../lib/client/runner/docker-runner';
 import LoggerFactory from '../../lib/logger-factory';
-import * as vscode from 'vscode';
+import { DiagnosticCollection, Uri, TextDocument, window } from 'vscode';
 import {
     generateCredentialDiggerRunnerConfig,
     generateCurrentFile,
@@ -291,7 +291,7 @@ describe('RunnerFactory  - Unit Tests', function () {
                 .stub(LoggerFactory.getInstance(), 'debug')
                 .resolves();
             const showInformationMessageStub = sinon
-                .stub(vscode.window, 'showInformationMessage')
+                .stub(window, 'showInformationMessage')
                 .resolves();
             const rules = faker.system.filePath();
             await RunnerFactory.getInstance(runnerConfig).addRules(rules);
@@ -308,7 +308,7 @@ describe('RunnerFactory  - Unit Tests', function () {
                 .stub(LoggerFactory.getInstance(), 'debug')
                 .resolves();
             const showErrorMessageStub = sinon
-                .stub(vscode.window, 'showErrorMessage')
+                .stub(window, 'showErrorMessage')
                 .resolves();
             const rules = faker.system.filePath();
             await RunnerFactory.getInstance(runnerConfig).addRules(rules);
@@ -326,10 +326,10 @@ describe('RunnerFactory  - Unit Tests', function () {
                 .stub(LoggerFactory.getInstance(), 'debug')
                 .resolves();
             const showInformationMessageStub = sinon
-                .stub(vscode.window, 'showInformationMessage')
+                .stub(window, 'showInformationMessage')
                 .resolves();
             const showErrorMessageStub = sinon
-                .stub(vscode.window, 'showErrorMessage')
+                .stub(window, 'showErrorMessage')
                 .resolves();
             const rules = faker.system.filePath();
             try {
@@ -347,9 +347,9 @@ describe('RunnerFactory  - Unit Tests', function () {
     });
 
     describe('scan - Unit Tests', function () {
-        let currentFile: vscode.TextDocument;
-        let storageUri: vscode.Uri;
-        let diagCollection: vscode.DiagnosticCollection;
+        let currentFile: TextDocument;
+        let storageUri: Uri;
+        let diagCollection: DiagnosticCollection;
 
         beforeEach(() => {
             runnerConfig = generateCredentialDiggerRunnerConfig(
@@ -357,11 +357,11 @@ describe('RunnerFactory  - Unit Tests', function () {
                 generateDBConfig(DbType.SQLite),
             );
             currentFile = generateCurrentFile();
-            storageUri = vscode.Uri.parse(faker.system.filePath());
+            storageUri = Uri.parse(faker.system.filePath());
             diagCollection = {
                 delete: () => true,
                 set: () => true,
-            } as unknown as vscode.DiagnosticCollection;
+            } as unknown as DiagnosticCollection;
         });
 
         it('Should successfully scan a file: 0 findings', async function () {

@@ -1,10 +1,10 @@
-import * as path from 'path';
+import { dirname } from 'path';
 import { Discovery } from '../../../types/db';
 import Runner from './runner';
-import * as fs from 'fs';
+import { promises } from 'fs';
 import LoggerFactory from '../../logger-factory';
 import Utils from '../../utils';
-import * as vscode from 'vscode';
+import { Uri, TextDocument, ShellExecution, Task, TaskScope } from 'vscode';
 import {
     CredentialDiggerRunnerDockerConfig,
     DbType,
@@ -18,7 +18,7 @@ import {
 
 export default class DockerRunner extends Runner {
     private containerWorkingDir = '/data/credentialDigger';
-    private discoveriesLocalFileLocation!: vscode.Uri;
+    private discoveriesLocalFileLocation!: Uri;
 
     public async scan(): Promise<number> {
         const commands = [];
@@ -26,14 +26,14 @@ export default class DockerRunner extends Runner {
 
         // Copy to a temporary folder within the container
         commands.push(
-            `docker exec "${this.config.containerId}" mkdir -p "${path.dirname(
+            `docker exec "${this.config.containerId}" mkdir -p "${dirname(
                 this.fileLocation.fsPath,
             )}"`,
         );
         commands.push(
-            `docker cp "${
-                (this.currentFile as vscode.TextDocument).uri.fsPath
-            }" "${this.config.containerId}:${this.fileLocation.fsPath}"`,
+            `docker cp "${(this.currentFile as TextDocument).uri.fsPath}" "${
+                this.config.containerId
+            }:${this.fileLocation.fsPath}"`,
         );
 
         // Scan
@@ -47,16 +47,14 @@ export default class DockerRunner extends Runner {
         );
 
         // Trigger
-        const cmdShellExec = new vscode.ShellExecution(
-            `${commands.join(' && ')}`,
-        );
-        const triggerTask = new vscode.Task(
+        const cmdShellExec = new ShellExecution(`${commands.join(' && ')}`);
+        const triggerTask = new Task(
             {
                 type: CredentialDiggerTaskDefinitionType.Scan,
                 group: CredentialDiggerTaskGroup,
                 scanId: this.getId(),
             },
-            vscode.TaskScope.Workspace,
+            TaskScope.Workspace,
             CredentialDiggerTasks.scan.name,
             CredentialDiggerTasks.scan.description,
             cmdShellExec,
@@ -74,7 +72,7 @@ export default class DockerRunner extends Runner {
         return exitCode ?? 0;
     }
 
-    public async getDiscoveries(storagePath: vscode.Uri): Promise<Discovery[]> {
+    public async getDiscoveries(storagePath: Uri): Promise<Discovery[]> {
         let discoveries: Discovery[] = [];
         const commands = [];
         this.config = this.config as CredentialDiggerRunnerDockerConfig;
@@ -85,12 +83,9 @@ export default class DockerRunner extends Runner {
         }
         const filename =
             (await Utils.createHash(this.fileLocation.fsPath, 8)) + '.csv';
-        this.discoveriesLocalFileLocation = vscode.Uri.joinPath(
-            storagePath,
-            filename,
-        );
-        this.discoveriesFileLocation = vscode.Uri.joinPath(
-            vscode.Uri.parse(this.containerWorkingDir),
+        this.discoveriesLocalFileLocation = Uri.joinPath(storagePath, filename);
+        this.discoveriesFileLocation = Uri.joinPath(
+            Uri.parse(this.containerWorkingDir),
             filename,
         );
 
@@ -111,16 +106,14 @@ export default class DockerRunner extends Runner {
         );
 
         // Trigger
-        const cmdShellExec = new vscode.ShellExecution(
-            `${commands.join('; ')}`,
-        );
-        const triggerTask = new vscode.Task(
+        const cmdShellExec = new ShellExecution(`${commands.join('; ')}`);
+        const triggerTask = new Task(
             {
                 type: CredentialDiggerTaskDefinitionType.Discoveries,
                 group: CredentialDiggerTaskGroup,
                 scanId: this.getId(),
             },
-            vscode.TaskScope.Workspace,
+            TaskScope.Workspace,
             CredentialDiggerTasks.discoveries.name,
             CredentialDiggerTasks.discoveries.description,
             cmdShellExec,
@@ -155,16 +148,16 @@ export default class DockerRunner extends Runner {
         }
         // Cleanup
         if (commands) {
-            const triggerTask = new vscode.Task(
+            const triggerTask = new Task(
                 {
                     type: CredentialDiggerTaskDefinitionType.Cleanup,
                     group: CredentialDiggerTaskGroup,
                     scanId: this.getId(),
                 },
-                vscode.TaskScope.Workspace,
+                TaskScope.Workspace,
                 CredentialDiggerTasks.cleanup.name,
                 CredentialDiggerTasks.cleanup.description,
-                new vscode.ShellExecution(`${commands.join('; ')}`),
+                new ShellExecution(`${commands.join('; ')}`),
                 TaskProblemMatcher.Docker,
             );
             const exitCode = await Utils.executeTask(triggerTask);
@@ -175,7 +168,7 @@ export default class DockerRunner extends Runner {
 
         // Cleanup the discoveries file
         if (this.discoveriesLocalFileLocation) {
-            await fs.promises.rm(this.discoveriesLocalFileLocation.fsPath);
+            await promises.rm(this.discoveriesLocalFileLocation.fsPath);
         }
     }
 
@@ -193,14 +186,14 @@ export default class DockerRunner extends Runner {
         }
         const commands = [];
         this.config = this.config as CredentialDiggerRunnerDockerConfig;
-        const rulesFileLocation = vscode.Uri.joinPath(
-            vscode.Uri.parse(this.containerWorkingDir),
+        const rulesFileLocation = Uri.joinPath(
+            Uri.parse(this.containerWorkingDir),
             this.rules.fsPath,
         );
         // Copy to container
-        let cmd = `docker exec "${
-            this.config.containerId
-        }" mkdir -p "${path.dirname(rulesFileLocation.fsPath)}"`;
+        let cmd = `docker exec "${this.config.containerId}" mkdir -p "${dirname(
+            rulesFileLocation.fsPath,
+        )}"`;
         commands.push(cmd);
         cmd = `docker cp "${this.rules?.fsPath}" "${this.config.containerId}:${rulesFileLocation.fsPath}"`;
         commands.push(cmd);
@@ -218,16 +211,14 @@ export default class DockerRunner extends Runner {
             }`,
         );
         // Trigger
-        const cmdShellExec = new vscode.ShellExecution(
-            `${commands.join(' && ')}`,
-        );
-        const triggerTask = new vscode.Task(
+        const cmdShellExec = new ShellExecution(`${commands.join(' && ')}`);
+        const triggerTask = new Task(
             {
                 type: CredentialDiggerTaskDefinitionType.AddRules,
                 group: CredentialDiggerTaskGroup,
                 scanId: this.getId(),
             },
-            vscode.TaskScope.Workspace,
+            TaskScope.Workspace,
             CredentialDiggerTasks.addRules.name,
             CredentialDiggerTasks.addRules.description,
             cmdShellExec,
@@ -240,11 +231,11 @@ export default class DockerRunner extends Runner {
         return exitCode === 0;
     }
 
-    public setCurrentFile(currentFile: vscode.TextDocument) {
+    public setCurrentFile(currentFile: TextDocument) {
         super.setCurrentFile(currentFile);
-        this.fileLocation = vscode.Uri.joinPath(
-            vscode.Uri.parse(this.containerWorkingDir),
-            (this.currentFile as vscode.TextDocument).uri.fsPath,
+        this.fileLocation = Uri.joinPath(
+            Uri.parse(this.containerWorkingDir),
+            (this.currentFile as TextDocument).uri.fsPath,
         );
     }
 }

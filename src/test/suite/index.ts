@@ -1,4 +1,4 @@
-import * as path from 'path';
+import { join, resolve } from 'path';
 import * as Mocha from 'mocha';
 import * as glob from 'glob';
 
@@ -8,7 +8,7 @@ function setupCoverage() {
     const nyc = new NYC({
         extends: '@istanbuljs/nyc-config-typescript',
         all: true,
-        cwd: path.join(__dirname, '..', '..', '..'),
+        cwd: join(__dirname, '..', '..', '..'),
         exclude: ['**/test/**', '.vscode-test/**', '**/types/**'],
         hookRequire: true,
         hookRunInContext: true,
@@ -36,7 +36,7 @@ export async function run(): Promise<void> {
         require: ['mochawesome/register'],
     });
 
-    const testsRoot = path.resolve(__dirname, '..');
+    const testsRoot = resolve(__dirname, '..');
 
     return new Promise((c, e) => {
         glob('**/**.test.js', { cwd: testsRoot }, async (err, files) => {
@@ -44,7 +44,7 @@ export async function run(): Promise<void> {
                 return e(err);
             }
             // Add files to the test suite
-            files.forEach((f) => mocha.addFile(path.resolve(testsRoot, f)));
+            files.forEach((f) => mocha.addFile(resolve(testsRoot, f)));
             try {
                 // Run the mocha test
                 mocha.run(async (failures) => {

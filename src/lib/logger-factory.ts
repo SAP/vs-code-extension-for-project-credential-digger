@@ -1,5 +1,5 @@
 import { IVSCodeExtLogger, getExtensionLogger } from '@vscode-logging/logger';
-import * as vscode from 'vscode';
+import { window } from 'vscode';
 import MetaReaderFactory from './meta-reader-factory';
 
 export default class LoggerFactory {
@@ -10,9 +10,7 @@ export default class LoggerFactory {
     private constructor() {
         this.extensionName = MetaReaderFactory.getInstance().getExtensionName();
         // Create output channel
-        const logOutputChannel = vscode.window.createOutputChannel(
-            this.extensionName,
-        );
+        const logOutputChannel = window.createOutputChannel(this.extensionName);
         this.logger = getExtensionLogger({
             extName: this.extensionName,
             level: 'debug',
