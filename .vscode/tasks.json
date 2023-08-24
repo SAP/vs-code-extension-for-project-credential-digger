@@ -7,9 +7,12 @@
             "type": "npm",
             "script": "compile",
             "problemMatcher": "$tsc-watch",
-            "isBackground": true,
+            "isBackground": false,
             "presentation": {
-                "reveal": "never"
+                "reveal": "silent",
+                "revealProblems": "onProblem",
+                "clear": true,
+                "close": true
             },
             "group": {
                 "kind": "build",

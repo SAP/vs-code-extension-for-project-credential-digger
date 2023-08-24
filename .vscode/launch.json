@@ -14,7 +14,7 @@
             "preLaunchTask": "${defaultBuildTask}"
         },
         {
-            "name": "Extension Tests",
+            "name": "Extension All Tests",
             "type": "extensionHost",
             "request": "launch",
             "args": [
@@ -22,12 +22,48 @@
                 "--disable-extensions",
                 "--disable-gpu",
                 "--extensionDevelopmentPath=${workspaceFolder}",
-                "--extensionTestsPath=${workspaceFolder}/out/test/suite/index"
+                "--extensionTestsPath=${workspaceFolder}/out/test/index"
             ],
             "outFiles": ["${workspaceFolder}/out/test/**/*.js"],
             "preLaunchTask": "${defaultBuildTask}",
             "env": {
                 "NODE_ENV": "debug"
+            }
+        },
+        {
+            "name": "Extension Unit Tests",
+            "type": "extensionHost",
+            "request": "launch",
+            "args": [
+                "--profile-temp",
+                "--disable-extensions",
+                "--disable-gpu",
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "--extensionTestsPath=${workspaceFolder}/out/test/index"
+            ],
+            "outFiles": ["${workspaceFolder}/out/test/**/*.js"],
+            "preLaunchTask": "${defaultBuildTask}",
+            "env": {
+                "NODE_ENV": "debug",
+                "scope": "unit"
+            }
+        },
+        {
+            "name": "Extension Integration Tests",
+            "type": "extensionHost",
+            "request": "launch",
+            "args": [
+                "--profile-temp",
+                "--disable-extensions",
+                "--disable-gpu",
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "--extensionTestsPath=${workspaceFolder}/out/test/index"
+            ],
+            "outFiles": ["${workspaceFolder}/out/test/**/*.js"],
+            "preLaunchTask": "${defaultBuildTask}",
+            "env": {
+                "NODE_ENV": "debug",
+                "scope": "integration"
             }
         }
     ]

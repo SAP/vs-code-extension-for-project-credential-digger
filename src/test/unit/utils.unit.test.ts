@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { faker } from '@faker-js/faker';
 import * as sinon from 'sinon';
-import * as path from 'path';
+import { basename, resolve } from 'path';
 import { Task, TaskScope, TaskProcessEndEvent, tasks } from 'vscode';
 import Utils from '../../lib/utils';
 import { describe, it, beforeEach } from 'mocha';
@@ -230,7 +230,7 @@ describe('Utils - Unit Tests', function () {
     describe('parseDiscoveriesCSVFile - Unit Tests', function () {
         it('Should parse discoveries csv file successfully', async function () {
             const result = await Utils.parseDiscoveriesCSVFile(
-                path.resolve('./src/test/suite/data/raw-discoveries.csv'),
+                resolve('./src/test/unit/data/raw-discoveries.csv'),
             );
             expect(result.length).to.be.eql(5);
             result.forEach((d) => {
@@ -239,7 +239,7 @@ describe('Utils - Unit Tests', function () {
                 expect(d.commitId).to.be.empty;
                 expect(d.lineNumber).to.be.greaterThanOrEqual(0);
                 expect(d.repoUrl).to.be.not.null;
-                expect(path.basename(d.repoUrl)).to.be.eql(d.filename);
+                expect(basename(d.repoUrl)).to.be.eql(d.filename);
                 expect(d.ruleId).to.be.greaterThanOrEqual(1);
                 expect(d.state).to.be.eql(State.New);
                 expect(d.rule).to.be.not.null;

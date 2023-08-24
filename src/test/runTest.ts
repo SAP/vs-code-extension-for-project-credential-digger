@@ -9,9 +9,7 @@ async function main() {
         // Passed to `--extensionDevelopmentPath`
         const extensionDevelopmentPath = resolve(__dirname, '../../');
 
-        // The path to test runner
-        // Passed to --extensionTestsPath
-        const extensionTestsPath = resolve(__dirname, './suite/index');
+        // Launch args
         const launchArgs = [
             '--disable-extensions',
             '--disable-gpu',
@@ -19,11 +17,17 @@ async function main() {
             `${tmpdir()}`,
         ];
 
+        // The path to test runner
+        // Passed to --extensionTestsPath
+        const extensionTestsPath = resolve(__dirname, './index');
         // Download VS Code, unzip it and run the tests
         await runTests({
             extensionDevelopmentPath,
             extensionTestsPath,
             launchArgs,
+            extensionTestsEnv: {
+                scope: process.argv[2] ?? 'all',
+            },
         });
     } catch (err) {
         console.error('Failed to run tests', err);

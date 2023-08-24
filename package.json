@@ -176,9 +176,12 @@
     },
     "scripts": {
         "commit": "cz",
-        "compile": "rm -rf out .nyc_output coverage mochawesome-report && tsc -p ./",
+        "compile": "rm -rf out .nyc_output coverage mochawesome-report && tsc -p ./ && npm run copy-test-files",
         "watch": "tsc -watch -p ./",
         "pretest": "npm run compile",
+        "copy-test-files": "cp -r ./src/test/unit/data ./out/test/unit/data",
+        "test:unit": "node ./out/test/runTest.js unit",
+        "test:integration": "node ./out/test/runTest.js integration",
         "test": "node ./out/test/runTest.js",
         "lint": "eslint src --ext ts",
         "lint:fix": "eslint src --ext ts --fix .",
