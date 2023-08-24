@@ -100,12 +100,13 @@ export function generateCredentialDiggerRunnerConfig(
 export function generateCurrentFile(
     discoveries?: Discovery[] | RawDiscovery[],
 ): vscode.TextDocument {
+    const isEmpty = discoveries?.length;
     return {
         uri: vscode.Uri.parse(faker.system.filePath()),
         lineAt: (line: number) => {
             return {
                 text:
-                    discoveries && discoveries[line].snippet
+                    isEmpty && discoveries[line].snippet
                         ? faker.lorem.sentence() +
                           discoveries[line].snippet +
                           faker.lorem.sentence()
