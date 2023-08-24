@@ -28,6 +28,7 @@ describe('DockerRunner  - Unit Tests', function () {
     let fileLocation: vscode.Uri;
     let discoveries: Discovery[];
     let runner: DockerRunner;
+    let loggerInstance: sinon.SinonStub;
     let debugStub: sinon.SinonStub;
     let cmdShellExecStub: sinon.SinonStub;
     let executeTaskStub: sinon.SinonStub;
@@ -40,7 +41,10 @@ describe('DockerRunner  - Unit Tests', function () {
             vscode.Uri.parse(containerWorkingDir),
             currentFile.uri.fsPath,
         );
-        debugStub = sinon.stub(LoggerFactory.getInstance(), 'debug').resolves();
+        debugStub = sinon.stub().returns(undefined);
+        loggerInstance = sinon
+            .stub(LoggerFactory, 'getInstance')
+            .returns({ debug: debugStub } as unknown as LoggerFactory);
         cmdShellExecStub = sinon.stub(vscode, 'ShellExecution').returns({});
         taskStub = sinon.stub(vscode, 'Task').returns({});
     });
@@ -74,6 +78,7 @@ describe('DockerRunner  - Unit Tests', function () {
             }" --models PathModel --force --debug --sqlite "${
                 config.databaseConfig.sqlite?.filename
             }"`;
+            expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
             expect(cmdShellExecStub.callCount).to.be.eql(1);
             expect(cmdShellExecStub.lastCall.args[0]).to.be.eql(expectedCmd);
@@ -102,6 +107,7 @@ describe('DockerRunner  - Unit Tests', function () {
             }" credentialdigger scan_path "${
                 fileLocation.fsPath
             }" --models PathModel --force --debug`;
+            expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
             expect(cmdShellExecStub.callCount).to.be.eql(1);
             expect(cmdShellExecStub.lastCall.args[0]).to.be.eql(expectedCmd);
@@ -122,6 +128,7 @@ describe('DockerRunner  - Unit Tests', function () {
             runner = new DockerRunner(config, CredentialDiggerRuntime.Docker);
             runner.setCurrentFile(currentFile);
             result = await runner.scan();
+            expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
             expect(cmdShellExecStub.callCount).to.be.eql(1);
             expect(taskStub.callCount).to.be.eql(1);
@@ -166,6 +173,7 @@ describe('DockerRunner  - Unit Tests', function () {
             result = await runner.getDiscoveries(storagePath);
             let expectedCmd = `docker exec "${config.containerId}" credentialdigger get_discoveries --with_rules --save "${discoveriesFileLocation.fsPath}" "${fileLocation.fsPath}" --sqlite "${config.databaseConfig.sqlite?.filename}"; docker cp "${config.containerId}:${discoveriesFileLocation.fsPath}" "${discoveriesLocalFileLocation.fsPath}"`;
             expect(createHashStub.callCount).to.be.eql(1);
+            expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
             expect(cmdShellExecStub.callCount).to.be.eql(1);
             expect(cmdShellExecStub.lastCall.args[0]).to.be.eql(expectedCmd);
@@ -177,6 +185,7 @@ describe('DockerRunner  - Unit Tests', function () {
             const rmStub = sinon.stub(promises, 'rm').resolves();
             await runner.cleanup();
             expectedCmd = `docker exec "${config.containerId}" rm -f "${fileLocation.fsPath}"; docker exec "${config.containerId}" rm -f "${discoveriesFileLocation.fsPath}"`;
+            expect(loggerInstance.callCount).to.be.eql(3);
             expect(debugStub.callCount).to.be.eql(3);
             expect(cmdShellExecStub.callCount).to.be.eql(2);
             expect(cmdShellExecStub.lastCall.args[0]).to.be.eql(expectedCmd);
@@ -196,6 +205,7 @@ describe('DockerRunner  - Unit Tests', function () {
             result = await runner.getDiscoveries(storagePath);
             const expectedCmd = `docker exec "${config.containerId}" credentialdigger get_discoveries --with_rules --save "${discoveriesFileLocation.fsPath}" "${fileLocation.fsPath}"; docker cp "${config.containerId}:${discoveriesFileLocation.fsPath}" "${discoveriesLocalFileLocation.fsPath}"`;
             expect(createHashStub.callCount).to.be.eql(1);
+            expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
             expect(cmdShellExecStub.callCount).to.be.eql(1);
             expect(cmdShellExecStub.lastCall.args[0]).to.be.eql(expectedCmd);
@@ -215,6 +225,7 @@ describe('DockerRunner  - Unit Tests', function () {
             runner.setCurrentFile(currentFile);
             result = await runner.getDiscoveries(storagePath);
             expect(createHashStub.callCount).to.be.eql(1);
+            expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
             expect(cmdShellExecStub.callCount).to.be.eql(1);
             expect(taskStub.callCount).to.be.eql(1);
@@ -231,6 +242,7 @@ describe('DockerRunner  - Unit Tests', function () {
             runner = new DockerRunner(config, CredentialDiggerRuntime.Docker);
             result = await runner.getDiscoveries(storagePath);
             expect(createHashStub.callCount).to.be.eql(0);
+            expect(loggerInstance.callCount).to.be.eql(0);
             expect(debugStub.callCount).to.be.eql(0);
             expect(cmdShellExecStub.callCount).to.be.eql(0);
             expect(taskStub.callCount).to.be.eql(0);
@@ -274,6 +286,7 @@ describe('DockerRunner  - Unit Tests', function () {
             }" credentialdigger add_rules "${
                 rulesFileLocation.fsPath
             }" --sqlite "${config.databaseConfig.sqlite?.filename}"`;
+            expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
             expect(cmdShellExecStub.callCount).to.be.eql(1);
             expect(cmdShellExecStub.lastCall.args[0]).to.be.eql(expectedCmd);
@@ -302,6 +315,7 @@ describe('DockerRunner  - Unit Tests', function () {
             }" credentialdigger add_rules "${
                 rulesFileLocation.fsPath
             }" --dotenv "${config.databaseConfig.postgres?.envFile}"`;
+            expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
             expect(cmdShellExecStub.callCount).to.be.eql(1);
             expect(cmdShellExecStub.lastCall.args[0]).to.be.eql(expectedCmd);
@@ -319,6 +333,7 @@ describe('DockerRunner  - Unit Tests', function () {
             runner = new DockerRunner(config, CredentialDiggerRuntime.Docker);
             runner.validateAndSetRules(rulesPath);
             result = await runner.addRules();
+            expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
             expect(cmdShellExecStub.callCount).to.be.eql(1);
             expect(taskStub.callCount).to.be.eql(1);
@@ -333,6 +348,7 @@ describe('DockerRunner  - Unit Tests', function () {
             ).docker as CredentialDiggerRunnerDockerConfig;
             runner = new DockerRunner(config, CredentialDiggerRuntime.Docker);
             result = await runner.addRules();
+            expect(loggerInstance.callCount).to.be.eql(0);
             expect(debugStub.callCount).to.be.eql(0);
             expect(cmdShellExecStub.callCount).to.be.eql(0);
             expect(taskStub.callCount).to.be.eql(0);

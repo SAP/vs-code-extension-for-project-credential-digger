@@ -182,9 +182,10 @@ describe('Extension - Unit Tests', function () {
             context = {
                 storageUri: undefined,
             } as unknown as ExtensionContext;
-            const errorStub = sinon
-                .stub(LoggerFactory.getInstance(), 'error')
-                .returns();
+            const errorStub = sinon.stub().returns(undefined);
+            const loggerInstance = sinon
+                .stub(LoggerFactory, 'getInstance')
+                .returns({ error: errorStub } as unknown as LoggerFactory);
             const showErrorMessageStub = sinon
                 .stub(window, 'showErrorMessage')
                 .resolves();
@@ -192,6 +193,7 @@ describe('Extension - Unit Tests', function () {
             expect(getConfigurationStub.callCount).to.be.eql(1);
             expect(getStub.callCount).to.be.eql(1);
             expect(fsStatStub.callCount).to.be.eql(1);
+            expect(loggerInstance.callCount).to.be.eql(1);
             expect(errorStub.callCount).to.be.eql(1);
             expect(showErrorMessageStub.callCount).to.be.eql(1);
             expect(runnerFactoryStub.callCount).to.be.eql(0);
@@ -216,9 +218,10 @@ describe('Extension - Unit Tests', function () {
             } as unknown as fs.Stats);
             const message = 'Failed to scan a file';
             scanStub.onFirstCall().throws(new Error(message));
-            const errorStub = sinon
-                .stub(LoggerFactory.getInstance(), 'error')
-                .returns();
+            const errorStub = sinon.stub().returns(undefined);
+            const loggerInstance = sinon
+                .stub(LoggerFactory, 'getInstance')
+                .returns({ error: errorStub } as unknown as LoggerFactory);
             const showErrorMessageStub = sinon
                 .stub(window, 'showErrorMessage')
                 .resolves();
@@ -229,6 +232,7 @@ describe('Extension - Unit Tests', function () {
             expect(runnerFactoryStub.callCount).to.be.eql(1);
             expect(getIdStub.callCount).to.be.eql(1);
             expect(scanStub.callCount).to.be.eql(1);
+            expect(loggerInstance.callCount).to.be.eql(1);
             expect(errorStub.callCount).to.be.eql(1);
             expect(showErrorMessageStub.callCount).to.be.eql(1);
         });
@@ -326,9 +330,10 @@ describe('Extension - Unit Tests', function () {
                 .returns({
                     get: getStub,
                 } as unknown as WorkspaceConfiguration);
-            const errorStub = sinon
-                .stub(LoggerFactory.getInstance(), 'error')
-                .returns();
+            const errorStub = sinon.stub().returns(undefined);
+            const loggerInstance = sinon
+                .stub(LoggerFactory, 'getInstance')
+                .returns({ error: errorStub } as unknown as LoggerFactory);
             const showErrorMessageStub = sinon
                 .stub(window, 'showErrorMessage')
                 .resolves();
@@ -339,6 +344,7 @@ describe('Extension - Unit Tests', function () {
             expect(runnerFactoryStub.callCount).to.be.eql(1);
             expect(getIdStub.callCount).to.be.eql(1);
             expect(addRulesStub.callCount).to.be.eql(1);
+            expect(loggerInstance.callCount).to.be.eql(1);
             expect(errorStub.callCount).to.be.eql(1);
             expect(showErrorMessageStub.callCount).to.be.eql(1);
         });

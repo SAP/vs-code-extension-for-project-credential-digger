@@ -25,6 +25,7 @@ describe('BinaryRunner  - Unit Tests', function () {
     let config: CredentialDiggerRunnerBinaryConfig;
     let discoveries: Discovery[];
     let runner: BinaryRunner;
+    let loggerInstance: sinon.SinonStub;
     let debugStub: sinon.SinonStub;
     let existsSyncStub: sinon.SinonStub;
     let cmdShellExecStub: sinon.SinonStub;
@@ -35,7 +36,10 @@ describe('BinaryRunner  - Unit Tests', function () {
         discoveries = generateDiscoveries(2);
         currentFile = generateCurrentFile(discoveries);
         existsSyncStub = sinon.stub(fs, 'existsSync').resolves(true);
-        debugStub = sinon.stub(LoggerFactory.getInstance(), 'debug').resolves();
+        debugStub = sinon.stub().returns(undefined);
+        loggerInstance = sinon
+            .stub(LoggerFactory, 'getInstance')
+            .returns({ debug: debugStub } as unknown as LoggerFactory);
         cmdShellExecStub = sinon.stub(vscode, 'ShellExecution').returns({});
         taskStub = sinon.stub(vscode, 'Task').returns({});
     });
@@ -60,6 +64,7 @@ describe('BinaryRunner  - Unit Tests', function () {
             result = await runner.scan();
             const expectedCmd = `${config.path} scan_path "${currentFile.uri.fsPath}" --models PathModel --force --debug --sqlite "${config.databaseConfig.sqlite?.filename}"`;
             expect(existsSyncStub.called).to.be.true;
+            expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
             expect(cmdShellExecStub.callCount).to.be.eql(1);
             expect(cmdShellExecStub.lastCall.args[0]).to.be.eql(expectedCmd);
@@ -81,6 +86,7 @@ describe('BinaryRunner  - Unit Tests', function () {
             result = await runner.scan();
             const expectedCmd = `${config.path} scan_path "${currentFile.uri.fsPath}" --models PathModel --force --debug`;
             expect(existsSyncStub.called).to.be.true;
+            expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
             expect(cmdShellExecStub.callCount).to.be.eql(1);
             expect(cmdShellExecStub.lastCall.args[0]).to.be.eql(expectedCmd);
@@ -101,6 +107,7 @@ describe('BinaryRunner  - Unit Tests', function () {
             runner.setCurrentFile(currentFile);
             result = await runner.scan();
             expect(existsSyncStub.called).to.be.true;
+            expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
             expect(debugStub.lastCall.args[0]).to.be.eql(
                 `${runner.getId()}: scan: exit code: ${undefined}`,
@@ -132,6 +139,7 @@ describe('BinaryRunner  - Unit Tests', function () {
                 expect((e as Error).message).to.be.eql(message);
             } finally {
                 expect(existsSyncStub.called).to.be.true;
+                expect(loggerInstance.callCount).to.be.eql(1);
                 expect(debugStub.callCount).to.be.eql(1);
                 expect(cmdShellExecStub.callCount).to.be.eql(1);
                 expect(taskStub.callCount).to.be.eql(1);
@@ -173,6 +181,7 @@ describe('BinaryRunner  - Unit Tests', function () {
             result = await runner.getDiscoveries(storagePath);
             const expectedCmd = `${config.path} get_discoveries --with_rules --save "${discoveriesFileLocation.fsPath}" "${currentFile.uri.fsPath}" --sqlite "${config.databaseConfig.sqlite?.filename}"`;
             expect(createHashStub.callCount).to.be.eql(1);
+            expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
             expect(cmdShellExecStub.callCount).to.be.eql(1);
             expect(cmdShellExecStub.lastCall.args[0]).to.be.eql(expectedCmd);
@@ -199,6 +208,7 @@ describe('BinaryRunner  - Unit Tests', function () {
             result = await runner.getDiscoveries(storagePath);
             const expectedCmd = `${config.path} get_discoveries --with_rules --save "${discoveriesFileLocation.fsPath}" "${currentFile.uri.fsPath}"`;
             expect(createHashStub.callCount).to.be.eql(1);
+            expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
             expect(cmdShellExecStub.callCount).to.be.eql(1);
             expect(cmdShellExecStub.lastCall.args[0]).to.be.eql(expectedCmd);
@@ -218,6 +228,7 @@ describe('BinaryRunner  - Unit Tests', function () {
             runner.setCurrentFile(currentFile);
             result = await runner.getDiscoveries(storagePath);
             expect(createHashStub.callCount).to.be.eql(1);
+            expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
             expect(cmdShellExecStub.callCount).to.be.eql(1);
             expect(taskStub.callCount).to.be.eql(1);
@@ -234,6 +245,7 @@ describe('BinaryRunner  - Unit Tests', function () {
             runner = new BinaryRunner(config, CredentialDiggerRuntime.Binary);
             result = await runner.getDiscoveries(storagePath);
             expect(createHashStub.callCount).to.be.eql(0);
+            expect(loggerInstance.callCount).to.be.eql(0);
             expect(debugStub.callCount).to.be.eql(0);
             expect(cmdShellExecStub.callCount).to.be.eql(0);
             expect(taskStub.callCount).to.be.eql(0);
@@ -262,6 +274,7 @@ describe('BinaryRunner  - Unit Tests', function () {
             const expectedCmd = `${config.path} add_rules "${
                 vscode.Uri.parse(rulesFileLocation).fsPath
             }" --sqlite "${config.databaseConfig.sqlite?.filename}"`;
+            expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
             expect(cmdShellExecStub.callCount).to.be.eql(1);
             expect(cmdShellExecStub.lastCall.args[0]).to.be.eql(expectedCmd);
@@ -282,6 +295,7 @@ describe('BinaryRunner  - Unit Tests', function () {
             const expectedCmd = `${config.path} add_rules "${
                 vscode.Uri.parse(rulesFileLocation).fsPath
             }" --dotenv "${config.databaseConfig.postgres?.envFile}"`;
+            expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
             expect(cmdShellExecStub.callCount).to.be.eql(1);
             expect(cmdShellExecStub.lastCall.args[0]).to.be.eql(expectedCmd);
@@ -299,6 +313,7 @@ describe('BinaryRunner  - Unit Tests', function () {
             runner = new BinaryRunner(config, CredentialDiggerRuntime.Binary);
             runner.validateAndSetRules(rulesFileLocation);
             result = await runner.addRules();
+            expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
             expect(cmdShellExecStub.callCount).to.be.eql(1);
             expect(taskStub.callCount).to.be.eql(1);
@@ -313,6 +328,7 @@ describe('BinaryRunner  - Unit Tests', function () {
             ).binary as CredentialDiggerRunnerBinaryConfig;
             runner = new BinaryRunner(config, CredentialDiggerRuntime.Binary);
             result = await runner.addRules();
+            expect(loggerInstance.callCount).to.be.eql(0);
             expect(debugStub.callCount).to.be.eql(0);
             expect(cmdShellExecStub.callCount).to.be.eql(0);
             expect(taskStub.callCount).to.be.eql(0);
@@ -332,6 +348,7 @@ describe('BinaryRunner  - Unit Tests', function () {
                 expect(err).to.be.not.null;
                 expect((err as Error).message).to.be.eql(message);
             } finally {
+                expect(loggerInstance.callCount).to.be.eql(0);
                 expect(debugStub.callCount).to.be.eql(0);
                 expect(cmdShellExecStub.callCount).to.be.eql(0);
                 expect(taskStub.callCount).to.be.eql(0);
@@ -352,6 +369,7 @@ describe('BinaryRunner  - Unit Tests', function () {
                 expect(err).to.be.not.null;
                 expect((err as Error).message).to.be.eql(message);
             } finally {
+                expect(loggerInstance.callCount).to.be.eql(0);
                 expect(debugStub.callCount).to.be.eql(0);
                 expect(cmdShellExecStub.callCount).to.be.eql(0);
                 expect(taskStub.callCount).to.be.eql(0);
@@ -372,6 +390,7 @@ describe('BinaryRunner  - Unit Tests', function () {
                 expect(err).to.be.not.null;
                 expect((err as Error).message).to.be.eql(message);
             } finally {
+                expect(loggerInstance.callCount).to.be.eql(0);
                 expect(debugStub.callCount).to.be.eql(0);
                 expect(cmdShellExecStub.callCount).to.be.eql(0);
                 expect(taskStub.callCount).to.be.eql(0);

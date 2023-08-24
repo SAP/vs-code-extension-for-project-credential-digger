@@ -31,12 +31,16 @@ describe('WebserverRunner  - Unit Tests', function () {
     let rawDiscoveries: RawDiscovery[];
     let runner: WebServerRunner;
     let httpWrapperStub: sinon.SinonStub;
+    let loggerInstance: sinon.SinonStub;
     let debugStub: sinon.SinonStub;
 
     beforeEach(() => {
         rawDiscoveries = generateRawDiscoveries(2);
         currentFile = generateCurrentFile(rawDiscoveries);
-        debugStub = sinon.stub(LoggerFactory.getInstance(), 'debug').resolves();
+        debugStub = sinon.stub().returns(undefined);
+        loggerInstance = sinon
+            .stub(LoggerFactory, 'getInstance')
+            .returns({ debug: debugStub } as unknown as LoggerFactory);
     });
 
     afterEach(() => {
@@ -68,6 +72,7 @@ describe('WebserverRunner  - Unit Tests', function () {
             runner.setCurrentFile(currentFile);
             result = await runner.scan();
             expect(httpWrapperStub.callCount).to.be.eql(1);
+            expect(loggerInstance.callCount).to.be.eql(3);
             expect(debugStub.callCount).to.be.eql(3);
             expect(result).to.be.eql(rawDiscoveries.length);
         });
@@ -99,6 +104,7 @@ describe('WebserverRunner  - Unit Tests', function () {
             expect(existsSyncStub.callCount).to.be.eql(1);
             expect(httpWrapperStub.callCount).to.be.eql(1);
             expect(connectStub.callCount).to.be.eql(1);
+            expect(loggerInstance.callCount).to.be.eql(3);
             expect(debugStub.callCount).to.be.eql(3);
             expect(result).to.be.eql(rawDiscoveries.length);
         });
@@ -125,6 +131,7 @@ describe('WebserverRunner  - Unit Tests', function () {
             runner.setCurrentFile(currentFile);
             result = await runner.scan();
             expect(httpWrapperStub.callCount).to.be.eql(1);
+            expect(loggerInstance.callCount).to.be.eql(3);
             expect(debugStub.callCount).to.be.eql(3);
             expect(result).to.be.eql(0);
         });
@@ -192,6 +199,7 @@ describe('WebserverRunner  - Unit Tests', function () {
                 discoveries.push(Utils.convertRawToDiscovery(d));
             });
             expect(httpWrapperStub.callCount).to.be.eql(1);
+            expect(loggerInstance.callCount).to.be.eql(3);
             expect(debugStub.callCount).to.be.eql(3);
             expect(count).to.be.eql(rawDiscoveries.length);
             expect(result).to.be.eql(discoveries);
@@ -231,6 +239,7 @@ describe('WebserverRunner  - Unit Tests', function () {
             runner.validateAndSetRules(rules);
             result = await runner.addRules();
             expect(httpWrapperStub.callCount).to.be.eql(1);
+            expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
             expect(result).to.be.eql(true);
         });
@@ -265,6 +274,7 @@ describe('WebserverRunner  - Unit Tests', function () {
             expect(existsSyncStub.callCount).to.be.eql(1);
             expect(httpWrapperStub.callCount).to.be.eql(1);
             expect(connectStub.callCount).to.be.eql(1);
+            expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
             expect(result).to.be.eql(true);
         });
@@ -302,6 +312,7 @@ describe('WebserverRunner  - Unit Tests', function () {
                 );
             } finally {
                 expect(httpWrapperStub.callCount).to.be.eql(1);
+                expect(loggerInstance.callCount).to.be.eql(2);
                 expect(debugStub.callCount).to.be.eql(2);
             }
         });
@@ -327,6 +338,7 @@ describe('WebserverRunner  - Unit Tests', function () {
                 expect(axios.isAxiosError(err)).to.be.false;
             } finally {
                 expect(httpWrapperStub.callCount).to.be.eql(1);
+                expect(loggerInstance.callCount).to.be.eql(2);
                 expect(debugStub.callCount).to.be.eql(2);
             }
         });
@@ -346,6 +358,7 @@ describe('WebserverRunner  - Unit Tests', function () {
             runner.validateAndSetRules(rules);
             result = await runner.addRules();
             expect(httpWrapperStub.callCount).to.be.eql(1);
+            expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
             expect(result).to.be.false;
         });
@@ -385,6 +398,7 @@ describe('WebserverRunner  - Unit Tests', function () {
             result = await runner.connect();
             expect(existsSyncStub.callCount).to.be.eql(1);
             expect(httpWrapperStub.callCount).to.be.eql(1);
+            expect(loggerInstance.callCount).to.be.eql(3);
             expect(debugStub.callCount).to.be.eql(3);
             expect(result).to.be.eql(true);
         });
@@ -416,6 +430,7 @@ describe('WebserverRunner  - Unit Tests', function () {
             expect(existsSyncStub.callCount).to.be.eql(0);
             expect(httpWrapperStub.callCount).to.be.eql(1);
             expect(postStub.callCount).to.be.eql(0);
+            expect(loggerInstance.callCount).to.be.eql(0);
             expect(debugStub.callCount).to.be.eql(0);
             expect(result).to.be.eql(true);
         });
@@ -450,6 +465,7 @@ describe('WebserverRunner  - Unit Tests', function () {
             } finally {
                 expect(existsSyncStub.callCount).to.be.eql(1);
                 expect(httpWrapperStub.callCount).to.be.eql(1);
+                expect(loggerInstance.callCount).to.be.eql(2);
                 expect(debugStub.callCount).to.be.eql(2);
             }
         });
@@ -484,6 +500,7 @@ describe('WebserverRunner  - Unit Tests', function () {
             } finally {
                 expect(existsSyncStub.callCount).to.be.eql(1);
                 expect(httpWrapperStub.callCount).to.be.eql(1);
+                expect(loggerInstance.callCount).to.be.eql(2);
                 expect(debugStub.callCount).to.be.eql(2);
             }
         });
@@ -509,6 +526,7 @@ describe('WebserverRunner  - Unit Tests', function () {
             } finally {
                 expect(existsSyncStub.callCount).to.be.eql(1);
                 expect(httpWrapperStub.callCount).to.be.eql(1);
+                expect(loggerInstance.callCount).to.be.eql(1);
                 expect(debugStub.callCount).to.be.eql(1);
             }
         });

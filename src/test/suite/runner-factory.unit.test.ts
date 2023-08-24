@@ -287,15 +287,17 @@ describe('RunnerFactory  - Unit Tests', function () {
             const runnerAddRulesStub = sinon
                 .stub(DockerRunner.prototype, 'addRules')
                 .resolves(true);
-            const debugStub = sinon
-                .stub(LoggerFactory.getInstance(), 'debug')
-                .resolves();
+            const debugStub = sinon.stub().returns(undefined);
+            const loggerInstance = sinon
+                .stub(LoggerFactory, 'getInstance')
+                .returns({ debug: debugStub } as unknown as LoggerFactory);
             const showInformationMessageStub = sinon
                 .stub(window, 'showInformationMessage')
                 .resolves();
             const rules = faker.system.filePath();
             await RunnerFactory.getInstance(runnerConfig).addRules(rules);
             expect(runnerAddRulesStub.callCount).to.be.eql(1);
+            expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
             expect(showInformationMessageStub.callCount).to.be.eql(1);
         });
@@ -304,15 +306,17 @@ describe('RunnerFactory  - Unit Tests', function () {
             const runnerAddRulesStub = sinon
                 .stub(DockerRunner.prototype, 'addRules')
                 .resolves(false);
-            const debugStub = sinon
-                .stub(LoggerFactory.getInstance(), 'debug')
-                .resolves();
+            const debugStub = sinon.stub().returns(undefined);
+            const loggerInstance = sinon
+                .stub(LoggerFactory, 'getInstance')
+                .returns({ debug: debugStub } as unknown as LoggerFactory);
             const showErrorMessageStub = sinon
                 .stub(window, 'showErrorMessage')
                 .resolves();
             const rules = faker.system.filePath();
             await RunnerFactory.getInstance(runnerConfig).addRules(rules);
             expect(runnerAddRulesStub.callCount).to.be.eql(1);
+            expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
             expect(showErrorMessageStub.callCount).to.be.eql(1);
         });
@@ -322,9 +326,10 @@ describe('RunnerFactory  - Unit Tests', function () {
             const runnerAddRulesStub = sinon
                 .stub(DockerRunner.prototype, 'addRules')
                 .throws(error);
-            const debugStub = sinon
-                .stub(LoggerFactory.getInstance(), 'debug')
-                .resolves();
+            const debugStub = sinon.stub().returns(undefined);
+            const loggerInstance = sinon
+                .stub(LoggerFactory, 'getInstance')
+                .returns({ debug: debugStub } as unknown as LoggerFactory);
             const showInformationMessageStub = sinon
                 .stub(window, 'showInformationMessage')
                 .resolves();
@@ -339,6 +344,7 @@ describe('RunnerFactory  - Unit Tests', function () {
                 expect(err).to.be.eql(error);
             } finally {
                 expect(runnerAddRulesStub.callCount).to.be.eql(1);
+                expect(loggerInstance.callCount).to.be.eql(1);
                 expect(debugStub.callCount).to.be.eql(1);
                 expect(showInformationMessageStub.callCount).to.be.eql(0);
                 expect(showErrorMessageStub.callCount).to.be.eql(0);
@@ -365,9 +371,10 @@ describe('RunnerFactory  - Unit Tests', function () {
         });
 
         it('Should successfully scan a file: 0 findings', async function () {
-            const debugStub = sinon
-                .stub(LoggerFactory.getInstance(), 'debug')
-                .resolves();
+            const debugStub = sinon.stub().returns(undefined);
+            const loggerInstance = sinon
+                .stub(LoggerFactory, 'getInstance')
+                .returns({ debug: debugStub } as unknown as LoggerFactory);
             const runnerSetFileStub = sinon
                 .stub(DockerRunner.prototype, 'setCurrentFile')
                 .returns();
@@ -388,6 +395,7 @@ describe('RunnerFactory  - Unit Tests', function () {
                 storageUri,
                 diagCollection,
             );
+            expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
             expect(runnerSetFileStub.callCount).to.be.eql(1);
             expect(getCurrentFileStub.called).to.be.true;
@@ -399,9 +407,10 @@ describe('RunnerFactory  - Unit Tests', function () {
         it('Should successfully scan a file: at least one finding', async function () {
             const discoveries = generateDiscoveries(2);
             currentFile = generateCurrentFile(discoveries);
-            const debugStub = sinon
-                .stub(LoggerFactory.getInstance(), 'debug')
-                .resolves();
+            const debugStub = sinon.stub().returns(undefined);
+            const loggerInstance = sinon
+                .stub(LoggerFactory, 'getInstance')
+                .returns({ debug: debugStub } as unknown as LoggerFactory);
             const runnerSetFileStub = sinon
                 .stub(DockerRunner.prototype, 'setCurrentFile')
                 .returns();
@@ -422,6 +431,7 @@ describe('RunnerFactory  - Unit Tests', function () {
                 storageUri,
                 diagCollection,
             );
+            expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
             expect(runnerSetFileStub.callCount).to.be.eql(1);
             expect(getCurrentFileStub.called).to.be.true;
