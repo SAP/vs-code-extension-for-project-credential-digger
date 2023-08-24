@@ -2,3 +2,4 @@
 .*ignore
 .reuse/dep5
 *.gif
+*.csv

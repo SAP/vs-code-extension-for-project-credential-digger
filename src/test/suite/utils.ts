@@ -11,13 +11,13 @@ import { TextDocument, Uri } from 'vscode';
 
 export function generateRawDiscovery(lineNumber?: number): RawDiscovery {
     return {
-        id: faker.number.int(),
+        id: `${faker.number.int()}`,
         file_name: faker.system.filePath(),
         commit_id: faker.git.commitSha(),
-        line_number: lineNumber ?? faker.number.int({ min: 0 }),
+        line_number: `${lineNumber ?? faker.number.int({ min: 0 })}`,
         snippet: faker.lorem.text(),
         repo_url: faker.internet.url(),
-        rule_id: faker.number.int(),
+        rule_id: `${faker.number.int()}`,
         state: State.New,
         timestamp: faker.date.anytime().toISOString(),
         rule_regex: faker.lorem.sentence(),

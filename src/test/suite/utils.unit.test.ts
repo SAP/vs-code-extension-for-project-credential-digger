@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import { faker } from '@faker-js/faker';
 import * as sinon from 'sinon';
+import * as path from 'path';
 import { Task, TaskScope, TaskProcessEndEvent, tasks } from 'vscode';
 import Utils from '../../lib/utils';
 import { describe, it, beforeEach } from 'mocha';
@@ -10,6 +11,7 @@ import {
     ExtensionConfig,
 } from '../../types/config';
 import { generateRawDiscovery } from './utils';
+import { State } from '../../types/db';
 
 describe('Utils - Unit Tests', function () {
     afterEach(() => {
@@ -222,6 +224,30 @@ describe('Utils - Unit Tests', function () {
             const obj = null;
             const result = Utils.cloneObject(obj);
             expect(result).to.be.eql(obj);
+        });
+    });
+
+    describe('parseDiscoveriesCSVFile - Unit Tests', function () {
+        it('Should parse discoveries csv file successfully', async function () {
+            const result = await Utils.parseDiscoveriesCSVFile(
+                path.resolve('./src/test/suite/data/raw-discoveries.csv'),
+            );
+            expect(result.length).to.be.eql(5);
+            result.forEach((d) => {
+                expect(d.id).to.be.not.null;
+                expect(d.filename).to.be.eql('SMTPEmail.ts');
+                expect(d.commitId).to.be.empty;
+                expect(d.lineNumber).to.be.greaterThanOrEqual(0);
+                expect(d.repoUrl).to.be.not.null;
+                expect(path.basename(d.repoUrl)).to.be.eql(d.filename);
+                expect(d.ruleId).to.be.greaterThanOrEqual(1);
+                expect(d.state).to.be.eql(State.New);
+                expect(d.rule).to.be.not.null;
+                expect(d.rule?.id).to.be.eql(d.ruleId);
+                expect(d.rule?.regex).to.be.not.null;
+                expect(d.rule?.category).to.be.not.null;
+                expect(d.rule?.description).to.be.not.null;
+            });
         });
     });
 });

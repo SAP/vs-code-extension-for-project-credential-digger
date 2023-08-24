@@ -28,17 +28,17 @@ export default class Utils {
 
     public static convertRawToDiscovery(record: RawDiscovery): Discovery {
         return {
-            id: record.id,
+            id: parseInt(record.id),
             filename: record.file_name,
             commitId: record.commit_id,
-            lineNumber: record.line_number,
+            lineNumber: parseInt(record.line_number),
             snippet: record.snippet,
             repoUrl: record.repo_url,
-            ruleId: record.rule_id,
+            ruleId: parseInt(record.rule_id),
             state: record.state,
             timestamp: record.timestamp,
             rule: {
-                id: record.rule_id,
+                id: parseInt(record.rule_id),
                 regex: record.rule_regex,
                 category: record.rule_category,
                 description: record.rule_description,
