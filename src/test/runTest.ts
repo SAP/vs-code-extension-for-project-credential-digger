@@ -10,12 +10,10 @@ async function main() {
         const extensionDevelopmentPath = resolve(__dirname, '../../');
 
         // Launch args
-        const launchArgs = [
-            '--disable-extensions',
-            '--disable-gpu',
-            '--user-data-dir',
-            `${tmpdir()}`,
-        ];
+        const launchArgs = ['--disable-gpu', '--user-data-dir', `${tmpdir()}`];
+        if (process.argv[2] !== 'unit') {
+            launchArgs.push('--disable-extensions');
+        }
 
         // The path to test runner
         // Passed to --extensionTestsPath

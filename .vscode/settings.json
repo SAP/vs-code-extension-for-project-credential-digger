@@ -25,7 +25,7 @@
     "mochaExplorer.env": {
         "VSCODE_VERSION": "stable",
         "ELECTRON_RUN_AS_NODE": null,
-        "VSCODE_LAUNCH_ARGS": "[\"--disable-extensions\",\"--disable-gpu\",\"--user-data-dir\", \"~/tmp/user-data\"]"
+        "VSCODE_LAUNCH_ARGS": "[\"--disable-gpu\",\"--user-data-dir\", \"~/tmp/user-data\"]"
     },
     "mochaExplorer.fullTrace": false,
     "mochaExplorer.logpanel": true
