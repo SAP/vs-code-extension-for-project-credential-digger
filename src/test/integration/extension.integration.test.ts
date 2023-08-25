@@ -1,10 +1,11 @@
-import * as assert from 'assert';
 import { window } from 'vscode';
 
+import { expect } from 'chai';
+
 describe('Extension - Integration Tests', function () {
-    window.showInformationMessage('Start all tests.');
+    window.showInformationMessage('Start integration tests.');
     it('Sample test', function () {
-        assert.strictEqual(-1, [1, 2, 3].indexOf(5));
-        assert.strictEqual(-1, [1, 2, 3].indexOf(0));
+        expect([1, 2, 3].indexOf(5)).to.be.eql(-1);
+        expect([1, 2, 3].indexOf(0)).to.be.eql(-1);
     });
 });
