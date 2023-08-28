@@ -97,7 +97,7 @@ export async function scan(
             );
         }
         LoggerFactory.getInstance().error(
-            `Failed to scan file ${currentDoc.uri.fsPath}:  Credential Digger extension is not configured`,
+            `Failed to scan file ${currentDoc.uri.fsPath}: Credential Digger extension is not configured`,
         );
         return;
     }
