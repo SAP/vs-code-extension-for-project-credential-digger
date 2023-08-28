@@ -37,6 +37,7 @@ The following rule governs code contributions:
 -   Fork the current repository to your GitHub account.
 -   You must follow the coding style as best you can when submitting code. Take note of naming conventions, separation of concerns, and formatting rules.
     -   If you are using `vscode`, please install the recommended extensions
+    -   Run `npm ci` to install the dependencies
     -   Run `npm run prepare` to install the pre-commit hooks
     -   To commit your changes run `npm run commit`, this will guide you to create a compliant commit message based on [conventional-commits](https://www.conventionalcommits.org/en/v1.0.0/)
     -   A pre-commit hook will run `unit tests`, `prettier` for code formatting, `eslint` for static code scan, and will lint your commit message
