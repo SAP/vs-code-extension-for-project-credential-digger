@@ -1,19 +1,27 @@
-import { Discovery } from '../../../types/db';
+import { createReadStream, existsSync } from 'fs';
+import { Agent } from 'node:https';
+import { resolve } from 'path';
+import { TextDocument, Uri } from 'vscode';
+
+import axios, {
+    AxiosError,
+    AxiosInstance,
+    isAxiosError,
+    HttpStatusCode,
+} from 'axios';
+import { wrapper } from 'axios-cookiejar-support';
+import * as dotenv from 'dotenv';
+import * as FormData from 'form-data';
+import { CookieJar } from 'tough-cookie';
+
 import Runner from './runner';
-import axios, { AxiosError, AxiosInstance, HttpStatusCode } from 'axios';
 import {
     CredentialDiggerRunnerWebServerConfig,
     CredentialDiggerRuntime,
 } from '../../../types/config';
-import * as vscode from 'vscode';
-import * as dotenv from 'dotenv';
-import * as path from 'path';
-import * as fs from 'fs';
-import { wrapper } from 'axios-cookiejar-support';
-import { CookieJar } from 'tough-cookie';
+import { Discovery } from '../../../types/db';
 import LoggerFactory from '../../logger-factory';
-import * as https from 'node:https';
-import * as FormData from 'form-data';
+import { convertRawToDiscovery } from '../../utils';
 
 export default class WebServerRunner extends Runner {
     private discoveries: Discovery[] = [];
@@ -24,15 +32,13 @@ export default class WebServerRunner extends Runner {
     public constructor(
         config: CredentialDiggerRunnerWebServerConfig,
         runnerType: CredentialDiggerRuntime,
-        rules: string,
-        currentFile?: vscode.TextDocument,
     ) {
-        super(config, runnerType, rules, currentFile);
+        super(config, runnerType);
         this.config = this.config as CredentialDiggerRunnerWebServerConfig;
         // Create httpsAgent
         let httpsAgent;
         if (this.config.host.startsWith('https')) {
-            httpsAgent = new https.Agent({
+            httpsAgent = new Agent({
                 rejectUnauthorized: false,
             });
         }
@@ -40,7 +46,7 @@ export default class WebServerRunner extends Runner {
         this.httpInstance = wrapper(
             axios.create({
                 baseURL: this.config.host,
-                timeout: 120000,
+                timeout: 120000, // 120s
                 jar: new CookieJar(),
                 maxRedirects: 0, // Disable
                 httpsAgent,
@@ -50,15 +56,15 @@ export default class WebServerRunner extends Runner {
         if (this.config.envFile) {
             this.secureConnection = true;
             dotenv.config({
-                path: path.resolve(this.config.envFile),
+                path: resolve(this.config.envFile),
             });
         }
     }
 
-    public async run(): Promise<number> {
+    public async scan(): Promise<number> {
         this.config = this.config as CredentialDiggerRunnerWebServerConfig;
         // Connect
-        if (!this.cookies && this.secureConnection) {
+        if (this.secureConnection && !this.cookies) {
             await this.connect();
         }
         // Call API
@@ -69,7 +75,7 @@ export default class WebServerRunner extends Runner {
         form.append('forceScan', 'force');
         form.append(
             'filename',
-            fs.createReadStream(this.currentFile!.uri.fsPath),
+            createReadStream((this.currentFile as TextDocument).uri.fsPath),
         );
         LoggerFactory.getInstance().debug(
             `${this.getId()}: scan: sending file ${
@@ -89,23 +95,7 @@ export default class WebServerRunner extends Runner {
         ) {
             // Convert discoveries
             for (const d of resp.data) {
-                this.discoveries.push({
-                    id: d.id,
-                    filename: d.file_name,
-                    commitId: d.commit_id,
-                    lineNumber: d.line_number,
-                    snippet: d.snippet,
-                    repoUrl: d.repo_url,
-                    ruleId: d.rule_id,
-                    state: d.state,
-                    timestamp: d.timestamp,
-                    rule: {
-                        id: d.rule_id,
-                        regex: d.rule_regex,
-                        category: d.rule_category,
-                        description: d.rule_description,
-                    },
-                });
+                this.discoveries.push(convertRawToDiscovery(d));
             }
         } else {
             throw new Error(
@@ -122,9 +112,7 @@ export default class WebServerRunner extends Runner {
     }
 
     public async getDiscoveries(): Promise<Discovery[]> {
-        return new Promise((resolve) => {
-            resolve(this.discoveries);
-        });
+        return Promise.resolve(this.discoveries);
     }
 
     public async cleanup(): Promise<void> {
@@ -132,6 +120,7 @@ export default class WebServerRunner extends Runner {
     }
 
     protected validateConfig(): void {
+        super.validateConfig();
         this.config = this.config as CredentialDiggerRunnerWebServerConfig;
         if (!this.config.host) {
             throw new Error(
@@ -145,10 +134,9 @@ export default class WebServerRunner extends Runner {
             );
         }
 
-        if (this.config.envFile && !fs.existsSync(this.config.envFile)) {
+        if (this.config.envFile && !existsSync(this.config.envFile)) {
             throw new Error('Please provide a valid Credential File location');
         }
-        super.validateConfig();
     }
 
     public async addRules(): Promise<boolean> {
@@ -165,12 +153,23 @@ export default class WebServerRunner extends Runner {
         );
         try {
             const form = new FormData();
-            form.append('filename', fs.createReadStream(this.rules!.fsPath));
+            form.append(
+                'filename',
+                createReadStream((this.rules as Uri).fsPath),
+            );
             await this.httpInstance.post('/upload_rule', form, {
                 headers: form.getHeaders(),
                 jar: this.cookies,
             });
         } catch (err) {
+            if (!isAxiosError(err)) {
+                LoggerFactory.getInstance().debug(
+                    `${this.getId()}: addRules: error message: ${
+                        (err as Error).message
+                    }`,
+                );
+                throw err;
+            }
             const error = err as AxiosError<Error>;
             LoggerFactory.getInstance().debug(
                 `${this.getId()}: addRules: status code: ${
@@ -179,9 +178,8 @@ export default class WebServerRunner extends Runner {
             );
             if (error.response?.status === HttpStatusCode.Found) {
                 return true;
-            } else {
-                throw err;
             }
+            throw err;
         }
         LoggerFactory.getInstance().debug(
             `${this.getId()}: addRules: failed to add rules to ${
@@ -208,18 +206,20 @@ export default class WebServerRunner extends Runner {
                 headers: form.getHeaders(),
             });
         } catch (err) {
+            if (!isAxiosError(err)) {
+                throw err;
+            }
             const error = err as AxiosError<Error>;
             LoggerFactory.getInstance().debug(
                 `${this.getId()}: connect: status code: ${
                     error.response?.status
                 }`,
             );
-            if (error.response?.status === HttpStatusCode.Found) {
-                // Retrieve the cookies to set them for each upcoming request
-                this.cookies = error.response?.config?.jar;
-            } else {
+            if (error.response?.status !== HttpStatusCode.Found) {
                 throw err;
             }
+            // Retrieve the cookies to set them for each upcoming request
+            this.cookies = error.response?.config?.jar;
         }
         if (!this.cookies) {
             throw new Error(

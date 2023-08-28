@@ -1,48 +1,47 @@
 import {
+    Diagnostic,
+    DiagnosticCollection,
+    DiagnosticSeverity,
+    Range,
+    TextDocument,
+    Uri,
+    window,
+} from 'vscode';
+
+import BinaryRunner from './client/runner/binary-runner';
+import DockerRunner from './client/runner/docker-runner';
+import Runner from './client/runner/runner';
+import WebServerRunner from './client/runner/webserver-runner';
+import LoggerFactory from './logger-factory';
+import {
     CredentialDiggerRunner,
     CredentialDiggerRunnerBinaryConfig,
     CredentialDiggerRunnerDockerConfig,
     CredentialDiggerRunnerWebServerConfig,
     CredentialDiggerRuntime,
 } from '../types/config';
-import BinaryRunner from './client/runner/binary-runner';
-import Runner from './client/runner/runner';
-import DockerRunner from './client/runner/docker-runner';
-import * as vscode from 'vscode';
-import LoggerFactory from './logger-factory';
-import WebServerRunner from './client/runner/webserver-runner';
 
 export default class RunnerFactory {
     private runner: Runner;
 
-    private constructor(
-        runnerConfig: CredentialDiggerRunner,
-        rules: string,
-        currentFile?: vscode.TextDocument,
-    ) {
+    private constructor(runnerConfig: CredentialDiggerRunner) {
         switch (runnerConfig.type) {
             case CredentialDiggerRuntime.Docker:
                 this.runner = new DockerRunner(
                     runnerConfig.docker as CredentialDiggerRunnerDockerConfig,
                     runnerConfig.type,
-                    rules,
-                    currentFile,
                 );
                 break;
             case CredentialDiggerRuntime.Binary:
                 this.runner = new BinaryRunner(
                     runnerConfig.binary as CredentialDiggerRunnerBinaryConfig,
                     runnerConfig.type,
-                    rules,
-                    currentFile,
                 );
                 break;
             case CredentialDiggerRuntime.WebServer:
                 this.runner = new WebServerRunner(
                     runnerConfig.webserver as CredentialDiggerRunnerWebServerConfig,
                     runnerConfig.type,
-                    rules,
-                    currentFile,
                 );
                 break;
             default:
@@ -52,16 +51,16 @@ export default class RunnerFactory {
 
     public static getInstance(
         runnerConfig: CredentialDiggerRunner,
-        rules: string,
-        currentFile?: vscode.TextDocument,
     ): RunnerFactory {
-        return new RunnerFactory(runnerConfig, rules, currentFile);
+        return new RunnerFactory(runnerConfig);
     }
 
     public async scan(
-        storageUri: vscode.Uri,
-        diagCollection: vscode.DiagnosticCollection,
+        currentFile: TextDocument,
+        storageUri: Uri,
+        diagCollection: DiagnosticCollection,
     ) {
+        this.runner.setCurrentFile(currentFile);
         LoggerFactory.getInstance().debug(
             `${this.getId()}: scan: start scanning file ${
                 this.runner.getCurrentFile().uri.fsPath
@@ -70,7 +69,7 @@ export default class RunnerFactory {
         // Clear credential digger findings for current file
         diagCollection.delete(this.runner.getCurrentFile().uri);
         // Scan
-        const numberOfDiscoveries = await this.runner.run();
+        const numberOfDiscoveries = await this.runner.scan();
         // Get discoveries
         if (numberOfDiscoveries > 0) {
             const discoveries = await this.runner.getDiscoveries(storageUri);
@@ -88,16 +87,16 @@ export default class RunnerFactory {
                     \nSnippet: "${d.snippet}"
                     \nRule: "${d.rule?.regex}"
                     \nCategory: "${d.rule?.category}"`;
-                    const range = new vscode.Range(
+                    const range = new Range(
                         d.lineNumber - 1,
                         colStart,
                         d.lineNumber - 1,
                         colEnd,
                     );
-                    const diag: vscode.Diagnostic = {
+                    const diag: Diagnostic = {
                         message,
                         range,
-                        severity: vscode.DiagnosticSeverity.Warning,
+                        severity: DiagnosticSeverity.Warning,
                         source: 'CredentialDigger',
                     };
                     diags.push(diag);
@@ -119,18 +118,20 @@ export default class RunnerFactory {
         return this.runner.getId();
     }
 
-    public async addRules() {
+    public async addRules(rules: string) {
         LoggerFactory.getInstance().debug(
             `${this.getId()}: addRules: start adding rules`,
         );
+        // Validate & set rules
+        this.runner.validateAndSetRules(rules);
         // Add rules
         const success = await this.runner.addRules();
         if (success) {
-            vscode.window.showInformationMessage(
+            window.showInformationMessage(
                 `Scanning rules added successfully to the database (${this.getId()})`,
             );
         } else {
-            vscode.window.showErrorMessage(
+            window.showErrorMessage(
                 `Failed to add the scanning rules to the database (${this.getId()})`,
             );
         }

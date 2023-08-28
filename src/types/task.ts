@@ -1,10 +1,15 @@
 export interface CredentialDiggerTaskDefinition {
     type: CredentialDiggerTaskDefinitionType;
+    action: CredentialDiggerTaskDefinitionAction;
     group: CredentialDiggerTaskGroup;
     scanId: string;
 }
 
 export enum CredentialDiggerTaskDefinitionType {
+    Shell = 'shell',
+}
+
+export enum CredentialDiggerTaskDefinitionAction {
     Scan = 'scan',
     Discoveries = 'discoveries',
     Cleanup = 'cleanup',
@@ -21,7 +26,7 @@ export interface CredentialDiggerTaskInfo {
 }
 
 export const CredentialDiggerTasks: Record<
-    CredentialDiggerTaskDefinitionType,
+    CredentialDiggerTaskDefinitionAction,
     CredentialDiggerTaskInfo
 > = {
     scan: {
@@ -41,8 +46,3 @@ export const CredentialDiggerTasks: Record<
         description: 'Credential Digger Add Rules',
     },
 };
-
-export enum TaskProblemMatcher {
-    Shell = '$shell',
-    Docker = '$docker',
-}

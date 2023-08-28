@@ -1,22 +1,23 @@
+import { window } from 'vscode';
+
 import { IVSCodeExtLogger, getExtensionLogger } from '@vscode-logging/logger';
-import * as vscode from 'vscode';
+
 import MetaReaderFactory from './meta-reader-factory';
 
 export default class LoggerFactory {
     private static instance: LoggerFactory;
     private readonly logger: IVSCodeExtLogger;
-    private extensionName: string;
 
     private constructor() {
-        this.extensionName = MetaReaderFactory.getInstance().getExtensionName();
+        MetaReaderFactory.getInstance().getExtensionDisplayName();
         // Create output channel
-        const logOutputChannel = vscode.window.createOutputChannel(
-            this.extensionName,
+        const logOutputChannel = window.createOutputChannel(
+            MetaReaderFactory.getInstance().getExtensionDisplayName(),
         );
         this.logger = getExtensionLogger({
-            extName: this.extensionName,
+            extName: MetaReaderFactory.getInstance().getExtensionName(),
             level: 'debug',
-            logOutputChannel: logOutputChannel,
+            logOutputChannel,
             sourceLocationTracking: false,
             logConsole: true,
         });
@@ -29,27 +30,27 @@ export default class LoggerFactory {
         return LoggerFactory.instance;
     }
 
-    public fatal(msg: string) {
+    public fatal(msg: string): void {
         this.logger.fatal(msg);
     }
 
-    public error(msg: string) {
+    public error(msg: string): void {
         this.logger.error(msg);
     }
 
-    public warn(msg: string) {
+    public warn(msg: string): void {
         this.logger.warn(msg);
     }
 
-    public info(msg: string) {
+    public info(msg: string): void {
         this.logger.info(msg);
     }
 
-    public debug(msg: string) {
+    public debug(msg: string): void {
         this.logger.debug(msg);
     }
 
-    public trace(msg: string) {
+    public trace(msg: string): void {
         this.logger.trace(msg);
     }
 }

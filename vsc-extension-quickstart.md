@@ -12,7 +12,7 @@
 ## Get up and running straight away
 
 -   Press `F5` to open a new window with your extension loaded.
--   Run your command from the command palette by pressing (`Ctrl+Shift+P` or `Cmd+Shift+P` on Mac) and typing `Hello World`.
+-   Run your command from the command palette by pressing (`Ctrl+Shift+P` or `Cmd+Shift+P` on Mac) and typing `Credential Digger: Add Rules`.
 -   Set breakpoints in your code inside `src/extension.ts` to debug your extension.
 -   Find output from your extension in the debug console.
 
@@ -32,7 +32,6 @@
 -   See the output of the test result in the debug console.
 -   Make changes to `src/test/suite/extension.test.ts` or create new test files inside the `test/suite` folder.
     -   The provided test runner will only consider files matching the name pattern `**.test.ts`.
-    -   You can create folders inside the `test` folder to structure your tests any way you want.
 
 ## Go further
 

@@ -13,5 +13,20 @@
     "editor.codeActionsOnSave": [
         "source.formatDocument",
         "source.fixAll.eslint"
-    ]
+    ],
+    "testExplorer.useNativeTesting": true,
+    "mochaExplorer.files": "out/test/**/*.js",
+    "mochaExplorer.watch": "out/**/*.js",
+    "mochaExplorer.launcherScript": "node_modules/mocha-explorer-launcher-scripts/vscode-test",
+    "mochaExplorer.require": "source-map-support/register",
+    "mochaExplorer.autoload": false,
+    "mochaExplorer.ipcRole": "server",
+    "mochaExplorer.ipcTimeout": 100000,
+    "mochaExplorer.env": {
+        "VSCODE_VERSION": "stable",
+        "ELECTRON_RUN_AS_NODE": null,
+        "VSCODE_LAUNCH_ARGS": "[\"--disable-gpu\",\"--user-data-dir\", \"~/tmp/user-data\"]"
+    },
+    "mochaExplorer.fullTrace": false,
+    "mochaExplorer.logpanel": true
 }

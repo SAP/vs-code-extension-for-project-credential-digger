@@ -21,3 +21,18 @@ export interface Rule {
     category: string;
     description: string;
 }
+
+export interface RawDiscovery {
+    id: string;
+    file_name: string;
+    commit_id: string;
+    line_number: string;
+    snippet: string;
+    repo_url: string;
+    rule_id: string;
+    state: State;
+    timestamp: string;
+    rule_regex: string;
+    rule_category: string;
+    rule_description: string;
+}

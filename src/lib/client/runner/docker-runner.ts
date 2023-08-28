@@ -1,41 +1,38 @@
-import * as path from 'path';
-import { Discovery } from '../../../types/db';
+import { rmSync } from 'fs';
+import { dirname } from 'path';
+import { ShellExecution, Task, TaskScope, TextDocument, Uri } from 'vscode';
+
 import Runner from './runner';
-import * as fs from 'fs';
-import LoggerFactory from '../../logger-factory';
-import Utils from '../../utils';
-import * as vscode from 'vscode';
 import {
     CredentialDiggerRunnerDockerConfig,
     DbType,
 } from '../../../types/config';
+import { Discovery } from '../../../types/db';
 import {
+    CredentialDiggerTaskDefinitionAction,
     CredentialDiggerTaskDefinitionType,
     CredentialDiggerTaskGroup,
     CredentialDiggerTasks,
-    TaskProblemMatcher,
 } from '../../../types/task';
+import LoggerFactory from '../../logger-factory';
+import { createHash, executeTask, parseDiscoveriesCSVFile } from '../../utils';
 
 export default class DockerRunner extends Runner {
     private containerWorkingDir = '/data/credentialDigger';
-    private discoveriesLocalFileLocation!: vscode.Uri;
+    private discoveriesLocalFileLocation!: Uri;
 
-    public async run(): Promise<number> {
+    public async scan(): Promise<number> {
         const commands = [];
         this.config = this.config as CredentialDiggerRunnerDockerConfig;
 
         // Copy to a temporary folder within the container
-        this.fileLocation = vscode.Uri.joinPath(
-            vscode.Uri.parse(this.containerWorkingDir),
-            this.currentFile!.uri.fsPath,
-        );
         commands.push(
-            `docker exec "${this.config.containerId}" mkdir -p "${path.dirname(
+            `docker exec "${this.config.containerId}" mkdir -p "${dirname(
                 this.fileLocation.fsPath,
             )}"`,
         );
         commands.push(
-            `docker cp "${this.currentFile!.uri.fsPath}" "${
+            `docker cp "${(this.currentFile as TextDocument).uri.fsPath}" "${
                 this.config.containerId
             }:${this.fileLocation.fsPath}"`,
         );
@@ -51,23 +48,21 @@ export default class DockerRunner extends Runner {
         );
 
         // Trigger
-        const cmdShellExec = new vscode.ShellExecution(
-            `${commands.join(' && ')}`,
-        );
-        const triggerTask = new vscode.Task(
+        const cmdShellExec = new ShellExecution(`${commands.join(' && ')}`);
+        const triggerTask = new Task(
             {
-                type: CredentialDiggerTaskDefinitionType.Scan,
+                type: CredentialDiggerTaskDefinitionType.Shell,
+                action: CredentialDiggerTaskDefinitionAction.Scan,
                 group: CredentialDiggerTaskGroup,
                 scanId: this.getId(),
             },
-            vscode.TaskScope.Workspace,
+            TaskScope.Workspace,
             CredentialDiggerTasks.scan.name,
             CredentialDiggerTasks.scan.description,
             cmdShellExec,
-            TaskProblemMatcher.Docker,
         );
 
-        let exitCode = await Utils.executeTask(triggerTask);
+        let exitCode = await executeTask(triggerTask);
         LoggerFactory.getInstance().debug(
             `${this.getId()}: scan: exit code: ${exitCode}`,
         );
@@ -78,7 +73,7 @@ export default class DockerRunner extends Runner {
         return exitCode ?? 0;
     }
 
-    public async getDiscoveries(storagePath: vscode.Uri): Promise<Discovery[]> {
+    public async getDiscoveries(storagePath: Uri): Promise<Discovery[]> {
         let discoveries: Discovery[] = [];
         const commands = [];
         this.config = this.config as CredentialDiggerRunnerDockerConfig;
@@ -87,14 +82,10 @@ export default class DockerRunner extends Runner {
         if (!this.fileLocation) {
             return discoveries;
         }
-        const filename =
-            (await Utils.createHash(this.fileLocation.fsPath, 8)) + '.csv';
-        this.discoveriesLocalFileLocation = vscode.Uri.joinPath(
-            storagePath,
-            filename,
-        );
-        this.discoveriesFileLocation = vscode.Uri.joinPath(
-            vscode.Uri.parse(this.containerWorkingDir),
+        const filename = createHash(this.fileLocation.fsPath, 8) + '.csv';
+        this.discoveriesLocalFileLocation = Uri.joinPath(storagePath, filename);
+        this.discoveriesFileLocation = Uri.joinPath(
+            Uri.parse(this.containerWorkingDir),
             filename,
         );
 
@@ -115,29 +106,27 @@ export default class DockerRunner extends Runner {
         );
 
         // Trigger
-        const cmdShellExec = new vscode.ShellExecution(
-            `${commands.join('; ')}`,
-        );
-        const triggerTask = new vscode.Task(
+        const cmdShellExec = new ShellExecution(`${commands.join('; ')}`);
+        const triggerTask = new Task(
             {
-                type: CredentialDiggerTaskDefinitionType.Discoveries,
+                type: CredentialDiggerTaskDefinitionType.Shell,
+                action: CredentialDiggerTaskDefinitionAction.Discoveries,
                 group: CredentialDiggerTaskGroup,
                 scanId: this.getId(),
             },
-            vscode.TaskScope.Workspace,
+            TaskScope.Workspace,
             CredentialDiggerTasks.discoveries.name,
             CredentialDiggerTasks.discoveries.description,
             cmdShellExec,
-            TaskProblemMatcher.Docker,
         );
 
-        const exitCode = await Utils.executeTask(triggerTask);
+        const exitCode = await executeTask(triggerTask);
         LoggerFactory.getInstance().debug(
             `${this.getId()}: getDiscoveries: exit code: ${exitCode}`,
         );
         if (exitCode === 0) {
             // Parse result file
-            discoveries = await Utils.parseDiscoveriesCSVFile(
+            discoveries = await parseDiscoveriesCSVFile(
                 this.discoveriesLocalFileLocation.fsPath,
             );
         }
@@ -159,19 +148,19 @@ export default class DockerRunner extends Runner {
         }
         // Cleanup
         if (commands) {
-            const triggerTask = new vscode.Task(
+            const triggerTask = new Task(
                 {
-                    type: CredentialDiggerTaskDefinitionType.Cleanup,
+                    type: CredentialDiggerTaskDefinitionType.Shell,
+                    action: CredentialDiggerTaskDefinitionAction.Cleanup,
                     group: CredentialDiggerTaskGroup,
                     scanId: this.getId(),
                 },
-                vscode.TaskScope.Workspace,
+                TaskScope.Workspace,
                 CredentialDiggerTasks.cleanup.name,
                 CredentialDiggerTasks.cleanup.description,
-                new vscode.ShellExecution(`${commands.join('; ')}`),
-                TaskProblemMatcher.Docker,
+                new ShellExecution(`${commands.join('; ')}`),
             );
-            const exitCode = await Utils.executeTask(triggerTask);
+            const exitCode = await executeTask(triggerTask);
             LoggerFactory.getInstance().debug(
                 `${this.getId()}: cleanup: exit code: ${exitCode}`,
             );
@@ -179,32 +168,32 @@ export default class DockerRunner extends Runner {
 
         // Cleanup the discoveries file
         if (this.discoveriesLocalFileLocation) {
-            await fs.promises.rm(this.discoveriesLocalFileLocation.fsPath);
+            rmSync(this.discoveriesLocalFileLocation.fsPath);
         }
     }
 
     protected validateConfig() {
+        super.validateConfig();
         this.config = this.config as CredentialDiggerRunnerDockerConfig;
         if (!this.config.containerId) {
             throw new Error('Please provide a containerId');
         }
-        super.validateConfig();
     }
 
     public async addRules(): Promise<boolean> {
         if (!this.rules) {
-            return true;
+            return false;
         }
         const commands = [];
         this.config = this.config as CredentialDiggerRunnerDockerConfig;
-        const rulesFileLocation = vscode.Uri.joinPath(
-            vscode.Uri.parse(this.containerWorkingDir),
+        const rulesFileLocation = Uri.joinPath(
+            Uri.parse(this.containerWorkingDir),
             this.rules.fsPath,
         );
         // Copy to container
-        let cmd = `docker exec "${
-            this.config.containerId
-        }" mkdir -p "${path.dirname(rulesFileLocation.fsPath)}"`;
+        let cmd = `docker exec "${this.config.containerId}" mkdir -p "${dirname(
+            rulesFileLocation.fsPath,
+        )}"`;
         commands.push(cmd);
         cmd = `docker cp "${this.rules?.fsPath}" "${this.config.containerId}:${rulesFileLocation.fsPath}"`;
         commands.push(cmd);
@@ -222,25 +211,31 @@ export default class DockerRunner extends Runner {
             }`,
         );
         // Trigger
-        const cmdShellExec = new vscode.ShellExecution(
-            `${commands.join(' && ')}`,
-        );
-        const triggerTask = new vscode.Task(
+        const cmdShellExec = new ShellExecution(`${commands.join(' && ')}`);
+        const triggerTask = new Task(
             {
-                type: CredentialDiggerTaskDefinitionType.AddRules,
+                type: CredentialDiggerTaskDefinitionType.Shell,
+                action: CredentialDiggerTaskDefinitionAction.AddRules,
                 group: CredentialDiggerTaskGroup,
                 scanId: this.getId(),
             },
-            vscode.TaskScope.Workspace,
+            TaskScope.Workspace,
             CredentialDiggerTasks.addRules.name,
             CredentialDiggerTasks.addRules.description,
             cmdShellExec,
-            TaskProblemMatcher.Docker,
         );
-        const exitCode = await Utils.executeTask(triggerTask);
+        const exitCode = await executeTask(triggerTask);
         LoggerFactory.getInstance().debug(
             `${this.getId()}: addRules: exit code: ${exitCode}`,
         );
         return exitCode === 0;
+    }
+
+    public setCurrentFile(currentFile: TextDocument) {
+        super.setCurrentFile(currentFile);
+        this.fileLocation = Uri.joinPath(
+            Uri.parse(this.containerWorkingDir),
+            (this.currentFile as TextDocument).uri.fsPath,
+        );
     }
 }
