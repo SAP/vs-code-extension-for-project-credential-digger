@@ -1,4 +1,4 @@
-import crypto = require('crypto');
+import * as crypto from 'crypto';
 import { createReadStream } from 'fs';
 import { Task, TaskPanelKind, TaskRevealKind, tasks } from 'vscode';
 
