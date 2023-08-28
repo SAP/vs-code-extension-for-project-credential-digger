@@ -19,7 +19,7 @@ import { ExtensionConfig } from './types/config';
 export async function activate(context: ExtensionContext): Promise<void> {
     // Create storageUri
     if (!context.storageUri) {
-        await window.showErrorMessage(
+        window.showErrorMessage(
             `Failed to activate ${MetaReaderFactory.getInstance().getExtensionDisplayName()}`,
         );
         return;
@@ -33,7 +33,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
     );
 
     // Show info message
-    await window.showInformationMessage(
+    window.showInformationMessage(
         `${MetaReaderFactory.getInstance().getExtensionDisplayName()} is now active!`,
     );
 
@@ -92,10 +92,13 @@ export async function scan(
         .get<ExtensionConfig>('credentialDigger');
     if (!isSettingsConfigured(settings)) {
         if (showErrorOnEmptySettings) {
-            await window.showErrorMessage(
+            window.showErrorMessage(
                 `Failed to scan file: Credential Digger extension is not configured`,
             );
         }
+        LoggerFactory.getInstance().error(
+            `Failed to scan file ${currentDoc.uri.fsPath}:  Credential Digger extension is not configured`,
+        );
         return;
     }
     settings = settings as ExtensionConfig;
@@ -120,7 +123,7 @@ export async function scan(
         LoggerFactory.getInstance().error(
             `${id}: Error occurred when scanning ${currentDoc.uri.fsPath}: ${err}`,
         );
-        await window.showErrorMessage(
+        window.showErrorMessage(
             `Failed to scan ${currentDoc.uri.fsPath} (${id})`,
         );
     }
@@ -133,7 +136,7 @@ export async function addRules(): Promise<void> {
         .getConfiguration()
         .get<ExtensionConfig>('credentialDigger');
     if (!isSettingsConfigured(settings)) {
-        await window.showErrorMessage(
+        window.showErrorMessage(
             'Failed to add rules: Credential Digger extension is not configured',
         );
         return;
@@ -150,7 +153,7 @@ export async function addRules(): Promise<void> {
         LoggerFactory.getInstance().error(
             `${id}: Error occurred when adding rules: ${err}`,
         );
-        await window.showErrorMessage(`Failed to add rules (${id})`);
+        window.showErrorMessage(`Failed to add rules (${id})`);
     }
 }
 
@@ -164,6 +167,6 @@ export async function scanSelectedFile(
     if (currentFile?.uri) {
         await callback(currentFile, true);
     } else {
-        await window.showErrorMessage('Please select a file to scan');
+        window.showErrorMessage('Please select a file to scan');
     }
 }

@@ -105,10 +105,16 @@ describe('Extension - Unit Tests', function () {
             const showErrorMessageStub = sinon
                 .stub(window, 'showErrorMessage')
                 .resolves();
+            const errorStub = sinon.stub().returns(undefined);
+            const loggerInstance = sinon
+                .stub(LoggerFactory, 'getInstance')
+                .returns({ error: errorStub } as unknown as LoggerFactory);
             await scan(context, diagCollection, currentFile, true);
             expect(getConfigurationStub.callCount).to.be.eql(1);
             expect(getStub.callCount).to.be.eql(1);
             expect(showErrorMessageStub.callCount).to.be.eql(1);
+            expect(loggerInstance.callCount).to.be.eql(1);
+            expect(errorStub.callCount).to.be.eql(1);
             expect(runnerFactoryStub.callCount).to.be.eql(0);
             expect(getIdStub.callCount).to.be.eql(0);
             expect(scanStub.callCount).to.be.eql(0);
@@ -132,11 +138,17 @@ describe('Extension - Unit Tests', function () {
             const showErrorMessageStub = sinon
                 .stub(window, 'showErrorMessage')
                 .resolves();
+            const errorStub = sinon.stub().returns(undefined);
+            const loggerInstance = sinon
+                .stub(LoggerFactory, 'getInstance')
+                .returns({ error: errorStub } as unknown as LoggerFactory);
             await scan(context, diagCollection, currentFile, false);
             expect(getConfigurationStub.callCount).to.be.eql(1);
             expect(getStub.callCount).to.be.eql(1);
             expect(isSettingsConfiguredStub.callCount).to.be.eql(1);
             expect(showErrorMessageStub.callCount).to.be.eql(0);
+            expect(loggerInstance.callCount).to.be.eql(1);
+            expect(errorStub.callCount).to.be.eql(1);
             expect(runnerFactoryStub.callCount).to.be.eql(0);
             expect(getIdStub.callCount).to.be.eql(0);
             expect(scanStub.callCount).to.be.eql(0);

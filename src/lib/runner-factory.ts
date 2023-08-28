@@ -127,11 +127,11 @@ export default class RunnerFactory {
         // Add rules
         const success = await this.runner.addRules();
         if (success) {
-            await window.showInformationMessage(
+            window.showInformationMessage(
                 `Scanning rules added successfully to the database (${this.getId()})`,
             );
         } else {
-            await window.showErrorMessage(
+            window.showErrorMessage(
                 `Failed to add the scanning rules to the database (${this.getId()})`,
             );
         }
