@@ -1,6 +1,6 @@
 import { join, resolve } from 'path';
 
-import * as glob from 'glob';
+import { glob } from 'glob';
 import * as Mocha from 'mocha';
 
 function setupCoverage() {
@@ -49,29 +49,30 @@ export async function run(): Promise<void> {
     }
     console.log(`Running ${scope} tests`);
     return new Promise((c, e) => {
-        glob(pattern, { cwd: testsRoot }, async (err, files) => {
-            if (err) {
-                e(err);
-            }
-            // Add files to the test suite
-            files.forEach((f) => mocha.addFile(resolve(testsRoot, f)));
-            try {
-                // Run the mocha test
-                mocha.run(async (failures) => {
-                    if (failures > 0) {
-                        e(new Error(`${failures} tests failed.`));
-                    } else {
-                        if (nyc) {
-                            nyc.writeCoverageFile();
-                            await nyc.report();
+        glob(pattern, { cwd: testsRoot })
+            .then((files) => {
+                // Add files to the test suite
+                files.forEach((f) => mocha.addFile(resolve(testsRoot, f)));
+                try {
+                    // Run the mocha test
+                    mocha.run(async (failures) => {
+                        if (failures > 0) {
+                            e(new Error(`${failures} tests failed.`));
+                        } else {
+                            if (nyc) {
+                                nyc.writeCoverageFile();
+                                await nyc.report();
+                            }
+                            c();
                         }
-                        c();
-                    }
-                });
-            } catch (err) {
-                console.error(err);
+                    });
+                } catch (err) {
+                    console.error(err);
+                    e(err);
+                }
+            })
+            .catch((err) => {
                 e(err);
-            }
-        });
+            });
     });
 }
