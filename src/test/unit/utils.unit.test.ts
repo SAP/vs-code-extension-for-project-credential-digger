@@ -263,11 +263,11 @@ describe('Utils - Unit Tests', function () {
     });
 
     describe('createHash - Unit Tests', function () {
-        it('Should create hash successfully', async function () {
+        it('Should create hash successfully', function () {
             const data = faker.string.alpha(10);
             const length = 4;
-            const result = await createHash(data, length);
-            expect(result.length).to.be.eql(2 * length);
+            const result = createHash(data, length);
+            expect(result.length).to.be.eql(length);
             expect(result).to.be.not.eql(data);
         });
     });

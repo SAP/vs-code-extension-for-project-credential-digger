@@ -55,8 +55,7 @@ export default class BinaryRunner extends Runner {
         if (!this.fileLocation) {
             return discoveries;
         }
-        const filename =
-            (await createHash(this.fileLocation.fsPath, 8)) + '.csv';
+        const filename = createHash(this.fileLocation.fsPath, 8) + '.csv';
         this.discoveriesFileLocation = Uri.joinPath(storagePath, filename);
         // Get discoveries
         let cmd = `${this.config.path} get_discoveries --with_rules --save "${this.discoveriesFileLocation.fsPath}" "${this.fileLocation.fsPath}"`;

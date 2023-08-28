@@ -163,7 +163,7 @@ describe('BinaryRunner  - Unit Tests', function () {
                 .stub(Utils, 'parseDiscoveriesCSVFile')
                 .resolves(discoveries);
             const filename = faker.system.fileName();
-            createHashStub = sinon.stub(Utils, 'createHash').resolves(filename);
+            createHashStub = sinon.stub(Utils, 'createHash').returns(filename);
             discoveriesFileLocation = vscode.Uri.joinPath(
                 storagePath,
                 filename + '.csv',

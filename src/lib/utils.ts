@@ -1,7 +1,7 @@
+import crypto = require('crypto');
 import { createReadStream } from 'fs';
 import { Task, TaskPanelKind, TaskRevealKind, tasks } from 'vscode';
 
-import { hash } from 'argon2';
 import { parse } from 'csv-parse';
 import { cloneDeep } from 'lodash';
 import { v4 } from 'uuid';
@@ -64,13 +64,12 @@ export async function parseDiscoveriesCSVFile(
     return records;
 }
 
-export async function createHash(
-    data: string,
-    length: number,
-): Promise<string> {
-    return (await hash(data, { raw: true, hashLength: length })).toString(
-        'hex',
-    );
+export function createHash(data: string, length: number): string {
+    return crypto
+        .createHash('sha256')
+        .update(data)
+        .digest('hex')
+        .substring(0, length);
 }
 
 export function cloneObject<T>(object: T): T {

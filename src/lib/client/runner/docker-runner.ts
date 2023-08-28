@@ -82,8 +82,7 @@ export default class DockerRunner extends Runner {
         if (!this.fileLocation) {
             return discoveries;
         }
-        const filename =
-            (await createHash(this.fileLocation.fsPath, 8)) + '.csv';
+        const filename = createHash(this.fileLocation.fsPath, 8) + '.csv';
         this.discoveriesLocalFileLocation = Uri.joinPath(storagePath, filename);
         this.discoveriesFileLocation = Uri.joinPath(
             Uri.parse(this.containerWorkingDir),

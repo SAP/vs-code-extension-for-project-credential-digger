@@ -153,7 +153,7 @@ describe('DockerRunner  - Unit Tests', function () {
                 .stub(Utils, 'parseDiscoveriesCSVFile')
                 .resolves(discoveries);
             const filename = faker.system.fileName();
-            createHashStub = sinon.stub(Utils, 'createHash').resolves(filename);
+            createHashStub = sinon.stub(Utils, 'createHash').returns(filename);
             discoveriesLocalFileLocation = vscode.Uri.joinPath(
                 storagePath,
                 filename + '.csv',
