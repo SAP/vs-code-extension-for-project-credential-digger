@@ -200,7 +200,6 @@
         "@faker-js/faker": "8.0.2",
         "@istanbuljs/nyc-config-typescript": "1.0.2",
         "@types/chai": "4.3.5",
-        "@types/dotenv": "8.2.0",
         "@types/glob": "8.1.0",
         "@types/lodash": "4.14.195",
         "@types/mocha": "10.0.1",
