@@ -4,7 +4,6 @@ import { Task, TaskPanelKind, TaskRevealKind, tasks } from 'vscode';
 
 import { parse } from 'csv-parse';
 import { cloneDeep } from 'lodash';
-import { v4 } from 'uuid';
 
 import { ExtensionConfig } from '../types/config';
 import { Discovery, RawDiscovery } from '../types/db';
@@ -84,7 +83,7 @@ export function generateUniqNumber(): number {
 }
 
 export function generateUniqUuid(): string {
-    return v4();
+    return crypto.randomUUID();
 }
 
 export function isSettingsConfigured(
