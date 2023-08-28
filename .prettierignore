@@ -3,3 +3,5 @@
 .reuse/dep5
 *.gif
 *.csv
+.nvmrc
+package-lock.json
