@@ -7,7 +7,6 @@ export interface CredentialDiggerTaskDefinition {
 
 export enum CredentialDiggerTaskDefinitionType {
     Shell = 'shell',
-    Docker = 'docker',
 }
 
 export enum CredentialDiggerTaskDefinitionAction {

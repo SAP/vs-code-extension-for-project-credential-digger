@@ -51,7 +51,7 @@ export default class DockerRunner extends Runner {
         const cmdShellExec = new ShellExecution(`${commands.join(' && ')}`);
         const triggerTask = new Task(
             {
-                type: CredentialDiggerTaskDefinitionType.Docker,
+                type: CredentialDiggerTaskDefinitionType.Shell,
                 action: CredentialDiggerTaskDefinitionAction.Scan,
                 group: CredentialDiggerTaskGroup,
                 scanId: this.getId(),
@@ -110,7 +110,7 @@ export default class DockerRunner extends Runner {
         const cmdShellExec = new ShellExecution(`${commands.join('; ')}`);
         const triggerTask = new Task(
             {
-                type: CredentialDiggerTaskDefinitionType.Docker,
+                type: CredentialDiggerTaskDefinitionType.Shell,
                 action: CredentialDiggerTaskDefinitionAction.Discoveries,
                 group: CredentialDiggerTaskGroup,
                 scanId: this.getId(),
@@ -151,7 +151,7 @@ export default class DockerRunner extends Runner {
         if (commands) {
             const triggerTask = new Task(
                 {
-                    type: CredentialDiggerTaskDefinitionType.Docker,
+                    type: CredentialDiggerTaskDefinitionType.Shell,
                     action: CredentialDiggerTaskDefinitionAction.Cleanup,
                     group: CredentialDiggerTaskGroup,
                     scanId: this.getId(),
@@ -215,7 +215,7 @@ export default class DockerRunner extends Runner {
         const cmdShellExec = new ShellExecution(`${commands.join(' && ')}`);
         const triggerTask = new Task(
             {
-                type: CredentialDiggerTaskDefinitionType.Docker,
+                type: CredentialDiggerTaskDefinitionType.Shell,
                 action: CredentialDiggerTaskDefinitionAction.AddRules,
                 group: CredentialDiggerTaskGroup,
                 scanId: this.getId(),
