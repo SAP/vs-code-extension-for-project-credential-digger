@@ -379,11 +379,14 @@ describe('Extension - Unit Tests', function () {
     describe('activate - Unit Tests', function () {
         let existsSyncStub: sinon.SinonStub;
         let mkdirSyncStub: sinon.SinonStub;
-        let getExtensionNameStub: sinon.SinonStub;
+        let getExtensionDisplayNameStub: sinon.SinonStub;
 
         beforeEach(() => {
-            getExtensionNameStub = sinon
-                .stub(MetaReaderFactory.getInstance(), 'getExtensionName')
+            getExtensionDisplayNameStub = sinon
+                .stub(
+                    MetaReaderFactory.getInstance(),
+                    'getExtensionDisplayName',
+                )
                 .returns(faker.location.city());
         });
 
@@ -409,7 +412,7 @@ describe('Extension - Unit Tests', function () {
                 'getExtensionAddRulesCommand',
             );
             await activate(context);
-            expect(getExtensionNameStub.callCount).to.be.eql(2);
+            expect(getExtensionDisplayNameStub.callCount).to.be.eql(2);
             expect(existsSyncStub.callCount).to.be.eql(1);
             expect(mkdirSyncStub.callCount).to.be.eql(1);
             expect(createDiagnosticCollectionStub.callCount).to.be.eql(1);

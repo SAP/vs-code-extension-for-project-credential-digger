@@ -7,14 +7,15 @@ import MetaReaderFactory from './meta-reader-factory';
 export default class LoggerFactory {
     private static instance: LoggerFactory;
     private readonly logger: IVSCodeExtLogger;
-    private extensionName: string;
 
     private constructor() {
-        this.extensionName = MetaReaderFactory.getInstance().getExtensionName();
+        MetaReaderFactory.getInstance().getExtensionDisplayName();
         // Create output channel
-        const logOutputChannel = window.createOutputChannel(this.extensionName);
+        const logOutputChannel = window.createOutputChannel(
+            MetaReaderFactory.getInstance().getExtensionDisplayName(),
+        );
         this.logger = getExtensionLogger({
-            extName: this.extensionName,
+            extName: MetaReaderFactory.getInstance().getExtensionName(),
             level: 'debug',
             logOutputChannel,
             sourceLocationTracking: false,

@@ -12,6 +12,7 @@ import MetaReaderFactory from '../../lib/meta-reader-factory';
 describe('LoggerFactory - Unit Tests', function () {
     let messages: string[];
     let getExtensionNameStub: sinon.SinonStub;
+    let getExtensionDisplayNameStub: sinon.SinonStub;
     let createOutputChannelStub: sinon.SinonStub;
     let getExtensionLoggerStub: sinon.SinonStub;
     let fatalStub: sinon.SinonStub;
@@ -24,6 +25,9 @@ describe('LoggerFactory - Unit Tests', function () {
     before(() => {
         getExtensionNameStub = sinon
             .stub(MetaReaderFactory.getInstance(), 'getExtensionName')
+            .returns(faker.location.city());
+        getExtensionDisplayNameStub = sinon
+            .stub(MetaReaderFactory.getInstance(), 'getExtensionDisplayName')
             .returns(faker.location.city());
         createOutputChannelStub = sinon
             .stub(window, 'createOutputChannel')
@@ -59,6 +63,7 @@ describe('LoggerFactory - Unit Tests', function () {
             LoggerFactory.getInstance();
             LoggerFactory.getInstance();
             expect(getExtensionNameStub.callCount).to.be.eql(1);
+            expect(getExtensionDisplayNameStub.callCount).to.be.eql(2);
             expect(createOutputChannelStub.callCount).to.be.eql(1);
             expect(getExtensionLoggerStub.callCount).to.be.eql(1);
         });

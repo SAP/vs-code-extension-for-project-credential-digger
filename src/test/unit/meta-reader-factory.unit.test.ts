@@ -17,6 +17,16 @@ describe('MetaReaderFactory - Unit Tests', function () {
         });
     });
 
+    describe('getExtensionDisplayName - Unit Tests', function () {
+        it('Should return extension display name', async function () {
+            const expected =
+                'VS Code extension for project "Credential Digger"';
+            const result =
+                MetaReaderFactory.getInstance().getExtensionDisplayName();
+            expect(result).to.be.eql(expected);
+        });
+    });
+
     describe('getExtensionScanCommand - Unit Tests', function () {
         it('Should return scan command name', async function () {
             const expected =

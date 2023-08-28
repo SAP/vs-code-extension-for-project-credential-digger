@@ -20,7 +20,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
     // Create storageUri
     if (!context.storageUri) {
         await window.showErrorMessage(
-            `Failed to activate ${MetaReaderFactory.getInstance().getExtensionName()}`,
+            `Failed to activate ${MetaReaderFactory.getInstance().getExtensionDisplayName()}`,
         );
         return;
     }
@@ -29,12 +29,12 @@ export async function activate(context: ExtensionContext): Promise<void> {
     }
     // Create diag collection
     const diagCollection = languages.createDiagnosticCollection(
-        MetaReaderFactory.getInstance().getExtensionName(),
+        MetaReaderFactory.getInstance().getExtensionDisplayName(),
     );
 
     // Show info message
     await window.showInformationMessage(
-        `${MetaReaderFactory.getInstance().getExtensionName()} is now active!`,
+        `${MetaReaderFactory.getInstance().getExtensionDisplayName()} is now active!`,
     );
 
     // Define scan action

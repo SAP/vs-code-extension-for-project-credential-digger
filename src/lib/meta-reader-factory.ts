@@ -23,6 +23,10 @@ export default class MetaReaderFactory {
         return this.data.name;
     }
 
+    public getExtensionDisplayName(): string {
+        return this.data.displayName;
+    }
+
     public getExtensionScanCommand(): string {
         return this.data.contributes?.commands
             ? this.data.contributes?.commands[0].command
