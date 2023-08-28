@@ -15,7 +15,7 @@ export async function executeTask(task: Task): Promise<number | undefined> {
     // Set defaults
     task.isBackground = true;
     task.presentationOptions = {
-        reveal: TaskRevealKind.Silent,
+        reveal: TaskRevealKind.Never,
         echo: true,
         focus: false,
         panel: TaskPanelKind.Shared,
