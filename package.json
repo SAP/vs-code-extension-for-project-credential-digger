@@ -175,6 +175,7 @@
         }
     },
     "scripts": {
+        "prepare": "husky install",
         "commit": "cz",
         "compile": "rm -rf out .nyc_output coverage mochawesome-report && tsc -p ./ && npm run copy-test-files",
         "watch": "tsc -watch -p ./",
