@@ -35,6 +35,7 @@ describe('Utils - Unit Tests', function () {
             task = new Task(
                 {
                     type: faker.person.jobType(),
+                    action: faker.person.jobType(),
                     scanId: faker.string.uuid(),
                 },
                 TaskScope.Workspace,

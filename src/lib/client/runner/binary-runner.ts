@@ -8,6 +8,7 @@ import {
 } from '../../../types/config';
 import { Discovery } from '../../../types/db';
 import {
+    CredentialDiggerTaskDefinitionAction,
     CredentialDiggerTaskDefinitionType,
     CredentialDiggerTaskGroup,
     CredentialDiggerTasks,
@@ -31,7 +32,8 @@ export default class BinaryRunner extends Runner {
         const cmdShellExec = new ShellExecution(cmd);
         const triggerTask = new Task(
             {
-                type: CredentialDiggerTaskDefinitionType.Scan,
+                type: CredentialDiggerTaskDefinitionType.Shell,
+                action: CredentialDiggerTaskDefinitionAction.Scan,
                 group: CredentialDiggerTaskGroup,
                 scanId: this.getId(),
             },
@@ -39,7 +41,7 @@ export default class BinaryRunner extends Runner {
             CredentialDiggerTasks.scan.name,
             CredentialDiggerTasks.scan.description,
             cmdShellExec,
-            TaskProblemMatcher.Shell,
+            [TaskProblemMatcher.Shell],
         );
         const exitCode = await executeTask(triggerTask);
         LoggerFactory.getInstance().debug(
@@ -70,7 +72,8 @@ export default class BinaryRunner extends Runner {
         const cmdShellExec = new ShellExecution(cmd);
         const triggerTask = new Task(
             {
-                type: CredentialDiggerTaskDefinitionType.Discoveries,
+                type: CredentialDiggerTaskDefinitionType.Shell,
+                action: CredentialDiggerTaskDefinitionAction.Discoveries,
                 group: CredentialDiggerTaskGroup,
                 scanId: this.getId(),
             },
@@ -78,7 +81,7 @@ export default class BinaryRunner extends Runner {
             CredentialDiggerTasks.discoveries.name,
             CredentialDiggerTasks.discoveries.description,
             cmdShellExec,
-            TaskProblemMatcher.Shell,
+            [TaskProblemMatcher.Shell],
         );
         const exitCode = await executeTask(triggerTask);
         LoggerFactory.getInstance().debug(
@@ -132,7 +135,8 @@ export default class BinaryRunner extends Runner {
         const cmdShellExec = new ShellExecution(cmd);
         const triggerTask = new Task(
             {
-                type: CredentialDiggerTaskDefinitionType.AddRules,
+                type: CredentialDiggerTaskDefinitionType.Shell,
+                action: CredentialDiggerTaskDefinitionAction.AddRules,
                 group: CredentialDiggerTaskGroup,
                 scanId: this.getId(),
             },
@@ -140,7 +144,7 @@ export default class BinaryRunner extends Runner {
             CredentialDiggerTasks.addRules.name,
             CredentialDiggerTasks.addRules.description,
             cmdShellExec,
-            TaskProblemMatcher.Shell,
+            [TaskProblemMatcher.Shell],
         );
         const exitCode = await executeTask(triggerTask);
         LoggerFactory.getInstance().debug(

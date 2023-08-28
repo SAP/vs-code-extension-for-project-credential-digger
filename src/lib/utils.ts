@@ -150,6 +150,8 @@ export class TaskUtils {
             const disposable = tasks.onDidEndTaskProcess((e) => {
                 if (
                     e.execution.task.definition.type === task.definition.type &&
+                    e.execution.task.definition.action ===
+                        task.definition.action &&
                     e.execution.task.definition.taskId ===
                         task.definition.taskId &&
                     e.execution.task.definition.scanId ===
