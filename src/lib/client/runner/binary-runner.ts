@@ -1,4 +1,4 @@
-import { existsSync, promises } from 'fs';
+import { existsSync, rmSync } from 'fs';
 import { ShellExecution, Task, TaskScope, TextDocument, Uri } from 'vscode';
 
 import Runner from './runner';
@@ -96,7 +96,7 @@ export default class BinaryRunner extends Runner {
     public async cleanup(): Promise<void> {
         // Cleanup the discoveries file
         if (this.discoveriesFileLocation) {
-            await promises.rm(this.discoveriesFileLocation.fsPath);
+            rmSync(this.discoveriesFileLocation.fsPath);
         }
     }
 

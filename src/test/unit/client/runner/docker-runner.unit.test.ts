@@ -1,4 +1,4 @@
-import { promises } from 'fs';
+import * as fs from 'fs';
 import { dirname } from 'path';
 import * as vscode from 'vscode';
 
@@ -184,7 +184,7 @@ describe('DockerRunner  - Unit Tests', function () {
             expect(parseDiscoveriesCSVFileStub.callCount).to.be.eql(1);
             expect(result).to.be.eql(discoveries);
             // Cleanup
-            const rmStub = sinon.stub(promises, 'rm').resolves();
+            const rmStub = sinon.stub(fs, 'rmSync').returns();
             await runner.cleanup();
             expectedCmd = `docker exec "${config.containerId}" rm -f "${fileLocation.fsPath}"; docker exec "${config.containerId}" rm -f "${discoveriesFileLocation.fsPath}"`;
             expect(loggerInstance.callCount).to.be.eql(3);

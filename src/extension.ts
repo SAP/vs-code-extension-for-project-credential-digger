@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, promises } from 'fs';
+import { existsSync, mkdirSync, statSync } from 'fs';
 import {
     DiagnosticCollection,
     ExtensionContext,
@@ -101,8 +101,10 @@ export async function scan(
     settings = settings as ExtensionConfig;
     let id = null;
     try {
-        const stats = await promises.stat(currentDoc.uri.fsPath);
-        if (!stats.isFile()) {
+        const stats = statSync(currentDoc.uri.fsPath, {
+            throwIfNoEntry: false,
+        });
+        if (!stats?.isFile()) {
             return;
         }
         if (!context.storageUri) {

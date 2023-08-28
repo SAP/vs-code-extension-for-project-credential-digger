@@ -83,7 +83,7 @@ describe('Extension - Unit Tests', function () {
                 .returns({
                     get: getStub,
                 } as unknown as WorkspaceConfiguration);
-            fsStatStub = sinon.stub(fs.promises, 'stat').resolves({
+            fsStatStub = sinon.stub(fs, 'statSync').returns({
                 isFile: sinon.stub().returns(true),
             } as unknown as fs.Stats);
             await scan(context, diagCollection, currentFile, false);
@@ -154,7 +154,7 @@ describe('Extension - Unit Tests', function () {
                 .returns({
                     get: getStub,
                 } as unknown as WorkspaceConfiguration);
-            fsStatStub = sinon.stub(fs.promises, 'stat').resolves({
+            fsStatStub = sinon.stub(fs, 'statSync').returns({
                 isFile: sinon.stub().returns(false),
             } as unknown as fs.Stats);
             await scan(context, diagCollection, currentFile, false);
@@ -178,7 +178,7 @@ describe('Extension - Unit Tests', function () {
                 .returns({
                     get: getStub,
                 } as unknown as WorkspaceConfiguration);
-            fsStatStub = sinon.stub(fs.promises, 'stat').resolves({
+            fsStatStub = sinon.stub(fs, 'statSync').returns({
                 isFile: sinon.stub().returns(true),
             } as unknown as fs.Stats);
             context = {
@@ -215,7 +215,7 @@ describe('Extension - Unit Tests', function () {
                 .returns({
                     get: getStub,
                 } as unknown as WorkspaceConfiguration);
-            fsStatStub = sinon.stub(fs.promises, 'stat').resolves({
+            fsStatStub = sinon.stub(fs, 'statSync').returns({
                 isFile: sinon.stub().returns(true),
             } as unknown as fs.Stats);
             const message = 'Failed to scan a file';

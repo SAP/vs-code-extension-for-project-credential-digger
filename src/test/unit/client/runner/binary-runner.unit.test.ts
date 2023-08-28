@@ -192,7 +192,7 @@ describe('BinaryRunner  - Unit Tests', function () {
             expect(parseDiscoveriesCSVFileStub.callCount).to.be.eql(1);
             expect(result).to.be.eql(discoveries);
             // Cleanup
-            const rmStub = sinon.stub(fs.promises, 'rm').resolves();
+            const rmStub = sinon.stub(fs, 'rmSync').returns();
             await runner.cleanup();
             expect(rmStub.callCount).to.be.eql(1);
         });

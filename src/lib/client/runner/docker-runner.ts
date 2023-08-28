@@ -1,4 +1,4 @@
-import { promises } from 'fs';
+import { rmSync } from 'fs';
 import { dirname } from 'path';
 import { ShellExecution, Task, TaskScope, TextDocument, Uri } from 'vscode';
 
@@ -169,7 +169,7 @@ export default class DockerRunner extends Runner {
 
         // Cleanup the discoveries file
         if (this.discoveriesLocalFileLocation) {
-            await promises.rm(this.discoveriesLocalFileLocation.fsPath);
+            rmSync(this.discoveriesLocalFileLocation.fsPath);
         }
     }
 
