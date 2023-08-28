@@ -12,7 +12,6 @@ import {
     CredentialDiggerTaskDefinitionType,
     CredentialDiggerTaskGroup,
     CredentialDiggerTasks,
-    TaskProblemMatcher,
 } from '../../../types/task';
 import LoggerFactory from '../../logger-factory';
 import { createHash, executeTask, parseDiscoveriesCSVFile } from '../../utils';
@@ -41,7 +40,6 @@ export default class BinaryRunner extends Runner {
             CredentialDiggerTasks.scan.name,
             CredentialDiggerTasks.scan.description,
             cmdShellExec,
-            [TaskProblemMatcher.Shell],
         );
         const exitCode = await executeTask(triggerTask);
         LoggerFactory.getInstance().debug(
@@ -81,7 +79,6 @@ export default class BinaryRunner extends Runner {
             CredentialDiggerTasks.discoveries.name,
             CredentialDiggerTasks.discoveries.description,
             cmdShellExec,
-            [TaskProblemMatcher.Shell],
         );
         const exitCode = await executeTask(triggerTask);
         LoggerFactory.getInstance().debug(
@@ -144,7 +141,6 @@ export default class BinaryRunner extends Runner {
             CredentialDiggerTasks.addRules.name,
             CredentialDiggerTasks.addRules.description,
             cmdShellExec,
-            [TaskProblemMatcher.Shell],
         );
         const exitCode = await executeTask(triggerTask);
         LoggerFactory.getInstance().debug(

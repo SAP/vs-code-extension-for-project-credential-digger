@@ -13,7 +13,6 @@ import {
     CredentialDiggerTaskDefinitionType,
     CredentialDiggerTaskGroup,
     CredentialDiggerTasks,
-    TaskProblemMatcher,
 } from '../../../types/task';
 import LoggerFactory from '../../logger-factory';
 import { createHash, executeTask, parseDiscoveriesCSVFile } from '../../utils';
@@ -61,7 +60,6 @@ export default class DockerRunner extends Runner {
             CredentialDiggerTasks.scan.name,
             CredentialDiggerTasks.scan.description,
             cmdShellExec,
-            [TaskProblemMatcher.Docker],
         );
 
         let exitCode = await executeTask(triggerTask);
@@ -121,7 +119,6 @@ export default class DockerRunner extends Runner {
             CredentialDiggerTasks.discoveries.name,
             CredentialDiggerTasks.discoveries.description,
             cmdShellExec,
-            [TaskProblemMatcher.Docker],
         );
 
         const exitCode = await executeTask(triggerTask);
@@ -163,7 +160,6 @@ export default class DockerRunner extends Runner {
                 CredentialDiggerTasks.cleanup.name,
                 CredentialDiggerTasks.cleanup.description,
                 new ShellExecution(`${commands.join('; ')}`),
-                [TaskProblemMatcher.Docker],
             );
             const exitCode = await executeTask(triggerTask);
             LoggerFactory.getInstance().debug(
@@ -228,7 +224,6 @@ export default class DockerRunner extends Runner {
             CredentialDiggerTasks.addRules.name,
             CredentialDiggerTasks.addRules.description,
             cmdShellExec,
-            [TaskProblemMatcher.Docker],
         );
         const exitCode = await executeTask(triggerTask);
         LoggerFactory.getInstance().debug(

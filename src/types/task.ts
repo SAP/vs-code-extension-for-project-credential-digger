@@ -47,8 +47,3 @@ export const CredentialDiggerTasks: Record<
         description: 'Credential Digger Add Rules',
     },
 };
-
-export enum TaskProblemMatcher {
-    Shell = '$shell',
-    Docker = '$docker',
-}
