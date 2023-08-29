@@ -16,3 +16,5 @@ vsc-extension-quickstart.md
 **/*.ts
 .DS_Store
 .git/**
+.nyc_output
+node_modules

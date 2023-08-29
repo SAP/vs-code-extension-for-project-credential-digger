@@ -11,7 +11,7 @@ import axios, {
 } from 'axios';
 import { wrapper } from 'axios-cookiejar-support';
 import * as dotenv from 'dotenv';
-import * as FormData from 'form-data';
+import FormData from 'form-data';
 import { CookieJar } from 'tough-cookie';
 
 import Runner from './runner';

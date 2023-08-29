@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+import fs from 'fs';
 import { DiagnosticCollection, TextDocument, Uri, window } from 'vscode';
 
 import { faker } from '@faker-js/faker';

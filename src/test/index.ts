@@ -1,7 +1,7 @@
 import { join, resolve } from 'path';
 
 import { glob } from 'glob';
-import * as Mocha from 'mocha';
+import Mocha from 'mocha';
 
 function setupCoverage() {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -55,7 +55,7 @@ export async function run(): Promise<void> {
                 files.forEach((f) => mocha.addFile(resolve(testsRoot, f)));
                 try {
                     // Run the mocha test
-                    mocha.run(async (failures) => {
+                    mocha.run(async (failures: number) => {
                         if (failures > 0) {
                             e(new Error(`${failures} tests failed.`));
                         } else {
