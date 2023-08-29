@@ -11,7 +11,7 @@
             "request": "launch",
             "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
             "outFiles": ["${workspaceFolder}/out/**/*.js"],
-            "preLaunchTask": "${defaultBuildTask}"
+            "preLaunchTask": "npm: watch"
         },
         {
             "name": "Extension All Tests",
@@ -24,7 +24,7 @@
                 "--extensionTestsPath=${workspaceFolder}/out/test/index"
             ],
             "outFiles": ["${workspaceFolder}/out/test/**/*.js"],
-            "preLaunchTask": "${defaultBuildTask}",
+            "preLaunchTask": "npm: pretest",
             "env": {
                 "NODE_ENV": "debug"
             }
@@ -41,7 +41,7 @@
                 "--extensionTestsPath=${workspaceFolder}/out/test/index"
             ],
             "outFiles": ["${workspaceFolder}/out/test/**/*.js"],
-            "preLaunchTask": "${defaultBuildTask}",
+            "preLaunchTask": "npm: pretest",
             "env": {
                 "NODE_ENV": "debug",
                 "scope": "unit"
@@ -58,7 +58,7 @@
                 "--extensionTestsPath=${workspaceFolder}/out/test/index"
             ],
             "outFiles": ["${workspaceFolder}/out/test/**/*.js"],
-            "preLaunchTask": "${defaultBuildTask}",
+            "preLaunchTask": "npm: pretest",
             "env": {
                 "NODE_ENV": "debug",
                 "scope": "integration"

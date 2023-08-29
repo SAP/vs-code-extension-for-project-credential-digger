@@ -1,6 +1,6 @@
-import * as fs from 'fs';
+import fs from 'fs';
 import { dirname } from 'path';
-import * as vscode from 'vscode';
+import vscode from 'vscode';
 
 import { faker } from '@faker-js/faker';
 import { expect } from 'chai';

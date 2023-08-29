@@ -4,6 +4,7 @@
     "recommendations": [
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
-        "hbenl.vscode-mocha-test-adapter"
+        "hbenl.vscode-mocha-test-adapter",
+        "connor4312.esbuild-problem-matchers"
     ]
 }

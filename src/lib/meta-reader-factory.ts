@@ -8,7 +8,7 @@ export default class MetaReaderFactory {
     private readonly data: MetaData;
     private constructor() {
         this.data = JSON.parse(
-            readFileSync(resolve(__dirname, '../..', 'package.json'), 'utf8'),
+            readFileSync(resolve(__dirname, '..', 'package.json'), 'utf8'),
         );
     }
 

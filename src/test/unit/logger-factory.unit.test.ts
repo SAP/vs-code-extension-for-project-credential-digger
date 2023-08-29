@@ -1,7 +1,7 @@
 import { LogOutputChannel, window } from 'vscode';
 
 import { faker } from '@faker-js/faker';
-import * as vscodeLogger from '@vscode-logging/logger';
+import vscodeLogger from '@vscode-logging/logger';
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import * as sinon from 'sinon';
