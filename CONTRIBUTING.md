@@ -33,12 +33,11 @@ The following rule governs code contributions:
 
 ### Contribution process
 
--   Check the `main` branch and make sure that the issue/feature you want to work on has not been solved yet.
+-   Checkout the `main` branch and make sure that the issue/feature you want to work on has not been solved yet.
 -   Fork the current repository to your GitHub account.
 -   You must follow the coding style as best you can when submitting code. Take note of naming conventions, separation of concerns, and formatting rules.
     -   If you are using `vscode`, please install the recommended extensions
-    -   Run `npm ci` to install the dependencies
-    -   Run `npm run prepare` to install the pre-commit hooks
+    -   Run `npm ci` to install the dependencies and the pre-commit hooks
     -   To commit your changes run `npm run commit`, this will guide you to create a compliant commit message based on [conventional-commits](https://www.conventionalcommits.org/en/v1.0.0/)
     -   A pre-commit hook will run `unit tests`, `prettier` for code formatting, `eslint` for static code scan, and will lint your commit message
 -   Create a Pull Request from your forked repository to `github.com/SAP/vs-code-extension-for-project-credential-digger`. In the subject of the pull request, briefly describe the bug fix or enhancement you're contributing. In the pull request description, please provide a link to the issue in the issue tracker.
@@ -65,10 +64,10 @@ npm run format
 npm run format:fix
 ```
 
-#### Compiling
+#### Building
 
 ```sh
-npm run compile
+npm run build
 ```
 
 #### Testing
