@@ -180,7 +180,7 @@
         "copyfiles": "copyfiles",
         "esbuild": "esbuild",
         "prepare": "husky install",
-        "clean": "npm run rimraf -- node_modules .vscode-test",
+        "clean": "npm run rimraf -- node_modules .vscode-test out .nyc_output coverage mochawesome-report",
         "lint": "eslint src --ext ts",
         "lint:fix": "eslint src --ext ts --fix .",
         "format": "prettier --check .",
