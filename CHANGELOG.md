@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.0](https://github.com/SAP/vs-code-extension-for-project-credential-digger/compare/v0.0.5...v1.0.0) (2023-08-29)
+
+### Features
+
+-   **webserverrunner:** expose server certificate validation as config param ([#52](https://github.com/SAP/vs-code-extension-for-project-credential-digger/issues/52)) ([409444b](https://github.com/SAP/vs-code-extension-for-project-credential-digger/commit/409444b13a70122add29bb1be2365b63003644b9))
+
 ### 0.0.5 (2023-08-28)
 
 ### Features
