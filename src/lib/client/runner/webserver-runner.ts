@@ -21,7 +21,7 @@ import {
 } from '../../../types/config';
 import { Discovery } from '../../../types/db';
 import LoggerFactory from '../../logger-factory';
-import { convertRawToDiscovery } from '../../utils';
+import { convertRawToDiscovery, isNullOrUndefined } from '../../utils';
 
 export default class WebServerRunner extends Runner {
     private discoveries: Discovery[] = [];
@@ -38,8 +38,20 @@ export default class WebServerRunner extends Runner {
         // Create httpsAgent
         let httpsAgent;
         if (this.config.host.startsWith('https')) {
+            let certificateValidation = true;
+            if (isNullOrUndefined(this.config.certificateValidation)) {
+                LoggerFactory.getInstance().warn(
+                    `Certificate validation flag is not set defaulting to ${certificateValidation}`,
+                );
+            } else {
+                certificateValidation = this.config
+                    .certificateValidation as boolean;
+                LoggerFactory.getInstance().warn(
+                    `Certificate validation flag is set to ${certificateValidation}`,
+                );
+            }
             httpsAgent = new Agent({
-                rejectUnauthorized: false,
+                rejectUnauthorized: certificateValidation,
             });
         }
         // Create httpInstance
