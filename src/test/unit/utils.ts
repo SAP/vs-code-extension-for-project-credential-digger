@@ -81,8 +81,9 @@ export function generateCredentialDiggerRunnerConfig(
             return {
                 type: CredentialDiggerRuntime.WebServer,
                 webserver: {
-                    host: faker.internet.url(),
+                    host: faker.internet.url({ protocol: 'http' }),
                     envFile: faker.system.filePath(),
+                    certificateValidation: false,
                 },
             };
         default:

@@ -47,6 +47,7 @@ export interface CredentialDiggerRunnerBinaryConfig {
 export interface CredentialDiggerRunnerWebServerConfig {
     host: string;
     envFile?: string;
+    certificateValidation?: boolean;
 }
 
 export type CredentialDiggerRunnerConfig =

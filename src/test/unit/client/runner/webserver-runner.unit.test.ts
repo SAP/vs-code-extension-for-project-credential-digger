@@ -36,14 +36,19 @@ describe('WebserverRunner  - Unit Tests', function () {
     let httpWrapperStub: sinon.SinonStub;
     let loggerInstance: sinon.SinonStub;
     let debugStub: sinon.SinonStub;
+    let warnStub: sinon.SinonStub;
 
     beforeEach(() => {
         rawDiscoveries = generateRawDiscoveries(2);
         currentFile = generateCurrentFile(rawDiscoveries);
         debugStub = sinon.stub().returns(undefined);
+        warnStub = sinon.stub().returns(undefined);
         loggerInstance = sinon
             .stub(LoggerFactory, 'getInstance')
-            .returns({ debug: debugStub } as unknown as LoggerFactory);
+            .returns({
+                debug: debugStub,
+                warn: warnStub,
+            } as unknown as LoggerFactory);
     });
 
     afterEach(() => {
@@ -108,6 +113,69 @@ describe('WebserverRunner  - Unit Tests', function () {
             expect(httpWrapperStub.callCount).to.be.eql(1);
             expect(connectStub.callCount).to.be.eql(1);
             expect(loggerInstance.callCount).to.be.eql(3);
+            expect(debugStub.callCount).to.be.eql(3);
+            expect(result).to.be.eql(rawDiscoveries.length);
+        });
+
+        it('Should successfully scan a file: certificate validation is set', async function () {
+            config = generateCredentialDiggerRunnerConfig(
+                CredentialDiggerRuntime.WebServer,
+            ).webserver as CredentialDiggerRunnerWebServerConfig;
+            delete config.envFile;
+            config.host = faker.internet.url({ protocol: 'https' });
+            const postResponse = {
+                status: HttpStatusCode.Ok,
+                headers: {
+                    'content-type': 'application/json',
+                },
+                data: rawDiscoveries,
+            };
+            httpWrapperStub = sinon.stub(AxiosCookieJar, 'wrapper').returns({
+                post: sinon.stub().resolves(postResponse),
+            } as unknown as AxiosInstance);
+            runner = new WebServerRunner(
+                config,
+                CredentialDiggerRuntime.WebServer,
+            );
+            runner.setCurrentFile(currentFile);
+            result = await runner.scan();
+            const message = `Certificate validation flag is set to ${config.certificateValidation}`;
+            expect(warnStub.callCount).to.be.eql(1);
+            expect(warnStub.lastCall.args[0]).to.be.eql(message);
+            expect(httpWrapperStub.callCount).to.be.eql(1);
+            expect(loggerInstance.callCount).to.be.eql(4);
+            expect(debugStub.callCount).to.be.eql(3);
+            expect(result).to.be.eql(rawDiscoveries.length);
+        });
+
+        it('Should successfully scan a file: certificate validation is not set defaults to true', async function () {
+            config = generateCredentialDiggerRunnerConfig(
+                CredentialDiggerRuntime.WebServer,
+            ).webserver as CredentialDiggerRunnerWebServerConfig;
+            delete config.envFile;
+            delete config.certificateValidation;
+            config.host = faker.internet.url({ protocol: 'https' });
+            const postResponse = {
+                status: HttpStatusCode.Ok,
+                headers: {
+                    'content-type': 'application/json',
+                },
+                data: rawDiscoveries,
+            };
+            httpWrapperStub = sinon.stub(AxiosCookieJar, 'wrapper').returns({
+                post: sinon.stub().resolves(postResponse),
+            } as unknown as AxiosInstance);
+            runner = new WebServerRunner(
+                config,
+                CredentialDiggerRuntime.WebServer,
+            );
+            runner.setCurrentFile(currentFile);
+            result = await runner.scan();
+            const message = `Certificate validation flag is not set defaulting to true`;
+            expect(warnStub.callCount).to.be.eql(1);
+            expect(warnStub.lastCall.args[0]).to.be.eql(message);
+            expect(httpWrapperStub.callCount).to.be.eql(1);
+            expect(loggerInstance.callCount).to.be.eql(4);
             expect(debugStub.callCount).to.be.eql(3);
             expect(result).to.be.eql(rawDiscoveries.length);
         });

@@ -168,6 +168,11 @@
                         "envFile": {
                             "type": "string",
                             "description": "Specifies the path to an environment file"
+                        },
+                        "certificateValidation": {
+                            "type": "boolean",
+                            "default": true,
+                            "description": "Specifies whether to validate the Credential Digger webserver certificate"
                         }
                     }
                 }
