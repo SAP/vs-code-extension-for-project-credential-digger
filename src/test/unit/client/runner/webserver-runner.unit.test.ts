@@ -2,14 +2,13 @@ import fs from 'fs';
 import { TextDocument } from 'vscode';
 
 import { faker } from '@faker-js/faker';
-import {
+import axios, {
     AxiosError,
     AxiosInstance,
     AxiosResponse,
     HttpStatusCode,
     isAxiosError,
 } from 'axios';
-import * as AxiosCookieJar from 'axios-cookiejar-support';
 import { expect } from 'chai';
 import { afterEach, beforeEach, describe, it } from 'mocha';
 import * as sinon from 'sinon';
@@ -33,7 +32,8 @@ describe('WebserverRunner  - Unit Tests', function () {
     let config: CredentialDiggerRunnerWebServerConfig;
     let rawDiscoveries: RawDiscovery[];
     let runner: WebServerRunner;
-    let httpWrapperStub: sinon.SinonStub;
+    let axiosInstanceStub: sinon.SinonStub;
+    let postStub: sinon.SinonStub;
     let loggerInstance: sinon.SinonStub;
     let debugStub: sinon.SinonStub;
     let warnStub: sinon.SinonStub;
@@ -43,12 +43,14 @@ describe('WebserverRunner  - Unit Tests', function () {
         currentFile = generateCurrentFile(rawDiscoveries);
         debugStub = sinon.stub().returns(undefined);
         warnStub = sinon.stub().returns(undefined);
-        loggerInstance = sinon
-            .stub(LoggerFactory, 'getInstance')
-            .returns({
-                debug: debugStub,
-                warn: warnStub,
-            } as unknown as LoggerFactory);
+        loggerInstance = sinon.stub(LoggerFactory, 'getInstance').returns({
+            debug: debugStub,
+            warn: warnStub,
+        } as unknown as LoggerFactory);
+        postStub = sinon.stub().resolves();
+        axiosInstanceStub = sinon.stub(axios, 'create').returns({
+            post: postStub,
+        } as unknown as AxiosInstance);
     });
 
     afterEach(() => {
@@ -58,11 +60,7 @@ describe('WebserverRunner  - Unit Tests', function () {
     describe('scan - Unit Tests', function () {
         let result: number;
 
-        it('Should successfully scan a file: secure mode disabled', async function () {
-            config = generateCredentialDiggerRunnerConfig(
-                CredentialDiggerRuntime.WebServer,
-            ).webserver as CredentialDiggerRunnerWebServerConfig;
-            delete config.envFile;
+        beforeEach(() => {
             const postResponse = {
                 status: HttpStatusCode.Ok,
                 headers: {
@@ -70,16 +68,22 @@ describe('WebserverRunner  - Unit Tests', function () {
                 },
                 data: rawDiscoveries,
             };
-            httpWrapperStub = sinon.stub(AxiosCookieJar, 'wrapper').returns({
-                post: sinon.stub().resolves(postResponse),
-            } as unknown as AxiosInstance);
+            postStub.onCall(0).resolves(postResponse);
+        });
+
+        it('Should successfully scan a file: secure mode disabled', async function () {
+            config = generateCredentialDiggerRunnerConfig(
+                CredentialDiggerRuntime.WebServer,
+            ).webserver as CredentialDiggerRunnerWebServerConfig;
+            delete config.envFile;
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
             );
             runner.setCurrentFile(currentFile);
             result = await runner.scan();
-            expect(httpWrapperStub.callCount).to.be.eql(1);
+            expect(axiosInstanceStub.callCount).to.be.eql(1);
+            expect(postStub.callCount).to.be.eql(1);
             expect(loggerInstance.callCount).to.be.eql(3);
             expect(debugStub.callCount).to.be.eql(3);
             expect(result).to.be.eql(rawDiscoveries.length);
@@ -89,16 +93,6 @@ describe('WebserverRunner  - Unit Tests', function () {
             config = generateCredentialDiggerRunnerConfig(
                 CredentialDiggerRuntime.WebServer,
             ).webserver as CredentialDiggerRunnerWebServerConfig;
-            const postResponse = {
-                status: HttpStatusCode.Ok,
-                headers: {
-                    'content-type': 'application/json',
-                },
-                data: rawDiscoveries,
-            };
-            httpWrapperStub = sinon.stub(AxiosCookieJar, 'wrapper').returns({
-                post: sinon.stub().resolves(postResponse),
-            } as unknown as AxiosInstance);
             const connectStub = sinon
                 .stub(WebServerRunner.prototype, 'connect')
                 .resolves();
@@ -110,8 +104,9 @@ describe('WebserverRunner  - Unit Tests', function () {
             runner.setCurrentFile(currentFile);
             result = await runner.scan();
             expect(existsSyncStub.callCount).to.be.eql(1);
-            expect(httpWrapperStub.callCount).to.be.eql(1);
+            expect(axiosInstanceStub.callCount).to.be.eql(1);
             expect(connectStub.callCount).to.be.eql(1);
+            expect(postStub.callCount).to.be.eql(1);
             expect(loggerInstance.callCount).to.be.eql(3);
             expect(debugStub.callCount).to.be.eql(3);
             expect(result).to.be.eql(rawDiscoveries.length);
@@ -123,16 +118,6 @@ describe('WebserverRunner  - Unit Tests', function () {
             ).webserver as CredentialDiggerRunnerWebServerConfig;
             delete config.envFile;
             config.host = faker.internet.url({ protocol: 'https' });
-            const postResponse = {
-                status: HttpStatusCode.Ok,
-                headers: {
-                    'content-type': 'application/json',
-                },
-                data: rawDiscoveries,
-            };
-            httpWrapperStub = sinon.stub(AxiosCookieJar, 'wrapper').returns({
-                post: sinon.stub().resolves(postResponse),
-            } as unknown as AxiosInstance);
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
@@ -142,7 +127,8 @@ describe('WebserverRunner  - Unit Tests', function () {
             const message = `Certificate validation flag is set to ${config.certificateValidation}`;
             expect(warnStub.callCount).to.be.eql(1);
             expect(warnStub.lastCall.args[0]).to.be.eql(message);
-            expect(httpWrapperStub.callCount).to.be.eql(1);
+            expect(axiosInstanceStub.callCount).to.be.eql(1);
+            expect(postStub.callCount).to.be.eql(1);
             expect(loggerInstance.callCount).to.be.eql(4);
             expect(debugStub.callCount).to.be.eql(3);
             expect(result).to.be.eql(rawDiscoveries.length);
@@ -155,16 +141,6 @@ describe('WebserverRunner  - Unit Tests', function () {
             delete config.envFile;
             delete config.certificateValidation;
             config.host = faker.internet.url({ protocol: 'https' });
-            const postResponse = {
-                status: HttpStatusCode.Ok,
-                headers: {
-                    'content-type': 'application/json',
-                },
-                data: rawDiscoveries,
-            };
-            httpWrapperStub = sinon.stub(AxiosCookieJar, 'wrapper').returns({
-                post: sinon.stub().resolves(postResponse),
-            } as unknown as AxiosInstance);
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
@@ -174,7 +150,8 @@ describe('WebserverRunner  - Unit Tests', function () {
             const message = `Certificate validation flag is not set defaulting to true`;
             expect(warnStub.callCount).to.be.eql(1);
             expect(warnStub.lastCall.args[0]).to.be.eql(message);
-            expect(httpWrapperStub.callCount).to.be.eql(1);
+            expect(axiosInstanceStub.callCount).to.be.eql(1);
+            expect(postStub.callCount).to.be.eql(1);
             expect(loggerInstance.callCount).to.be.eql(4);
             expect(debugStub.callCount).to.be.eql(3);
             expect(result).to.be.eql(rawDiscoveries.length);
@@ -192,16 +169,15 @@ describe('WebserverRunner  - Unit Tests', function () {
                 },
                 data: [],
             };
-            httpWrapperStub = sinon.stub(AxiosCookieJar, 'wrapper').returns({
-                post: sinon.stub().resolves(postResponse),
-            } as unknown as AxiosInstance);
+            postStub.onCall(0).resolves(postResponse);
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
             );
             runner.setCurrentFile(currentFile);
             result = await runner.scan();
-            expect(httpWrapperStub.callCount).to.be.eql(1);
+            expect(axiosInstanceStub.callCount).to.be.eql(1);
+            expect(postStub.callCount).to.be.eql(1);
             expect(loggerInstance.callCount).to.be.eql(3);
             expect(debugStub.callCount).to.be.eql(3);
             expect(result).to.be.eql(0);
@@ -219,9 +195,7 @@ describe('WebserverRunner  - Unit Tests', function () {
                 },
                 data: rawDiscoveries,
             };
-            httpWrapperStub = sinon.stub(AxiosCookieJar, 'wrapper').returns({
-                post: sinon.stub().resolves(postResponse),
-            } as unknown as AxiosInstance);
+            postStub.onCall(0).resolves(postResponse);
             const message = `Failed to scan file ${currentFile.uri.fsPath} on ${config.host}`;
             runner = new WebServerRunner(
                 config,
@@ -234,7 +208,8 @@ describe('WebserverRunner  - Unit Tests', function () {
                 expect(err).to.be.not.null;
                 expect((err as Error).message).to.be.eql(message);
             } finally {
-                expect(httpWrapperStub.callCount).to.be.eql(1);
+                expect(axiosInstanceStub.callCount).to.be.eql(1);
+                expect(postStub.callCount).to.be.eql(1);
                 expect(debugStub.callCount).to.be.eql(2);
             }
         });
@@ -255,9 +230,7 @@ describe('WebserverRunner  - Unit Tests', function () {
                 },
                 data: rawDiscoveries,
             };
-            httpWrapperStub = sinon.stub(AxiosCookieJar, 'wrapper').returns({
-                post: sinon.stub().resolves(postResponse),
-            } as unknown as AxiosInstance);
+            postStub.onCall(0).resolves(postResponse);
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
@@ -269,7 +242,8 @@ describe('WebserverRunner  - Unit Tests', function () {
             rawDiscoveries.forEach((d) => {
                 discoveries.push(convertRawToDiscovery(d));
             });
-            expect(httpWrapperStub.callCount).to.be.eql(1);
+            expect(axiosInstanceStub.callCount).to.be.eql(1);
+            expect(postStub.callCount).to.be.eql(1);
             expect(loggerInstance.callCount).to.be.eql(3);
             expect(debugStub.callCount).to.be.eql(3);
             expect(count).to.be.eql(rawDiscoveries.length);
@@ -300,16 +274,15 @@ describe('WebserverRunner  - Unit Tests', function () {
                 undefined,
                 postResponse,
             );
-            httpWrapperStub = sinon.stub(AxiosCookieJar, 'wrapper').returns({
-                post: sinon.stub().throws(axiosError),
-            } as unknown as AxiosInstance);
+            postStub.onCall(0).throws(axiosError);
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
             );
             runner.validateAndSetRules(rules);
             result = await runner.addRules();
-            expect(httpWrapperStub.callCount).to.be.eql(1);
+            expect(axiosInstanceStub.callCount).to.be.eql(1);
+            expect(postStub.callCount).to.be.eql(1);
             expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
             expect(result).to.be.eql(true);
@@ -329,9 +302,7 @@ describe('WebserverRunner  - Unit Tests', function () {
                 undefined,
                 postResponse,
             );
-            httpWrapperStub = sinon.stub(AxiosCookieJar, 'wrapper').returns({
-                post: sinon.stub().throws(axiosError),
-            } as unknown as AxiosInstance);
+            postStub.onCall(0).throws(axiosError);
             const connectStub = sinon
                 .stub(WebServerRunner.prototype, 'connect')
                 .resolves();
@@ -343,7 +314,8 @@ describe('WebserverRunner  - Unit Tests', function () {
             runner.validateAndSetRules(rules);
             result = await runner.addRules();
             expect(existsSyncStub.callCount).to.be.eql(1);
-            expect(httpWrapperStub.callCount).to.be.eql(1);
+            expect(axiosInstanceStub.callCount).to.be.eql(1);
+            expect(postStub.callCount).to.be.eql(1);
             expect(connectStub.callCount).to.be.eql(1);
             expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
@@ -365,9 +337,7 @@ describe('WebserverRunner  - Unit Tests', function () {
                 undefined,
                 postResponse,
             );
-            httpWrapperStub = sinon.stub(AxiosCookieJar, 'wrapper').returns({
-                post: sinon.stub().throws(axiosError),
-            } as unknown as AxiosInstance);
+            postStub.onCall(0).throws(axiosError);
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
@@ -382,7 +352,8 @@ describe('WebserverRunner  - Unit Tests', function () {
                     postResponse,
                 );
             } finally {
-                expect(httpWrapperStub.callCount).to.be.eql(1);
+                expect(axiosInstanceStub.callCount).to.be.eql(1);
+                expect(postStub.callCount).to.be.eql(1);
                 expect(loggerInstance.callCount).to.be.eql(2);
                 expect(debugStub.callCount).to.be.eql(2);
             }
@@ -394,9 +365,7 @@ describe('WebserverRunner  - Unit Tests', function () {
             ).webserver as CredentialDiggerRunnerWebServerConfig;
             delete config.envFile;
             const error = new Error('Failed to add rules');
-            httpWrapperStub = sinon.stub(AxiosCookieJar, 'wrapper').returns({
-                post: sinon.stub().throws(error),
-            } as unknown as AxiosInstance);
+            postStub.onCall(0).throws(error);
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
@@ -408,7 +377,8 @@ describe('WebserverRunner  - Unit Tests', function () {
                 expect(err).to.be.not.null;
                 expect(isAxiosError(err)).to.be.false;
             } finally {
-                expect(httpWrapperStub.callCount).to.be.eql(1);
+                expect(axiosInstanceStub.callCount).to.be.eql(1);
+                expect(postStub.callCount).to.be.eql(1);
                 expect(loggerInstance.callCount).to.be.eql(2);
                 expect(debugStub.callCount).to.be.eql(2);
             }
@@ -419,16 +389,14 @@ describe('WebserverRunner  - Unit Tests', function () {
                 CredentialDiggerRuntime.WebServer,
             ).webserver as CredentialDiggerRunnerWebServerConfig;
             delete config.envFile;
-            httpWrapperStub = sinon.stub(AxiosCookieJar, 'wrapper').returns({
-                post: sinon.stub().resolves(),
-            } as unknown as AxiosInstance);
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
             );
             runner.validateAndSetRules(rules);
             result = await runner.addRules();
-            expect(httpWrapperStub.callCount).to.be.eql(1);
+            expect(axiosInstanceStub.callCount).to.be.eql(1);
+            expect(postStub.callCount).to.be.eql(1);
             expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
             expect(result).to.be.false;
@@ -436,7 +404,6 @@ describe('WebserverRunner  - Unit Tests', function () {
     });
 
     describe('connect - Unit Tests', function () {
-        let result: boolean;
         let existsSyncStub: sinon.SinonStub;
 
         beforeEach(() => {
@@ -450,7 +417,6 @@ describe('WebserverRunner  - Unit Tests', function () {
             ).webserver as CredentialDiggerRunnerWebServerConfig;
             const postResponse = {
                 status: HttpStatusCode.Found,
-                config: { jar: faker.string.uuid() },
             } as unknown as AxiosResponse;
             const axiosError = new AxiosError(
                 'Connected',
@@ -459,19 +425,17 @@ describe('WebserverRunner  - Unit Tests', function () {
                 undefined,
                 postResponse,
             );
-            httpWrapperStub = sinon.stub(AxiosCookieJar, 'wrapper').returns({
-                post: sinon.stub().throws(axiosError),
-            } as unknown as AxiosInstance);
+            postStub.onCall(0).throws(axiosError);
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
             );
-            result = await runner.connect();
+            await runner.connect();
             expect(existsSyncStub.callCount).to.be.eql(1);
-            expect(httpWrapperStub.callCount).to.be.eql(1);
+            expect(axiosInstanceStub.callCount).to.be.eql(1);
+            expect(postStub.callCount).to.be.eql(1);
             expect(loggerInstance.callCount).to.be.eql(3);
             expect(debugStub.callCount).to.be.eql(3);
-            expect(result).to.be.eql(true);
         });
 
         it('Should not connect: secure mode disabled', async function () {
@@ -489,21 +453,17 @@ describe('WebserverRunner  - Unit Tests', function () {
                 undefined,
                 postResponse,
             );
-            const postStub = sinon.stub().throws(axiosError);
-            httpWrapperStub = sinon
-                .stub(AxiosCookieJar, 'wrapper')
-                .returns({ post: postStub } as unknown as AxiosInstance);
+            postStub.onCall(0).throws(axiosError);
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
             );
-            result = await runner.connect();
+            await runner.connect();
             expect(existsSyncStub.callCount).to.be.eql(0);
-            expect(httpWrapperStub.callCount).to.be.eql(1);
+            expect(axiosInstanceStub.callCount).to.be.eql(1);
             expect(postStub.callCount).to.be.eql(0);
             expect(loggerInstance.callCount).to.be.eql(0);
             expect(debugStub.callCount).to.be.eql(0);
-            expect(result).to.be.eql(true);
         });
 
         it('Should fail to connect: invalid server response', async function () {
@@ -520,22 +480,21 @@ describe('WebserverRunner  - Unit Tests', function () {
                 undefined,
                 postResponse,
             );
-            httpWrapperStub = sinon.stub(AxiosCookieJar, 'wrapper').returns({
-                post: sinon.stub().throws(axiosError),
-            } as unknown as AxiosInstance);
+            postStub.onCall(0).throws(axiosError);
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
             );
             try {
-                result = await runner.connect();
+                await runner.connect();
             } catch (err) {
                 expect(err).to.be.not.null;
                 expect(isAxiosError(err)).to.be.true;
                 expect((err as AxiosError).response).to.be.eql(postResponse);
             } finally {
                 expect(existsSyncStub.callCount).to.be.eql(1);
-                expect(httpWrapperStub.callCount).to.be.eql(1);
+                expect(axiosInstanceStub.callCount).to.be.eql(1);
+                expect(postStub.callCount).to.be.eql(1);
                 expect(loggerInstance.callCount).to.be.eql(2);
                 expect(debugStub.callCount).to.be.eql(2);
             }
@@ -555,22 +514,21 @@ describe('WebserverRunner  - Unit Tests', function () {
                 undefined,
                 postResponse,
             );
-            httpWrapperStub = sinon.stub(AxiosCookieJar, 'wrapper').returns({
-                post: sinon.stub().throws(axiosError),
-            } as unknown as AxiosInstance);
+            postStub.onCall(0).throws(axiosError);
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
             );
             try {
-                result = await runner.connect();
+                await runner.connect();
             } catch (err) {
                 expect(err).to.be.not.null;
                 expect(isAxiosError(err)).to.be.true;
                 expect((err as AxiosError).response).to.be.eql(postResponse);
             } finally {
                 expect(existsSyncStub.callCount).to.be.eql(1);
-                expect(httpWrapperStub.callCount).to.be.eql(1);
+                expect(axiosInstanceStub.callCount).to.be.eql(1);
+                expect(postStub.callCount).to.be.eql(1);
                 expect(loggerInstance.callCount).to.be.eql(2);
                 expect(debugStub.callCount).to.be.eql(2);
             }
@@ -580,15 +538,12 @@ describe('WebserverRunner  - Unit Tests', function () {
             config = generateCredentialDiggerRunnerConfig(
                 CredentialDiggerRuntime.WebServer,
             ).webserver as CredentialDiggerRunnerWebServerConfig;
-            httpWrapperStub = sinon.stub(AxiosCookieJar, 'wrapper').returns({
-                post: sinon.stub().resolves(),
-            } as unknown as AxiosInstance);
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
             );
             try {
-                result = await runner.connect();
+                await runner.connect();
             } catch (err) {
                 const message = `Failed connect to ${config.host} using the provided credentials stored in ${config.envFile}`;
                 expect(err).to.be.not.null;
@@ -596,7 +551,8 @@ describe('WebserverRunner  - Unit Tests', function () {
                 expect((err as Error).message).to.be.eql(message);
             } finally {
                 expect(existsSyncStub.callCount).to.be.eql(1);
-                expect(httpWrapperStub.callCount).to.be.eql(1);
+                expect(axiosInstanceStub.callCount).to.be.eql(1);
+                expect(postStub.callCount).to.be.eql(1);
                 expect(loggerInstance.callCount).to.be.eql(1);
                 expect(debugStub.callCount).to.be.eql(1);
             }
