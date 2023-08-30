@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/SAP/vs-code-extension-for-project-credential-digger/compare/v1.0.0...v1.1.0) (2023-08-30)
+
+### Bug Fixes
+
+-   **extension:** cleanup findings on file close event ([4320325](https://github.com/SAP/vs-code-extension-for-project-credential-digger/commit/43203251075691cbfc68fefd63cacd95d712540c))
+-   **webrunner:** fix error axios-cookiejar-support http(s) agent ([#56](https://github.com/SAP/vs-code-extension-for-project-credential-digger/issues/56)) ([3ccb0ab](https://github.com/SAP/vs-code-extension-for-project-credential-digger/commit/3ccb0aba80d214758f0b8b9227dbaf8d38d5558f))
+
 ## [1.0.0](https://github.com/SAP/vs-code-extension-for-project-credential-digger/compare/v0.0.5...v1.0.0) (2023-08-29)
 
 ### Features
