@@ -1,5 +1,4 @@
 import { createReadStream, existsSync } from 'fs';
-import { Agent } from 'node:https';
 import { resolve } from 'path';
 import { TextDocument, Uri } from 'vscode';
 
@@ -9,9 +8,9 @@ import axios, {
     isAxiosError,
     HttpStatusCode,
 } from 'axios';
-import { wrapper } from 'axios-cookiejar-support';
 import * as dotenv from 'dotenv';
 import FormData from 'form-data';
+import { HttpCookieAgent, HttpsCookieAgent } from 'http-cookie-agent/http';
 import { CookieJar } from 'tough-cookie';
 
 import Runner from './runner';
@@ -27,7 +26,6 @@ export default class WebServerRunner extends Runner {
     private discoveries: Discovery[] = [];
     private httpInstance: AxiosInstance;
     private secureConnection = false;
-    private cookies: CookieJar | undefined;
 
     public constructor(
         config: CredentialDiggerRunnerWebServerConfig,
@@ -35,8 +33,9 @@ export default class WebServerRunner extends Runner {
     ) {
         super(config, runnerType);
         this.config = this.config as CredentialDiggerRunnerWebServerConfig;
-        // Create httpsAgent
-        let httpsAgent;
+        // Create agents
+        let httpsAgent, httpAgent;
+        const jar = new CookieJar();
         if (this.config.host.startsWith('https')) {
             let certificateValidation = true;
             if (isNullOrUndefined(this.config.certificateValidation)) {
@@ -50,20 +49,21 @@ export default class WebServerRunner extends Runner {
                     `Certificate validation flag is set to ${certificateValidation}`,
                 );
             }
-            httpsAgent = new Agent({
+            httpsAgent = new HttpsCookieAgent({
+                cookies: { jar },
                 rejectUnauthorized: certificateValidation,
             });
+        } else {
+            httpAgent = new HttpCookieAgent({ cookies: { jar } });
         }
         // Create httpInstance
-        this.httpInstance = wrapper(
-            axios.create({
-                baseURL: this.config.host,
-                timeout: 120000, // 120s
-                jar: new CookieJar(),
-                maxRedirects: 0, // Disable
-                httpsAgent,
-            }),
-        );
+        this.httpInstance = axios.create({
+            baseURL: this.config.host,
+            timeout: 120000, // 120s
+            maxRedirects: 0, // Disable
+            httpsAgent,
+            httpAgent,
+        });
         // Secure connection
         if (this.config.envFile) {
             this.secureConnection = true;
@@ -76,7 +76,7 @@ export default class WebServerRunner extends Runner {
     public async scan(): Promise<number> {
         this.config = this.config as CredentialDiggerRunnerWebServerConfig;
         // Connect
-        if (this.secureConnection && !this.cookies) {
+        if (this.secureConnection) {
             await this.connect();
         }
         // Call API
@@ -96,7 +96,6 @@ export default class WebServerRunner extends Runner {
         );
         const resp = await this.httpInstance.post('/scan_file', form, {
             headers: form.getHeaders(),
-            jar: this.cookies,
         });
         LoggerFactory.getInstance().debug(
             `${this.getId()}: scan: status code: ${resp.status}`,
@@ -154,7 +153,7 @@ export default class WebServerRunner extends Runner {
     public async addRules(): Promise<boolean> {
         this.config = this.config as CredentialDiggerRunnerWebServerConfig;
         // Connect
-        if (!this.cookies && this.secureConnection) {
+        if (this.secureConnection) {
             await this.connect();
         }
         // Call API
@@ -171,7 +170,6 @@ export default class WebServerRunner extends Runner {
             );
             await this.httpInstance.post('/upload_rule', form, {
                 headers: form.getHeaders(),
-                jar: this.cookies,
             });
         } catch (err) {
             if (!isAxiosError(err)) {
@@ -201,9 +199,9 @@ export default class WebServerRunner extends Runner {
         return false;
     }
 
-    public async connect(): Promise<boolean> {
+    public async connect(): Promise<void> {
         if (!this.secureConnection) {
-            return true;
+            return;
         }
         this.config = this.config as CredentialDiggerRunnerWebServerConfig;
         LoggerFactory.getInstance().debug(
@@ -230,19 +228,17 @@ export default class WebServerRunner extends Runner {
             if (error.response?.status !== HttpStatusCode.Found) {
                 throw err;
             }
-            // Retrieve the cookies to set them for each upcoming request
-            this.cookies = error.response?.config?.jar;
-        }
-        if (!this.cookies) {
-            throw new Error(
-                `Failed connect to ${this.config.host} using the provided credentials stored in ${this.config.envFile}`,
+            LoggerFactory.getInstance().debug(
+                `${this.getId()}: connect: successfully connected to ${
+                    this.config.host
+                } using the provided credentials stored in ${
+                    this.config.envFile
+                }`,
             );
+            return;
         }
-        LoggerFactory.getInstance().debug(
-            `${this.getId()}: connect: successfully connected to ${
-                this.config.host
-            } using the provided credentials stored in ${this.config.envFile}`,
+        throw new Error(
+            `Failed connect to ${this.config.host} using the provided credentials stored in ${this.config.envFile}`,
         );
-        return true;
     }
 }
