@@ -45,15 +45,15 @@ export async function activate(context: ExtensionContext): Promise<void> {
         await scan(context, diagCollection, doc, showErrorOnEmptySettings);
     };
 
-    // Define add rules action
-    const addRulesHandler = async () => {
-        await addRules();
+    const cleanUpHandler = (doc: TextDocument) => {
+        cleanUp(doc, diagCollection);
     };
 
     // Subscribe to open/save document events
     context.subscriptions.push(
         workspace.onDidOpenTextDocument(scanHandler),
         workspace.onDidSaveTextDocument(scanHandler),
+        workspace.onDidCloseTextDocument(cleanUpHandler),
     );
 
     // The commandId has been defined in the package.json file
@@ -66,9 +66,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
     context.subscriptions.push(disposable);
     disposable = commands.registerCommand(
         MetaReaderFactory.getInstance().getExtensionAddRulesCommand(),
-        async () => {
-            await addRulesHandler();
-        },
+        addRules,
     );
     context.subscriptions.push(disposable);
 }
@@ -169,4 +167,11 @@ export async function scanSelectedFile(
     } else {
         window.showErrorMessage('Please select a file to scan');
     }
+}
+
+export function cleanUp(
+    doc: TextDocument,
+    diagCollection: DiagnosticCollection,
+): void {
+    diagCollection.delete(doc.uri);
 }

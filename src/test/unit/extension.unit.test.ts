@@ -25,6 +25,7 @@ import {
 import {
     activate,
     addRules,
+    cleanUp,
     deactivate,
     scan,
     scanSelectedFile,
@@ -432,7 +433,7 @@ describe('Extension - Unit Tests', function () {
             expect(registerCommandStub.callCount).to.be.eql(2);
             expect(getExtensionScanCommandStub.callCount).to.be.eql(1);
             expect(getExtensionAddRulesCommandStub.callCount).to.be.eql(1);
-            expect(context.subscriptions.length).to.be.eql(4);
+            expect(context.subscriptions.length).to.be.eql(5);
         });
 
         it('Should fail to activate the extension: invalid storage', async function () {
@@ -459,6 +460,22 @@ describe('Extension - Unit Tests', function () {
                 expect(existsSyncStub.callCount).to.be.eql(1);
                 expect(mkdirSyncStub.callCount).to.be.eql(1);
             }
+        });
+    });
+
+    describe('cleanUp - Unit Tests', function () {
+        let deleteStub: sinon.SinonStub;
+
+        beforeEach(() => {
+            deleteStub = sinon.stub().returns(null);
+            diagCollection = {
+                delete: deleteStub,
+            } as unknown as DiagnosticCollection;
+        });
+
+        it('Should execute cleanup successfully', async function () {
+            cleanUp(currentFile, diagCollection);
+            expect(deleteStub.callCount).to.be.eql(1);
         });
     });
 
