@@ -58,6 +58,12 @@ If your Credential digger instance does not have scanning rules or you want to p
 
 ![add-rules](images/credential-digger-add-rules.gif)
 
+### Exclude files
+
+If you would like to exclude some files from being scanned you need to configure the extension by providing the patterns to to filter out
+
+![exclude-files](images/credential-digger-exclude-files.gif)
+
 ## Support, Feedback, Contributing
 
 This project is open to feature requests/suggestions, bug reports etc. via [GitHub issues](https://github.com/SAP/vs-code-extension-for-project-credential-digger/issues). Contribution and feedback are encouraged and always welcome. For more information about how to contribute, the project structure, as well as additional contribution information, see our [Contribution Guidelines](CONTRIBUTING.md).
