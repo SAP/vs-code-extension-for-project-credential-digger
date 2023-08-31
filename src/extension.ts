@@ -1,5 +1,7 @@
 import { existsSync, mkdirSync, statSync } from 'fs';
+import { relative } from 'path';
 import {
+    ConfigurationChangeEvent,
     DiagnosticCollection,
     ExtensionContext,
     TextDocument,
@@ -9,11 +11,13 @@ import {
     workspace,
 } from 'vscode';
 
+import ignore from 'ignore';
+
 import LoggerFactory from './lib/logger-factory';
 import MetaReaderFactory from './lib/meta-reader-factory';
 import RunnerFactory from './lib/runner-factory';
 import { cloneObject, isSettingsConfigured } from './lib/utils';
-import { ExtensionConfig } from './types/config';
+import { CONFIGURATION_NAME, ExtensionConfig } from './types/config';
 
 // Called when the extension is activated
 export async function activate(context: ExtensionContext): Promise<void> {
@@ -37,23 +41,40 @@ export async function activate(context: ExtensionContext): Promise<void> {
         `${MetaReaderFactory.getInstance().getExtensionDisplayName()} is now active!`,
     );
 
+    // Set filter pattern
+    const settings = workspace
+        .getConfiguration()
+        .get<ExtensionConfig>(CONFIGURATION_NAME);
+    let filterPattern: string[] = settings?.filterPattern ?? [];
+    LoggerFactory.getInstance().warn(`Filter pattern: ${filterPattern}`);
+    const updateFilterPatternHandler = (event: ConfigurationChangeEvent) => {
+        filterPattern = getFilterPattern(event, filterPattern);
+    };
+
     // Define scan action
     const scanHandler = async (
         doc: TextDocument,
         showErrorOnEmptySettings = false,
     ) => {
-        await scan(context, diagCollection, doc, showErrorOnEmptySettings);
+        await scan(
+            context,
+            diagCollection,
+            doc,
+            filterPattern,
+            showErrorOnEmptySettings,
+        );
     };
 
     const cleanUpHandler = (doc: TextDocument) => {
         cleanUp(doc, diagCollection);
     };
 
-    // Subscribe to open/save document events
+    // Subscribe to open/save/close document, configuration change events
     context.subscriptions.push(
         workspace.onDidOpenTextDocument(scanHandler),
         workspace.onDidSaveTextDocument(scanHandler),
         workspace.onDidCloseTextDocument(cleanUpHandler),
+        workspace.onDidChangeConfiguration(updateFilterPatternHandler),
     );
 
     // The commandId has been defined in the package.json file
@@ -80,14 +101,19 @@ export async function scan(
     context: ExtensionContext,
     diagCollection: DiagnosticCollection,
     doc: TextDocument,
+    fPattern: string[],
     showErrorOnEmptySettings = false,
 ): Promise<void> {
+    // Ignored?
+    if (isIgnored(doc.uri.fsPath, fPattern)) {
+        return;
+    }
     // Clone
     const currentDoc = cloneObject(doc);
     // Read settings
     let settings = workspace
         .getConfiguration()
-        .get<ExtensionConfig>('credentialDigger');
+        .get<ExtensionConfig>(CONFIGURATION_NAME);
     if (!isSettingsConfigured(settings)) {
         if (showErrorOnEmptySettings) {
             window.showErrorMessage(
@@ -132,7 +158,7 @@ export async function addRules(): Promise<void> {
     // Read settings
     let settings = workspace
         .getConfiguration()
-        .get<ExtensionConfig>('credentialDigger');
+        .get<ExtensionConfig>(CONFIGURATION_NAME);
     if (!isSettingsConfigured(settings)) {
         window.showErrorMessage(
             'Failed to add rules: Credential Digger extension is not configured',
@@ -174,4 +200,26 @@ export function cleanUp(
     diagCollection: DiagnosticCollection,
 ): void {
     diagCollection.delete(doc.uri);
+}
+
+export function getFilterPattern(
+    event: ConfigurationChangeEvent,
+    existingFPattern: string[],
+): string[] {
+    let fPattern: string[] = existingFPattern;
+    const affected = event.affectsConfiguration(
+        `${CONFIGURATION_NAME}.filterPattern`,
+    );
+    if (affected) {
+        const settings = workspace
+            .getConfiguration()
+            .get<ExtensionConfig>(CONFIGURATION_NAME);
+        fPattern = settings?.filterPattern ?? [];
+        LoggerFactory.getInstance().warn(`Filter pattern changed: ${fPattern}`);
+    }
+    return fPattern;
+}
+
+export function isIgnored(location: string, fPattern: string[]): boolean {
+    return ignore().add(fPattern).ignores(relative('/', location));
 }

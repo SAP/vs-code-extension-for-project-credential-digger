@@ -24,6 +24,7 @@ export enum CredentialDiggerRuntime {
 
 export interface ExtensionConfig {
     rules?: string;
+    filterPattern?: string[];
     credentialDiggerRunner: CredentialDiggerRunner;
 }
 
@@ -54,3 +55,5 @@ export type CredentialDiggerRunnerConfig =
     | CredentialDiggerRunnerDockerConfig
     | CredentialDiggerRunnerBinaryConfig
     | CredentialDiggerRunnerWebServerConfig;
+
+export const CONFIGURATION_NAME = 'credentialDigger';
