@@ -116,7 +116,7 @@ export default class WebServerRunner extends Runner {
         LoggerFactory.getInstance().debug(
             `${this.getId()}: scan: successfully sent ${
                 this.currentFile?.uri.fsPath
-            } to ${this.config.host}`,
+            } to ${this.config.host}: ${this.discoveries.length}`,
         );
         // Return
         return this.discoveries.length;
