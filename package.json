@@ -231,7 +231,7 @@
         "@typescript-eslint/parser": "5.53.0",
         "@vscode/test-electron": "2.3.4",
         "@vscode/vsce": "2.19.0",
-        "chai": "4.3.7",
+        "chai": "4.3.8",
         "commitizen": "4.3.0",
         "copyfiles": "2.4.1",
         "cz-conventional-changelog": "3.3.0",
