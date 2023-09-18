@@ -223,7 +223,7 @@
         "@types/lodash": "4.14.195",
         "@types/mocha": "10.0.1",
         "@types/mochawesome": "6.2.1",
-        "@types/node": "18.17.1",
+        "@types/node": "20.6.2",
         "@types/sinon": "10.0.15",
         "@types/tough-cookie": "4.0.2",
         "@types/vscode": "1.76.0",
