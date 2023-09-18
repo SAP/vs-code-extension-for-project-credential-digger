@@ -60,7 +60,7 @@ If your Credential digger instance does not have scanning rules or you want to p
 
 ### Exclude files
 
-If you would like to exclude some files from being scanned you need to configure the extension by providing the patterns to to filter out
+If you would like to exclude some files from being scanned you need to configure the extension by providing the patterns to filter out
 
 ![exclude-files](images/credential-digger-exclude-files.gif)
 
