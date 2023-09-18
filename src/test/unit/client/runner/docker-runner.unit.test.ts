@@ -77,7 +77,7 @@ describe('DockerRunner  - Unit Tests', function () {
                 config.containerId
             }" credentialdigger scan_path "${
                 fileLocation.fsPath
-            }" --models PathModel --force --debug --sqlite "${
+            }" --models PathModel PasswordModel --force --debug --sqlite "${
                 config.databaseConfig.sqlite?.filename
             }"`;
             expect(loggerInstance.callCount).to.be.eql(2);
@@ -108,7 +108,7 @@ describe('DockerRunner  - Unit Tests', function () {
                 config.containerId
             }" credentialdigger scan_path "${
                 fileLocation.fsPath
-            }" --models PathModel --force --debug`;
+            }" --models PathModel PasswordModel --force --debug`;
             expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
             expect(cmdShellExecStub.callCount).to.be.eql(1);

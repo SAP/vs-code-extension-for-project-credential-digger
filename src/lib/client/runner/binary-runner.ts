@@ -20,7 +20,7 @@ export default class BinaryRunner extends Runner {
     public async scan(): Promise<number> {
         this.config = this.config as CredentialDiggerRunnerBinaryConfig;
         // Prepare scan command
-        let cmd = `${this.config.path} scan_path "${this.fileLocation.fsPath}" --models PathModel --force --debug`;
+        let cmd = `${this.config.path} scan_path "${this.fileLocation.fsPath}" --models PathModel PasswordModel --force --debug`;
         if (this.config.databaseConfig.type === DbType.SQLite) {
             cmd += ` --sqlite "${this.config.databaseConfig.sqlite?.filename}"`;
         }

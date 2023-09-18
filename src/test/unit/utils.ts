@@ -31,7 +31,10 @@ export function generateRawDiscovery(lineNumber?: number): RawDiscovery {
 export function generateDiscoveries(count: number): Discovery[] {
     const discoveries = [];
     for (let x = 0; x < count; x++) {
-        discoveries.push(convertRawToDiscovery(generateRawDiscovery(x + 1)));
+        const d = convertRawToDiscovery(generateRawDiscovery(x + 1), true);
+        if (d) {
+            discoveries.push(d);
+        }
     }
     return discoveries;
 }

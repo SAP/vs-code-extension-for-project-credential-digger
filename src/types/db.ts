@@ -13,6 +13,7 @@ export interface Discovery {
 
 export enum State {
     New = 'new',
+    FalsePositive = 'false_positive',
 }
 
 export interface Rule {

@@ -38,7 +38,7 @@ export default class DockerRunner extends Runner {
         );
 
         // Scan
-        let scanCmd = `docker exec "${this.config.containerId}" credentialdigger scan_path "${this.fileLocation.fsPath}" --models PathModel --force --debug`;
+        let scanCmd = `docker exec "${this.config.containerId}" credentialdigger scan_path "${this.fileLocation.fsPath}" --models PathModel PasswordModel --force --debug`;
         if (this.config.databaseConfig.type === DbType.SQLite) {
             scanCmd += ` --sqlite "${this.config.databaseConfig.sqlite?.filename}"`;
         }
