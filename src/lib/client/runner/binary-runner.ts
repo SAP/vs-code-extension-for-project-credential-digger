@@ -24,9 +24,9 @@ export default class BinaryRunner extends Runner {
         if (this.config.databaseConfig.type === DbType.SQLite) {
             cmd += ` --sqlite "${this.config.databaseConfig.sqlite?.filename}"`;
         }
-        LoggerFactory.getInstance().debug(
-            `${this.getId()}: scan: command: ${cmd}`,
-        );
+        LoggerFactory.getInstance().debug(`scan: command: ${cmd}`, {
+            correlationId: this.getId(),
+        });
         // Trigger
         const cmdShellExec = new ShellExecution(cmd);
         const triggerTask = new Task(
@@ -42,9 +42,9 @@ export default class BinaryRunner extends Runner {
             cmdShellExec,
         );
         const exitCode = await executeTask(triggerTask);
-        LoggerFactory.getInstance().debug(
-            `${this.getId()}: scan: exit code: ${exitCode}`,
-        );
+        LoggerFactory.getInstance().debug(`scan: exit code: ${exitCode}`, {
+            correlationId: this.getId(),
+        });
         return exitCode ?? 0;
     }
 
@@ -62,9 +62,9 @@ export default class BinaryRunner extends Runner {
         if (this.config.databaseConfig.type === DbType.SQLite) {
             cmd += ` --sqlite "${this.config.databaseConfig.sqlite?.filename}"`;
         }
-        LoggerFactory.getInstance().debug(
-            `${this.getId()}: getDiscoveries: command: ${cmd}`,
-        );
+        LoggerFactory.getInstance().debug(`getDiscoveries: command: ${cmd}`, {
+            correlationId: this.getId(),
+        });
         // Trigger
         const cmdShellExec = new ShellExecution(cmd);
         const triggerTask = new Task(
@@ -81,7 +81,8 @@ export default class BinaryRunner extends Runner {
         );
         const exitCode = await executeTask(triggerTask);
         LoggerFactory.getInstance().debug(
-            `${this.getId()}: getDiscoveries: exit code: ${exitCode}`,
+            `getDiscoveries: exit code: ${exitCode}`,
+            { correlationId: this.getId() },
         );
         if (exitCode && exitCode > 0) {
             // Parse result file
@@ -124,9 +125,9 @@ export default class BinaryRunner extends Runner {
         } else if (this.config.databaseConfig.type === DbType.Postgres) {
             cmd += ` --dotenv "${this.config.databaseConfig.postgres?.envFile}"`;
         }
-        LoggerFactory.getInstance().debug(
-            `${this.getId()}: addRules: command: ${cmd}`,
-        );
+        LoggerFactory.getInstance().debug(`addRules: command: ${cmd}`, {
+            correlationId: this.getId(),
+        });
         // Trigger
         const cmdShellExec = new ShellExecution(cmd);
         const triggerTask = new Task(
@@ -142,9 +143,9 @@ export default class BinaryRunner extends Runner {
             cmdShellExec,
         );
         const exitCode = await executeTask(triggerTask);
-        LoggerFactory.getInstance().debug(
-            `${this.getId()}: addRules: exit code: ${exitCode}`,
-        );
+        LoggerFactory.getInstance().debug(`addRules: exit code: ${exitCode}`, {
+            correlationId: this.getId(),
+        });
         return exitCode === 0;
     }
 

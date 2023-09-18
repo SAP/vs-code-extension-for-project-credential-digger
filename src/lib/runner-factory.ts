@@ -24,24 +24,30 @@ import {
 export default class RunnerFactory {
     private runner: Runner;
 
-    private constructor(runnerConfig: CredentialDiggerRunner) {
+    private constructor(
+        runnerConfig: CredentialDiggerRunner,
+        correlationId: string,
+    ) {
         switch (runnerConfig.type) {
             case CredentialDiggerRuntime.Docker:
                 this.runner = new DockerRunner(
                     runnerConfig.docker as CredentialDiggerRunnerDockerConfig,
                     runnerConfig.type,
+                    correlationId,
                 );
                 break;
             case CredentialDiggerRuntime.Binary:
                 this.runner = new BinaryRunner(
                     runnerConfig.binary as CredentialDiggerRunnerBinaryConfig,
                     runnerConfig.type,
+                    correlationId,
                 );
                 break;
             case CredentialDiggerRuntime.WebServer:
                 this.runner = new WebServerRunner(
                     runnerConfig.webserver as CredentialDiggerRunnerWebServerConfig,
                     runnerConfig.type,
+                    correlationId,
                 );
                 break;
             default:
@@ -51,8 +57,9 @@ export default class RunnerFactory {
 
     public static getInstance(
         runnerConfig: CredentialDiggerRunner,
+        correlationId: string,
     ): RunnerFactory {
-        return new RunnerFactory(runnerConfig);
+        return new RunnerFactory(runnerConfig, correlationId);
     }
 
     public async scan(
@@ -62,9 +69,10 @@ export default class RunnerFactory {
     ) {
         this.runner.setCurrentFile(currentFile);
         LoggerFactory.getInstance().debug(
-            `${this.getId()}: scan: start scanning file ${
+            `scan: start scanning file ${
                 this.runner.getCurrentFile().uri.fsPath
             }`,
+            { correlationId: this.getId() },
         );
         // Clear credential digger findings for current file
         diagCollection.delete(this.runner.getCurrentFile().uri);
@@ -108,9 +116,10 @@ export default class RunnerFactory {
         await this.runner.cleanup();
         // Log end
         LoggerFactory.getInstance().debug(
-            `${this.getId()}: scan: end scanning file ${
+            `scan: end scanning file ${
                 this.runner.getCurrentFile().uri.fsPath
             }`,
+            { correlationId: this.getId() },
         );
     }
 
@@ -119,9 +128,9 @@ export default class RunnerFactory {
     }
 
     public async addRules(rules: string) {
-        LoggerFactory.getInstance().debug(
-            `${this.getId()}: addRules: start adding rules`,
-        );
+        LoggerFactory.getInstance().debug(`addRules: start adding rules`, {
+            correlationId: this.getId(),
+        });
         // Validate & set rules
         this.runner.validateAndSetRules(rules);
         // Add rules
@@ -136,8 +145,8 @@ export default class RunnerFactory {
             );
         }
         // Log end
-        LoggerFactory.getInstance().debug(
-            `${this.getId()}: addRules: end adding rules`,
-        );
+        LoggerFactory.getInstance().debug(`addRules: end adding rules`, {
+            correlationId: this.getId(),
+        });
     }
 }

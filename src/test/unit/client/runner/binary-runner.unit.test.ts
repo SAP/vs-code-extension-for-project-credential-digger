@@ -61,7 +61,11 @@ describe('BinaryRunner  - Unit Tests', function () {
             executeTaskStub = sinon
                 .stub(Utils, 'executeTask')
                 .resolves(discoveries.length);
-            runner = new BinaryRunner(config, CredentialDiggerRuntime.Binary);
+            runner = new BinaryRunner(
+                config,
+                CredentialDiggerRuntime.Binary,
+                Utils.generateUniqUuid(),
+            );
             runner.setCurrentFile(currentFile);
             result = await runner.scan();
             const expectedCmd = `${config.path} scan_path "${currentFile.uri.fsPath}" --models PathModel PasswordModel --force --debug --sqlite "${config.databaseConfig.sqlite?.filename}"`;
@@ -83,7 +87,11 @@ describe('BinaryRunner  - Unit Tests', function () {
             executeTaskStub = sinon
                 .stub(Utils, 'executeTask')
                 .resolves(discoveries.length);
-            runner = new BinaryRunner(config, CredentialDiggerRuntime.Binary);
+            runner = new BinaryRunner(
+                config,
+                CredentialDiggerRuntime.Binary,
+                Utils.generateUniqUuid(),
+            );
             runner.setCurrentFile(currentFile);
             result = await runner.scan();
             const expectedCmd = `${config.path} scan_path "${currentFile.uri.fsPath}" --models PathModel PasswordModel --force --debug`;
@@ -105,15 +113,22 @@ describe('BinaryRunner  - Unit Tests', function () {
             executeTaskStub = sinon
                 .stub(Utils, 'executeTask')
                 .resolves(undefined);
-            runner = new BinaryRunner(config, CredentialDiggerRuntime.Binary);
+            runner = new BinaryRunner(
+                config,
+                CredentialDiggerRuntime.Binary,
+                Utils.generateUniqUuid(),
+            );
             runner.setCurrentFile(currentFile);
             result = await runner.scan();
             expect(existsSyncStub.called).to.be.true;
             expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
             expect(debugStub.lastCall.args[0]).to.be.eql(
-                `${runner.getId()}: scan: exit code: ${undefined}`,
+                `scan: exit code: ${undefined}`,
             );
+            expect(debugStub.lastCall.args[1]).to.be.eql({
+                correlationId: runner.getId(),
+            });
             expect(cmdShellExecStub.callCount).to.be.eql(1);
             expect(taskStub.callCount).to.be.eql(1);
             expect(executeTaskStub.callCount).to.be.eql(1);
@@ -133,6 +148,7 @@ describe('BinaryRunner  - Unit Tests', function () {
                 runner = new BinaryRunner(
                     config,
                     CredentialDiggerRuntime.Binary,
+                    Utils.generateUniqUuid(),
                 );
                 runner.setCurrentFile(currentFile);
                 await runner.scan();
@@ -178,7 +194,11 @@ describe('BinaryRunner  - Unit Tests', function () {
             executeTaskStub = sinon
                 .stub(Utils, 'executeTask')
                 .resolves(discoveries.length);
-            runner = new BinaryRunner(config, CredentialDiggerRuntime.Binary);
+            runner = new BinaryRunner(
+                config,
+                CredentialDiggerRuntime.Binary,
+                Utils.generateUniqUuid(),
+            );
             runner.setCurrentFile(currentFile);
             result = await runner.getDiscoveries(storagePath);
             const expectedCmd = `${config.path} get_discoveries --with_rules --save "${discoveriesFileLocation.fsPath}" "${currentFile.uri.fsPath}" --sqlite "${config.databaseConfig.sqlite?.filename}"`;
@@ -205,7 +225,11 @@ describe('BinaryRunner  - Unit Tests', function () {
             executeTaskStub = sinon
                 .stub(Utils, 'executeTask')
                 .resolves(discoveries.length);
-            runner = new BinaryRunner(config, CredentialDiggerRuntime.Binary);
+            runner = new BinaryRunner(
+                config,
+                CredentialDiggerRuntime.Binary,
+                Utils.generateUniqUuid(),
+            );
             runner.setCurrentFile(currentFile);
             result = await runner.getDiscoveries(storagePath);
             const expectedCmd = `${config.path} get_discoveries --with_rules --save "${discoveriesFileLocation.fsPath}" "${currentFile.uri.fsPath}"`;
@@ -226,7 +250,11 @@ describe('BinaryRunner  - Unit Tests', function () {
                 generateDBConfig(DbType.Postgres),
             ).binary as CredentialDiggerRunnerBinaryConfig;
             executeTaskStub = sinon.stub(Utils, 'executeTask').resolves(0);
-            runner = new BinaryRunner(config, CredentialDiggerRuntime.Binary);
+            runner = new BinaryRunner(
+                config,
+                CredentialDiggerRuntime.Binary,
+                Utils.generateUniqUuid(),
+            );
             runner.setCurrentFile(currentFile);
             result = await runner.getDiscoveries(storagePath);
             expect(createHashStub.callCount).to.be.eql(1);
@@ -244,7 +272,11 @@ describe('BinaryRunner  - Unit Tests', function () {
                 CredentialDiggerRuntime.Binary,
                 generateDBConfig(DbType.SQLite),
             ).binary as CredentialDiggerRunnerBinaryConfig;
-            runner = new BinaryRunner(config, CredentialDiggerRuntime.Binary);
+            runner = new BinaryRunner(
+                config,
+                CredentialDiggerRuntime.Binary,
+                Utils.generateUniqUuid(),
+            );
             result = await runner.getDiscoveries(storagePath);
             expect(createHashStub.callCount).to.be.eql(0);
             expect(loggerInstance.callCount).to.be.eql(0);
@@ -270,7 +302,11 @@ describe('BinaryRunner  - Unit Tests', function () {
                 generateDBConfig(DbType.SQLite),
             ).binary as CredentialDiggerRunnerBinaryConfig;
             executeTaskStub = sinon.stub(Utils, 'executeTask').resolves(0);
-            runner = new BinaryRunner(config, CredentialDiggerRuntime.Binary);
+            runner = new BinaryRunner(
+                config,
+                CredentialDiggerRuntime.Binary,
+                Utils.generateUniqUuid(),
+            );
             runner.validateAndSetRules(rulesFileLocation);
             result = await runner.addRules();
             const expectedCmd = `${config.path} add_rules "${
@@ -291,7 +327,11 @@ describe('BinaryRunner  - Unit Tests', function () {
                 generateDBConfig(DbType.Postgres),
             ).binary as CredentialDiggerRunnerBinaryConfig;
             executeTaskStub = sinon.stub(Utils, 'executeTask').resolves(0);
-            runner = new BinaryRunner(config, CredentialDiggerRuntime.Binary);
+            runner = new BinaryRunner(
+                config,
+                CredentialDiggerRuntime.Binary,
+                Utils.generateUniqUuid(),
+            );
             runner.validateAndSetRules(rulesFileLocation);
             result = await runner.addRules();
             const expectedCmd = `${config.path} add_rules "${
@@ -312,7 +352,11 @@ describe('BinaryRunner  - Unit Tests', function () {
                 generateDBConfig(DbType.SQLite),
             ).binary as CredentialDiggerRunnerBinaryConfig;
             executeTaskStub = sinon.stub(Utils, 'executeTask').resolves(-9);
-            runner = new BinaryRunner(config, CredentialDiggerRuntime.Binary);
+            runner = new BinaryRunner(
+                config,
+                CredentialDiggerRuntime.Binary,
+                Utils.generateUniqUuid(),
+            );
             runner.validateAndSetRules(rulesFileLocation);
             result = await runner.addRules();
             expect(loggerInstance.callCount).to.be.eql(2);
@@ -328,7 +372,11 @@ describe('BinaryRunner  - Unit Tests', function () {
                 CredentialDiggerRuntime.Binary,
                 generateDBConfig(DbType.SQLite),
             ).binary as CredentialDiggerRunnerBinaryConfig;
-            runner = new BinaryRunner(config, CredentialDiggerRuntime.Binary);
+            runner = new BinaryRunner(
+                config,
+                CredentialDiggerRuntime.Binary,
+                Utils.generateUniqUuid(),
+            );
             result = await runner.addRules();
             expect(loggerInstance.callCount).to.be.eql(0);
             expect(debugStub.callCount).to.be.eql(0);
@@ -343,7 +391,11 @@ describe('BinaryRunner  - Unit Tests', function () {
                 generateDBConfig(DbType.SQLite),
             ).binary as CredentialDiggerRunnerBinaryConfig;
             const message = 'Please provide the path to the rules file';
-            runner = new BinaryRunner(config, CredentialDiggerRuntime.Binary);
+            runner = new BinaryRunner(
+                config,
+                CredentialDiggerRuntime.Binary,
+                Utils.generateUniqUuid(),
+            );
             try {
                 runner.validateAndSetRules('');
             } catch (err) {
@@ -364,7 +416,11 @@ describe('BinaryRunner  - Unit Tests', function () {
             ).binary as CredentialDiggerRunnerBinaryConfig;
             const message =
                 'Please provide the Credential Digger Postgres database configuration';
-            runner = new BinaryRunner(config, CredentialDiggerRuntime.Binary);
+            runner = new BinaryRunner(
+                config,
+                CredentialDiggerRuntime.Binary,
+                Utils.generateUniqUuid(),
+            );
             try {
                 runner.validateAndSetRules(rulesFileLocation);
             } catch (err) {
@@ -385,7 +441,11 @@ describe('BinaryRunner  - Unit Tests', function () {
             ).binary as CredentialDiggerRunnerBinaryConfig;
             const message =
                 'Please provide the Credential Digger Postgres database environment file';
-            runner = new BinaryRunner(config, CredentialDiggerRuntime.Binary);
+            runner = new BinaryRunner(
+                config,
+                CredentialDiggerRuntime.Binary,
+                Utils.generateUniqUuid(),
+            );
             try {
                 runner.validateAndSetRules(rulesFileLocation);
             } catch (err) {
@@ -406,7 +466,11 @@ describe('BinaryRunner  - Unit Tests', function () {
                 CredentialDiggerRuntime.Binary,
                 generateDBConfig(DbType.SQLite),
             ).binary as CredentialDiggerRunnerBinaryConfig;
-            runner = new BinaryRunner(config, CredentialDiggerRuntime.Binary);
+            runner = new BinaryRunner(
+                config,
+                CredentialDiggerRuntime.Binary,
+                Utils.generateUniqUuid(),
+            );
             await runner.cleanup();
         });
     });

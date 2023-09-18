@@ -16,7 +16,11 @@ import ignore from 'ignore';
 import LoggerFactory from './lib/logger-factory';
 import MetaReaderFactory from './lib/meta-reader-factory';
 import RunnerFactory from './lib/runner-factory';
-import { cloneObject, isSettingsConfigured } from './lib/utils';
+import {
+    cloneObject,
+    generateUniqUuid,
+    isSettingsConfigured,
+} from './lib/utils';
 import { CONFIGURATION_NAME, ExtensionConfig } from './types/config';
 
 // Called when the extension is activated
@@ -104,6 +108,7 @@ export async function scan(
     fPattern: string[],
     showErrorOnEmptySettings = false,
 ): Promise<void> {
+    const correlationId = generateUniqUuid();
     // Ignored?
     if (isIgnored(doc.uri.fsPath, fPattern)) {
         return;
@@ -117,16 +122,16 @@ export async function scan(
     if (!isSettingsConfigured(settings)) {
         if (showErrorOnEmptySettings) {
             window.showErrorMessage(
-                `Failed to scan file: Credential Digger extension is not configured`,
+                `Failed to scan file: Credential Digger extension is not configured (${correlationId})`,
             );
         }
         LoggerFactory.getInstance().error(
             `Failed to scan file ${currentDoc.uri.fsPath}: Credential Digger extension is not configured`,
+            { correlationId },
         );
         return;
     }
     settings = settings as ExtensionConfig;
-    let id = null;
     try {
         const stats = statSync(currentDoc.uri.fsPath, {
             throwIfNoEntry: false,
@@ -140,28 +145,29 @@ export async function scan(
         // Scan
         const runner = RunnerFactory.getInstance(
             settings.credentialDiggerRunner,
+            correlationId,
         );
-        id = runner.getId();
         await runner.scan(currentDoc, context.storageUri, diagCollection);
     } catch (err) {
         LoggerFactory.getInstance().error(
-            `${id}: Error occurred when scanning ${currentDoc.uri.fsPath}: ${err}`,
+            `Error occurred when scanning ${currentDoc.uri.fsPath}: ${err}`,
+            { correlationId },
         );
         window.showErrorMessage(
-            `Failed to scan ${currentDoc.uri.fsPath} (${id})`,
+            `Failed to scan ${currentDoc.uri.fsPath} (${correlationId})`,
         );
     }
 }
 
 export async function addRules(): Promise<void> {
-    let id = null;
+    const correlationId = generateUniqUuid();
     // Read settings
     let settings = workspace
         .getConfiguration()
         .get<ExtensionConfig>(CONFIGURATION_NAME);
     if (!isSettingsConfigured(settings)) {
         window.showErrorMessage(
-            'Failed to add rules: Credential Digger extension is not configured',
+            `Failed to add rules: Credential Digger extension is not configured (${correlationId})`,
         );
         return;
     }
@@ -170,14 +176,15 @@ export async function addRules(): Promise<void> {
         // Add Rules
         const runner = RunnerFactory.getInstance(
             settings.credentialDiggerRunner,
+            correlationId,
         );
-        id = runner.getId();
         runner.addRules(settings.rules ?? '');
     } catch (err) {
         LoggerFactory.getInstance().error(
-            `${id}: Error occurred when adding rules: ${err}`,
+            `Error occurred when adding rules: ${err}`,
+            { correlationId },
         );
-        window.showErrorMessage(`Failed to add rules (${id})`);
+        window.showErrorMessage(`Failed to add rules (${correlationId})`);
     }
 }
 

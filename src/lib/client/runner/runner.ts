@@ -8,7 +8,7 @@ import {
     DbType,
 } from '../../../types/config';
 import { Discovery } from '../../../types/db';
-import { generateUniqUuid, isNullOrUndefinedOrEmptyObject } from '../../utils';
+import { isNullOrUndefinedOrEmptyObject } from '../../utils';
 
 export default abstract class Runner {
     private id: string;
@@ -22,12 +22,12 @@ export default abstract class Runner {
     public constructor(
         config: CredentialDiggerRunnerConfig,
         runnerType: CredentialDiggerRuntime,
+        correlationId: string,
     ) {
         // Set
         this.runnerType = runnerType;
         this.config = config;
-        // Generate a uniq uuid
-        this.id = generateUniqUuid();
+        this.id = correlationId;
         // Validate config
         this.validateConfig();
     }

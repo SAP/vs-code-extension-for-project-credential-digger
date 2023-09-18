@@ -30,8 +30,9 @@ export default class WebServerRunner extends Runner {
     public constructor(
         config: CredentialDiggerRunnerWebServerConfig,
         runnerType: CredentialDiggerRuntime,
+        correlationId: string,
     ) {
-        super(config, runnerType);
+        super(config, runnerType, correlationId);
         this.config = this.config as CredentialDiggerRunnerWebServerConfig;
         // Create agents
         let httpsAgent, httpAgent;
@@ -41,12 +42,14 @@ export default class WebServerRunner extends Runner {
             if (isNullOrUndefined(this.config.certificateValidation)) {
                 LoggerFactory.getInstance().warn(
                     `Certificate validation flag is not set defaulting to ${certificateValidation}`,
+                    { correlationId: this.getId() },
                 );
             } else {
                 certificateValidation = this.config
                     .certificateValidation as boolean;
                 LoggerFactory.getInstance().warn(
                     `Certificate validation flag is set to ${certificateValidation}`,
+                    { correlationId: this.getId() },
                 );
             }
             httpsAgent = new HttpsCookieAgent({
@@ -90,16 +93,15 @@ export default class WebServerRunner extends Runner {
             createReadStream((this.currentFile as TextDocument).uri.fsPath),
         );
         LoggerFactory.getInstance().debug(
-            `${this.getId()}: scan: sending file ${
-                this.currentFile?.uri.fsPath
-            } to ${this.config.host}`,
+            `scan: sending file ${this.currentFile?.uri.fsPath} to ${this.config.host}`,
+            { correlationId: this.getId() },
         );
         const resp = await this.httpInstance.post('/scan_file', form, {
             headers: form.getHeaders(),
         });
-        LoggerFactory.getInstance().debug(
-            `${this.getId()}: scan: status code: ${resp.status}`,
-        );
+        LoggerFactory.getInstance().debug(`scan: status code: ${resp.status}`, {
+            correlationId: this.getId(),
+        });
         if (
             resp.status === HttpStatusCode.Ok &&
             resp.headers['content-type'] === 'application/json'
@@ -117,9 +119,8 @@ export default class WebServerRunner extends Runner {
             );
         }
         LoggerFactory.getInstance().debug(
-            `${this.getId()}: scan: successfully sent ${
-                this.currentFile?.uri.fsPath
-            } to ${this.config.host}: ${this.discoveries.length}`,
+            `scan: successfully sent ${this.currentFile?.uri.fsPath} to ${this.config.host}: ${this.discoveries.length} discoveries`,
+            { correlationId: this.getId() },
         );
         // Return
         return this.discoveries.length;
@@ -161,9 +162,8 @@ export default class WebServerRunner extends Runner {
         }
         // Call API
         LoggerFactory.getInstance().debug(
-            `${this.getId()}: addRules: uploading rules stored in ${
-                this.rules?.fsPath
-            } to ${this.config.host}`,
+            `addRules: uploading rules stored in ${this.rules?.fsPath} to ${this.config.host}`,
+            { correlationId: this.getId() },
         );
         try {
             const form = new FormData();
@@ -177,17 +177,15 @@ export default class WebServerRunner extends Runner {
         } catch (err) {
             if (!isAxiosError(err)) {
                 LoggerFactory.getInstance().debug(
-                    `${this.getId()}: addRules: error message: ${
-                        (err as Error).message
-                    }`,
+                    `addRules: error message: ${(err as Error).message}`,
+                    { correlationId: this.getId() },
                 );
                 throw err;
             }
             const error = err as AxiosError<Error>;
             LoggerFactory.getInstance().debug(
-                `${this.getId()}: addRules: status code: ${
-                    error.response?.status
-                }`,
+                `addRules: status code: ${error.response?.status}`,
+                { correlationId: this.getId() },
             );
             if (error.response?.status === HttpStatusCode.Found) {
                 return true;
@@ -195,9 +193,8 @@ export default class WebServerRunner extends Runner {
             throw err;
         }
         LoggerFactory.getInstance().debug(
-            `${this.getId()}: addRules: failed to add rules to ${
-                this.config.host
-            }`,
+            `addRules: failed to add rules to ${this.config.host}`,
+            { correlationId: this.getId() },
         );
         return false;
     }
@@ -208,9 +205,8 @@ export default class WebServerRunner extends Runner {
         }
         this.config = this.config as CredentialDiggerRunnerWebServerConfig;
         LoggerFactory.getInstance().debug(
-            `${this.getId()}: connect: connecting to ${
-                this.config.host
-            } using the provided credentials stored in ${this.config.envFile}`,
+            `connect: connecting to ${this.config.host} using the provided credentials stored in ${this.config.envFile}`,
+            { correlationId: this.getId() },
         );
         try {
             const form = new FormData();
@@ -224,19 +220,15 @@ export default class WebServerRunner extends Runner {
             }
             const error = err as AxiosError<Error>;
             LoggerFactory.getInstance().debug(
-                `${this.getId()}: connect: status code: ${
-                    error.response?.status
-                }`,
+                `connect: status code: ${error.response?.status}`,
+                { correlationId: this.getId() },
             );
             if (error.response?.status !== HttpStatusCode.Found) {
                 throw err;
             }
             LoggerFactory.getInstance().debug(
-                `${this.getId()}: connect: successfully connected to ${
-                    this.config.host
-                } using the provided credentials stored in ${
-                    this.config.envFile
-                }`,
+                `connect: successfully connected to ${this.config.host} using the provided credentials stored in ${this.config.envFile}`,
+                { correlationId: this.getId() },
             );
             return;
         }

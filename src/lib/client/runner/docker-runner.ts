@@ -44,7 +44,8 @@ export default class DockerRunner extends Runner {
         }
         commands.push(scanCmd);
         LoggerFactory.getInstance().debug(
-            `${this.getId()}: scan: command: ${commands[commands.length - 1]}`,
+            `scan: command: ${commands[commands.length - 1]}`,
+            { correlationId: this.getId() },
         );
 
         // Trigger
@@ -63,9 +64,9 @@ export default class DockerRunner extends Runner {
         );
 
         let exitCode = await executeTask(triggerTask);
-        LoggerFactory.getInstance().debug(
-            `${this.getId()}: scan: exit code: ${exitCode}`,
-        );
+        LoggerFactory.getInstance().debug(`scan: exit code: ${exitCode}`, {
+            correlationId: this.getId(),
+        });
         // For tasks exit code 127 is reserved for command not found
         if (exitCode === 127) {
             exitCode = -127;
@@ -95,9 +96,8 @@ export default class DockerRunner extends Runner {
         }
         commands.push(cmd);
         LoggerFactory.getInstance().debug(
-            `${this.getId()}: getDiscoveries: command: ${
-                commands[commands.length - 1]
-            }`,
+            `getDiscoveries: command: ${commands[commands.length - 1]}`,
+            { correlationId: this.getId() },
         );
 
         // Copy discoveries file to extension workspace
@@ -122,7 +122,8 @@ export default class DockerRunner extends Runner {
 
         const exitCode = await executeTask(triggerTask);
         LoggerFactory.getInstance().debug(
-            `${this.getId()}: getDiscoveries: exit code: ${exitCode}`,
+            `getDiscoveries: exit code: ${exitCode}`,
+            { correlationId: this.getId() },
         );
         if (exitCode === 0) {
             // Parse result file
@@ -162,7 +163,8 @@ export default class DockerRunner extends Runner {
             );
             const exitCode = await executeTask(triggerTask);
             LoggerFactory.getInstance().debug(
-                `${this.getId()}: cleanup: exit code: ${exitCode}`,
+                `cleanup: exit code: ${exitCode}`,
+                { correlationId: this.getId() },
             );
         }
 
@@ -206,9 +208,8 @@ export default class DockerRunner extends Runner {
         }
         commands.push(cmd);
         LoggerFactory.getInstance().debug(
-            `${this.getId()}: addRules: command: ${
-                commands[commands.length - 1]
-            }`,
+            `addRules: command: ${commands[commands.length - 1]}`,
+            { correlationId: this.getId() },
         );
         // Trigger
         const cmdShellExec = new ShellExecution(`${commands.join(' && ')}`);
@@ -225,9 +226,9 @@ export default class DockerRunner extends Runner {
             cmdShellExec,
         );
         const exitCode = await executeTask(triggerTask);
-        LoggerFactory.getInstance().debug(
-            `${this.getId()}: addRules: exit code: ${exitCode}`,
-        );
+        LoggerFactory.getInstance().debug(`addRules: exit code: ${exitCode}`, {
+            correlationId: this.getId(),
+        });
         return exitCode === 0;
     }
 

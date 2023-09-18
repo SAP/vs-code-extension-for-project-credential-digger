@@ -15,7 +15,7 @@ import * as sinon from 'sinon';
 
 import WebServerRunner from '../../../../lib/client/runner/webserver-runner';
 import LoggerFactory from '../../../../lib/logger-factory';
-import { convertRawToDiscovery } from '../../../../lib/utils';
+import { convertRawToDiscovery, generateUniqUuid } from '../../../../lib/utils';
 import {
     CredentialDiggerRunnerWebServerConfig,
     CredentialDiggerRuntime,
@@ -79,6 +79,7 @@ describe('WebserverRunner  - Unit Tests', function () {
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
+                generateUniqUuid(),
             );
             runner.setCurrentFile(currentFile);
             result = await runner.scan();
@@ -100,6 +101,7 @@ describe('WebserverRunner  - Unit Tests', function () {
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
+                generateUniqUuid(),
             );
             runner.setCurrentFile(currentFile);
             result = await runner.scan();
@@ -121,6 +123,7 @@ describe('WebserverRunner  - Unit Tests', function () {
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
+                generateUniqUuid(),
             );
             runner.setCurrentFile(currentFile);
             result = await runner.scan();
@@ -144,6 +147,7 @@ describe('WebserverRunner  - Unit Tests', function () {
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
+                generateUniqUuid(),
             );
             runner.setCurrentFile(currentFile);
             result = await runner.scan();
@@ -173,6 +177,7 @@ describe('WebserverRunner  - Unit Tests', function () {
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
+                generateUniqUuid(),
             );
             runner.setCurrentFile(currentFile);
             result = await runner.scan();
@@ -200,6 +205,7 @@ describe('WebserverRunner  - Unit Tests', function () {
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
+                generateUniqUuid(),
             );
             runner.setCurrentFile(currentFile);
             try {
@@ -234,6 +240,7 @@ describe('WebserverRunner  - Unit Tests', function () {
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
+                generateUniqUuid(),
             );
             runner.setCurrentFile(currentFile);
             const count = await runner.scan();
@@ -281,6 +288,7 @@ describe('WebserverRunner  - Unit Tests', function () {
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
+                generateUniqUuid(),
             );
             runner.validateAndSetRules(rules);
             result = await runner.addRules();
@@ -313,6 +321,7 @@ describe('WebserverRunner  - Unit Tests', function () {
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
+                generateUniqUuid(),
             );
             runner.validateAndSetRules(rules);
             result = await runner.addRules();
@@ -344,6 +353,7 @@ describe('WebserverRunner  - Unit Tests', function () {
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
+                generateUniqUuid(),
             );
             runner.validateAndSetRules(rules);
             try {
@@ -372,6 +382,7 @@ describe('WebserverRunner  - Unit Tests', function () {
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
+                generateUniqUuid(),
             );
             runner.validateAndSetRules(rules);
             try {
@@ -395,6 +406,7 @@ describe('WebserverRunner  - Unit Tests', function () {
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
+                generateUniqUuid(),
             );
             runner.validateAndSetRules(rules);
             result = await runner.addRules();
@@ -432,6 +444,7 @@ describe('WebserverRunner  - Unit Tests', function () {
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
+                generateUniqUuid(),
             );
             await runner.connect();
             expect(existsSyncStub.callCount).to.be.eql(1);
@@ -460,6 +473,7 @@ describe('WebserverRunner  - Unit Tests', function () {
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
+                generateUniqUuid(),
             );
             await runner.connect();
             expect(existsSyncStub.callCount).to.be.eql(0);
@@ -487,6 +501,7 @@ describe('WebserverRunner  - Unit Tests', function () {
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
+                generateUniqUuid(),
             );
             try {
                 await runner.connect();
@@ -521,6 +536,7 @@ describe('WebserverRunner  - Unit Tests', function () {
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
+                generateUniqUuid(),
             );
             try {
                 await runner.connect();
@@ -544,6 +560,7 @@ describe('WebserverRunner  - Unit Tests', function () {
             runner = new WebServerRunner(
                 config,
                 CredentialDiggerRuntime.WebServer,
+                generateUniqUuid(),
             );
             try {
                 await runner.connect();
