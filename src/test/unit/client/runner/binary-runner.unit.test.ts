@@ -64,7 +64,7 @@ describe('BinaryRunner  - Unit Tests', function () {
             runner = new BinaryRunner(config, CredentialDiggerRuntime.Binary);
             runner.setCurrentFile(currentFile);
             result = await runner.scan();
-            const expectedCmd = `${config.path} scan_path "${currentFile.uri.fsPath}" --models PathModel --force --debug --sqlite "${config.databaseConfig.sqlite?.filename}"`;
+            const expectedCmd = `${config.path} scan_path "${currentFile.uri.fsPath}" --models PathModel PasswordModel --force --debug --sqlite "${config.databaseConfig.sqlite?.filename}"`;
             expect(existsSyncStub.called).to.be.true;
             expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
@@ -86,7 +86,7 @@ describe('BinaryRunner  - Unit Tests', function () {
             runner = new BinaryRunner(config, CredentialDiggerRuntime.Binary);
             runner.setCurrentFile(currentFile);
             result = await runner.scan();
-            const expectedCmd = `${config.path} scan_path "${currentFile.uri.fsPath}" --models PathModel --force --debug`;
+            const expectedCmd = `${config.path} scan_path "${currentFile.uri.fsPath}" --models PathModel PasswordModel --force --debug`;
             expect(existsSyncStub.called).to.be.true;
             expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);

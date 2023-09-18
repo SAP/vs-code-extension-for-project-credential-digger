@@ -82,7 +82,7 @@ export default class WebServerRunner extends Runner {
         // Call API
         const form = new FormData();
         form.append('pathModel', '');
-        form.append('passwordModel', '');
+        form.append('passwordModel', 'password');
         form.append('rule_to_use', 'all');
         form.append('forceScan', 'force');
         form.append(
@@ -105,8 +105,11 @@ export default class WebServerRunner extends Runner {
             resp.headers['content-type'] === 'application/json'
         ) {
             // Convert discoveries
-            for (const d of resp.data) {
-                this.discoveries.push(convertRawToDiscovery(d));
+            for (const r of resp.data) {
+                const d = convertRawToDiscovery(r, true);
+                if (d) {
+                    this.discoveries.push(d);
+                }
             }
         } else {
             throw new Error(

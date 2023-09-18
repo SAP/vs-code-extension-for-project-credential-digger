@@ -239,8 +239,11 @@ describe('WebserverRunner  - Unit Tests', function () {
             const count = await runner.scan();
             result = await runner.getDiscoveries();
             const discoveries: Discovery[] = [];
-            rawDiscoveries.forEach((d) => {
-                discoveries.push(convertRawToDiscovery(d));
+            rawDiscoveries.forEach((r) => {
+                const d = convertRawToDiscovery(r, true);
+                if (d) {
+                    discoveries.push(d);
+                }
             });
             expect(axiosInstanceStub.callCount).to.be.eql(1);
             expect(postStub.callCount).to.be.eql(1);

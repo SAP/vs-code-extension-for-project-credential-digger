@@ -6,7 +6,7 @@ import { parse } from 'csv-parse';
 import { cloneDeep } from 'lodash';
 
 import { ExtensionConfig } from '../types/config';
-import { Discovery, RawDiscovery } from '../types/db';
+import { Discovery, RawDiscovery, State } from '../types/db';
 
 export async function executeTask(task: Task): Promise<number | undefined> {
     // Generate a uniq id for the task to check on
@@ -26,24 +26,33 @@ export async function executeTask(task: Task): Promise<number | undefined> {
     return await TaskUtils.getTaskExitCode(task);
 }
 
-export function convertRawToDiscovery(record: RawDiscovery): Discovery {
-    return {
-        id: parseInt(record.id),
-        filename: record.file_name,
-        commitId: record.commit_id,
-        lineNumber: parseInt(record.line_number),
-        snippet: record.snippet,
-        repoUrl: record.repo_url,
-        ruleId: parseInt(record.rule_id),
-        state: record.state,
-        timestamp: record.timestamp,
-        rule: {
-            id: parseInt(record.rule_id),
-            regex: record.rule_regex,
-            category: record.rule_category,
-            description: record.rule_description,
-        },
-    };
+export function convertRawToDiscovery(
+    record: RawDiscovery,
+    filterFalsePositive: boolean,
+): Discovery | undefined {
+    if (
+        (filterFalsePositive && record.state !== State.FalsePositive) ||
+        !filterFalsePositive
+    ) {
+        return {
+            id: parseInt(record.id),
+            filename: record.file_name,
+            commitId: record.commit_id,
+            lineNumber: parseInt(record.line_number),
+            snippet: record.snippet,
+            repoUrl: record.repo_url,
+            ruleId: parseInt(record.rule_id),
+            state: record.state,
+            timestamp: record.timestamp,
+            rule: {
+                id: parseInt(record.rule_id),
+                regex: record.rule_regex,
+                category: record.rule_category,
+                description: record.rule_description,
+            },
+        };
+    }
+    return;
 }
 
 export async function parseDiscoveriesCSVFile(
@@ -58,7 +67,10 @@ export async function parseDiscoveriesCSVFile(
         }),
     );
     for await (const record of parser) {
-        records.push(convertRawToDiscovery(record));
+        const d = convertRawToDiscovery(record, true);
+        if (d && !isNullOrUndefinedOrEmptyObject(d)) {
+            records.push(d);
+        }
     }
     return records;
 }

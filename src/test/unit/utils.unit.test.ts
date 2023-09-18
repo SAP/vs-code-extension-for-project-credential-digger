@@ -243,7 +243,7 @@ describe('Utils - Unit Tests', function () {
             const result = await parseDiscoveriesCSVFile(
                 resolve(__dirname, './data/raw-discoveries.csv'),
             );
-            expect(result.length).to.be.eql(5);
+            expect(result.length).to.be.eql(4);
             result.forEach((d) => {
                 expect(d.id).to.be.not.null;
                 expect(d.filename).to.be.eql('SMTPEmail.ts');
