@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/SAP/vs-code-extension-for-project-credential-digger/compare/v1.1.0...v1.2.0) (2023-09-18)
+
+### Features
+
+-   **extension:** exclude files from scan ([#62](https://github.com/SAP/vs-code-extension-for-project-credential-digger/issues/62)) ([9b92871](https://github.com/SAP/vs-code-extension-for-project-credential-digger/commit/9b928714d97a7c8444cc142b25c05e0fd4eb1f2c))
+-   **logging:** add correlation id ([#73](https://github.com/SAP/vs-code-extension-for-project-credential-digger/issues/73)) ([f00c428](https://github.com/SAP/vs-code-extension-for-project-credential-digger/commit/f00c428ce44617ab37b0dc6b4cd76c69cb651415))
+-   **webrunner:** report on number of discoveries ([#61](https://github.com/SAP/vs-code-extension-for-project-credential-digger/issues/61)) ([9d28d2b](https://github.com/SAP/vs-code-extension-for-project-credential-digger/commit/9d28d2b478043495a1069751ff5c42e0275d6ebb))
+
+### Bug Fixes
+
+-   **runner:** support password model ([#72](https://github.com/SAP/vs-code-extension-for-project-credential-digger/issues/72)) ([7cb152e](https://github.com/SAP/vs-code-extension-for-project-credential-digger/commit/7cb152e15565214fa943aecd9dc3ff478fedb66c))
+
 ## [1.1.0](https://github.com/SAP/vs-code-extension-for-project-credential-digger/compare/v1.0.0...v1.1.0) (2023-08-30)
 
 ### Bug Fixes
@@ -15,7 +27,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 -   **webserverrunner:** expose server certificate validation as config param ([#52](https://github.com/SAP/vs-code-extension-for-project-credential-digger/issues/52)) ([409444b](https://github.com/SAP/vs-code-extension-for-project-credential-digger/commit/409444b13a70122add29bb1be2365b63003644b9))
 
-### 0.0.5 (2023-08-28)
+### [0.0.5](https://github.com/SAP/vs-code-extension-for-project-credential-digger/compare/v0.0.4...v0.0.5) (2023-08-28)
 
 ### Features
 
@@ -40,19 +52,19 @@ All notable changes to this project will be documented in this file. See [standa
 -   **utils:** fix crypto import ([50717ab](https://github.com/SAP/vs-code-extension-for-project-credential-digger/commit/50717ab2064bb47a5068d2dbd4c6b84f62f805ab))
 -   **utils:** properly convert raw data to discoveries ([6e49fa1](https://github.com/SAP/vs-code-extension-for-project-credential-digger/commit/6e49fa15c52aaade95f707fd02a26755d10462e3))
 
-### 0.0.4 (2023-07-27)
+### [0.0.4](https://github.com/SAP/vs-code-extension-for-project-credential-digger/compare/v0.0.3...v0.0.4) (2023-07-27)
 
 ### Bug Fixes
 
 -   **extension:** change display name ([#38](https://github.com/SAP/vs-code-extension-for-project-credential-digger/pull/38))([ca2ac1d](https://github.com/SAP/vs-code-extension-for-project-credential-digger/commit/ca2ac1d5d1c7f6142b2fc501d2fdc49f68056cfe))
 
-### 0.0.3 (2023-07-25)
+### [0.0.3](https://github.com/SAP/vs-code-extension-for-project-credential-digger/compare/v0.0.2...v0.0.3) (2023-07-25)
 
 ### Bug Fixes
 
 -   **extension:** change display name of the extension ([#36](https://github.com/SAP/vs-code-extension-for-project-credential-digger/pull/36)) ([70e6763](https://github.com/SAP/vs-code-extension-for-project-credential-digger/commit/70e676384aa760593732b5ede803a749dd28b615))
 
-### 0.0.2 (2023-07-20)
+### [0.0.2](https://github.com/SAP/vs-code-extension-for-project-credential-digger/compare/v0.0.1...v0.0.2) (2023-07-20)
 
 ### Bug Fixes
 
