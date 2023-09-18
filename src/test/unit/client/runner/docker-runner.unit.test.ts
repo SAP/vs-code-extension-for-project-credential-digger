@@ -66,7 +66,11 @@ describe('DockerRunner  - Unit Tests', function () {
             executeTaskStub = sinon
                 .stub(Utils, 'executeTask')
                 .resolves(discoveries.length);
-            runner = new DockerRunner(config, CredentialDiggerRuntime.Docker);
+            runner = new DockerRunner(
+                config,
+                CredentialDiggerRuntime.Docker,
+                Utils.generateUniqUuid(),
+            );
             runner.setCurrentFile(currentFile);
             result = await runner.scan();
             const expectedCmd = `docker exec "${
@@ -97,7 +101,11 @@ describe('DockerRunner  - Unit Tests', function () {
             executeTaskStub = sinon
                 .stub(Utils, 'executeTask')
                 .resolves(discoveries.length);
-            runner = new DockerRunner(config, CredentialDiggerRuntime.Docker);
+            runner = new DockerRunner(
+                config,
+                CredentialDiggerRuntime.Docker,
+                Utils.generateUniqUuid(),
+            );
             runner.setCurrentFile(currentFile);
             result = await runner.scan();
             const expectedCmd = `docker exec "${
@@ -127,7 +135,11 @@ describe('DockerRunner  - Unit Tests', function () {
             executeTaskStub = sinon
                 .stub(Utils, 'executeTask')
                 .resolves(exitCode);
-            runner = new DockerRunner(config, CredentialDiggerRuntime.Docker);
+            runner = new DockerRunner(
+                config,
+                CredentialDiggerRuntime.Docker,
+                Utils.generateUniqUuid(),
+            );
             runner.setCurrentFile(currentFile);
             result = await runner.scan();
             expect(loggerInstance.callCount).to.be.eql(2);
@@ -170,7 +182,11 @@ describe('DockerRunner  - Unit Tests', function () {
                 generateDBConfig(DbType.SQLite),
             ).docker as CredentialDiggerRunnerDockerConfig;
             executeTaskStub = sinon.stub(Utils, 'executeTask').resolves(0);
-            runner = new DockerRunner(config, CredentialDiggerRuntime.Docker);
+            runner = new DockerRunner(
+                config,
+                CredentialDiggerRuntime.Docker,
+                Utils.generateUniqUuid(),
+            );
             runner.setCurrentFile(currentFile);
             result = await runner.getDiscoveries(storagePath);
             let expectedCmd = `docker exec "${config.containerId}" credentialdigger get_discoveries --with_rules --save "${discoveriesFileLocation.fsPath}" "${fileLocation.fsPath}" --sqlite "${config.databaseConfig.sqlite?.filename}"; docker cp "${config.containerId}:${discoveriesFileLocation.fsPath}" "${discoveriesLocalFileLocation.fsPath}"`;
@@ -202,7 +218,11 @@ describe('DockerRunner  - Unit Tests', function () {
                 generateDBConfig(DbType.Postgres),
             ).docker as CredentialDiggerRunnerDockerConfig;
             executeTaskStub = sinon.stub(Utils, 'executeTask').resolves(0);
-            runner = new DockerRunner(config, CredentialDiggerRuntime.Docker);
+            runner = new DockerRunner(
+                config,
+                CredentialDiggerRuntime.Docker,
+                Utils.generateUniqUuid(),
+            );
             runner.setCurrentFile(currentFile);
             result = await runner.getDiscoveries(storagePath);
             const expectedCmd = `docker exec "${config.containerId}" credentialdigger get_discoveries --with_rules --save "${discoveriesFileLocation.fsPath}" "${fileLocation.fsPath}"; docker cp "${config.containerId}:${discoveriesFileLocation.fsPath}" "${discoveriesLocalFileLocation.fsPath}"`;
@@ -223,7 +243,11 @@ describe('DockerRunner  - Unit Tests', function () {
                 generateDBConfig(DbType.Postgres),
             ).docker as CredentialDiggerRunnerDockerConfig;
             executeTaskStub = sinon.stub(Utils, 'executeTask').resolves(1);
-            runner = new DockerRunner(config, CredentialDiggerRuntime.Docker);
+            runner = new DockerRunner(
+                config,
+                CredentialDiggerRuntime.Docker,
+                Utils.generateUniqUuid(),
+            );
             runner.setCurrentFile(currentFile);
             result = await runner.getDiscoveries(storagePath);
             expect(createHashStub.callCount).to.be.eql(1);
@@ -241,7 +265,11 @@ describe('DockerRunner  - Unit Tests', function () {
                 CredentialDiggerRuntime.Docker,
                 generateDBConfig(DbType.SQLite),
             ).docker as CredentialDiggerRunnerDockerConfig;
-            runner = new DockerRunner(config, CredentialDiggerRuntime.Docker);
+            runner = new DockerRunner(
+                config,
+                CredentialDiggerRuntime.Docker,
+                Utils.generateUniqUuid(),
+            );
             result = await runner.getDiscoveries(storagePath);
             expect(createHashStub.callCount).to.be.eql(0);
             expect(loggerInstance.callCount).to.be.eql(0);
@@ -274,7 +302,11 @@ describe('DockerRunner  - Unit Tests', function () {
                 generateDBConfig(DbType.SQLite),
             ).docker as CredentialDiggerRunnerDockerConfig;
             executeTaskStub = sinon.stub(Utils, 'executeTask').resolves(0);
-            runner = new DockerRunner(config, CredentialDiggerRuntime.Docker);
+            runner = new DockerRunner(
+                config,
+                CredentialDiggerRuntime.Docker,
+                Utils.generateUniqUuid(),
+            );
             runner.validateAndSetRules(rulesPath);
             result = await runner.addRules();
             const expectedCmd = `docker exec "${
@@ -303,7 +335,11 @@ describe('DockerRunner  - Unit Tests', function () {
                 generateDBConfig(DbType.Postgres),
             ).docker as CredentialDiggerRunnerDockerConfig;
             executeTaskStub = sinon.stub(Utils, 'executeTask').resolves(0);
-            runner = new DockerRunner(config, CredentialDiggerRuntime.Docker);
+            runner = new DockerRunner(
+                config,
+                CredentialDiggerRuntime.Docker,
+                Utils.generateUniqUuid(),
+            );
             runner.validateAndSetRules(rulesPath);
             result = await runner.addRules();
             const expectedCmd = `docker exec "${
@@ -332,7 +368,11 @@ describe('DockerRunner  - Unit Tests', function () {
                 generateDBConfig(DbType.SQLite),
             ).docker as CredentialDiggerRunnerDockerConfig;
             executeTaskStub = sinon.stub(Utils, 'executeTask').resolves(-9);
-            runner = new DockerRunner(config, CredentialDiggerRuntime.Docker);
+            runner = new DockerRunner(
+                config,
+                CredentialDiggerRuntime.Docker,
+                Utils.generateUniqUuid(),
+            );
             runner.validateAndSetRules(rulesPath);
             result = await runner.addRules();
             expect(loggerInstance.callCount).to.be.eql(2);
@@ -348,7 +388,11 @@ describe('DockerRunner  - Unit Tests', function () {
                 CredentialDiggerRuntime.Docker,
                 generateDBConfig(DbType.SQLite),
             ).docker as CredentialDiggerRunnerDockerConfig;
-            runner = new DockerRunner(config, CredentialDiggerRuntime.Docker);
+            runner = new DockerRunner(
+                config,
+                CredentialDiggerRuntime.Docker,
+                Utils.generateUniqUuid(),
+            );
             result = await runner.addRules();
             expect(loggerInstance.callCount).to.be.eql(0);
             expect(debugStub.callCount).to.be.eql(0);

@@ -47,7 +47,6 @@ describe('Extension - Unit Tests', function () {
     let getConfigurationStub: sinon.SinonStub;
     let fsStatStub: sinon.SinonStub;
     let runnerFactoryStub: sinon.SinonStub;
-    let getIdStub: sinon.SinonStub;
 
     beforeEach(() => {
         currentFile = generateCurrentFile();
@@ -55,7 +54,6 @@ describe('Extension - Unit Tests', function () {
             storageUri: Uri.parse(faker.system.directoryPath()),
             subscriptions: [],
         } as unknown as ExtensionContext;
-        getIdStub = sinon.stub().returns(faker.string.uuid());
     });
 
     afterEach(() => {
@@ -72,7 +70,6 @@ describe('Extension - Unit Tests', function () {
             runnerFactoryStub = sinon
                 .stub(RunnerFactory, 'getInstance')
                 .returns({
-                    getId: getIdStub,
                     scan: scanStub,
                 } as unknown as RunnerFactory);
         });
@@ -97,7 +94,6 @@ describe('Extension - Unit Tests', function () {
             expect(getStub.callCount).to.be.eql(1);
             expect(fsStatStub.callCount).to.be.eql(1);
             expect(runnerFactoryStub.callCount).to.be.eql(1);
-            expect(getIdStub.callCount).to.be.eql(1);
             expect(scanStub.callCount).to.be.eql(1);
         });
 
@@ -109,7 +105,6 @@ describe('Extension - Unit Tests', function () {
             await scan(context, diagCollection, currentFile, fPattern, true);
             expect(getConfigurationStub.callCount).to.be.eql(0);
             expect(runnerFactoryStub.callCount).to.be.eql(0);
-            expect(getIdStub.callCount).to.be.eql(0);
             expect(scanStub.callCount).to.be.eql(0);
         });
 
@@ -134,7 +129,6 @@ describe('Extension - Unit Tests', function () {
             expect(loggerInstanceStub.callCount).to.be.eql(1);
             expect(errorStub.callCount).to.be.eql(1);
             expect(runnerFactoryStub.callCount).to.be.eql(0);
-            expect(getIdStub.callCount).to.be.eql(0);
             expect(scanStub.callCount).to.be.eql(0);
         });
 
@@ -168,7 +162,6 @@ describe('Extension - Unit Tests', function () {
             expect(loggerInstanceStub.callCount).to.be.eql(1);
             expect(errorStub.callCount).to.be.eql(1);
             expect(runnerFactoryStub.callCount).to.be.eql(0);
-            expect(getIdStub.callCount).to.be.eql(0);
             expect(scanStub.callCount).to.be.eql(0);
         });
 
@@ -192,7 +185,6 @@ describe('Extension - Unit Tests', function () {
             expect(getStub.callCount).to.be.eql(1);
             expect(fsStatStub.callCount).to.be.eql(1);
             expect(runnerFactoryStub.callCount).to.be.eql(0);
-            expect(getIdStub.callCount).to.be.eql(0);
             expect(scanStub.callCount).to.be.eql(0);
         });
 
@@ -229,7 +221,6 @@ describe('Extension - Unit Tests', function () {
             expect(errorStub.callCount).to.be.eql(1);
             expect(showErrorMessageStub.callCount).to.be.eql(1);
             expect(runnerFactoryStub.callCount).to.be.eql(0);
-            expect(getIdStub.callCount).to.be.eql(0);
             expect(scanStub.callCount).to.be.eql(0);
         });
 
@@ -262,7 +253,6 @@ describe('Extension - Unit Tests', function () {
             expect(getStub.callCount).to.be.eql(1);
             expect(fsStatStub.callCount).to.be.eql(1);
             expect(runnerFactoryStub.callCount).to.be.eql(1);
-            expect(getIdStub.callCount).to.be.eql(1);
             expect(scanStub.callCount).to.be.eql(1);
             expect(loggerInstanceStub.callCount).to.be.eql(1);
             expect(errorStub.callCount).to.be.eql(1);
@@ -278,7 +268,6 @@ describe('Extension - Unit Tests', function () {
             runnerFactoryStub = sinon
                 .stub(RunnerFactory, 'getInstance')
                 .returns({
-                    getId: getIdStub,
                     addRules: addRulesStub,
                 } as unknown as RunnerFactory);
         });
@@ -299,7 +288,6 @@ describe('Extension - Unit Tests', function () {
             expect(getConfigurationStub.callCount).to.be.eql(1);
             expect(getStub.callCount).to.be.eql(1);
             expect(runnerFactoryStub.callCount).to.be.eql(1);
-            expect(getIdStub.callCount).to.be.eql(1);
             expect(addRulesStub.callCount).to.be.eql(1);
         });
 
@@ -318,7 +306,6 @@ describe('Extension - Unit Tests', function () {
             expect(getStub.callCount).to.be.eql(1);
             expect(showErrorMessageStub.callCount).to.be.eql(1);
             expect(runnerFactoryStub.callCount).to.be.eql(0);
-            expect(getIdStub.callCount).to.be.eql(0);
             expect(addRulesStub.callCount).to.be.eql(0);
         });
 
@@ -346,7 +333,6 @@ describe('Extension - Unit Tests', function () {
             expect(isSettingsConfiguredStub.callCount).to.be.eql(1);
             expect(showErrorMessageStub.callCount).to.be.eql(1);
             expect(runnerFactoryStub.callCount).to.be.eql(0);
-            expect(getIdStub.callCount).to.be.eql(0);
             expect(addRulesStub.callCount).to.be.eql(0);
         });
 
@@ -374,7 +360,6 @@ describe('Extension - Unit Tests', function () {
             expect(getConfigurationStub.callCount).to.be.eql(1);
             expect(getStub.callCount).to.be.eql(1);
             expect(runnerFactoryStub.callCount).to.be.eql(1);
-            expect(getIdStub.callCount).to.be.eql(1);
             expect(addRulesStub.callCount).to.be.eql(1);
             expect(loggerInstanceStub.callCount).to.be.eql(1);
             expect(errorStub.callCount).to.be.eql(1);

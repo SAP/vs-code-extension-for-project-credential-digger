@@ -30,27 +30,27 @@ export default class LoggerFactory {
         return LoggerFactory.instance;
     }
 
-    public fatal(msg: string): void {
-        this.logger.fatal(msg);
+    public fatal(msg: string, args?: object): void {
+        this.logger.fatal(msg, args);
     }
 
-    public error(msg: string): void {
-        this.logger.error(msg);
+    public error(msg: string, args?: object): void {
+        this.logger.error(msg, args);
     }
 
-    public warn(msg: string): void {
-        this.logger.warn(msg);
+    public warn(msg: string, args?: object): void {
+        this.logger.warn(msg, args);
     }
 
-    public info(msg: string): void {
-        this.logger.info(msg);
+    public info(msg: string, args?: object): void {
+        this.logger.info(msg, args);
     }
 
-    public debug(msg: string): void {
-        this.logger.debug(msg);
+    public debug(msg: string, args?: object): void {
+        this.logger.debug(msg, args);
     }
 
-    public trace(msg: string): void {
-        this.logger.trace(msg);
+    public trace(msg: string, args?: object): void {
+        this.logger.trace(msg, args);
     }
 }

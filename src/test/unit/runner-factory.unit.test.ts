@@ -14,6 +14,7 @@ import {
 import DockerRunner from '../../lib/client/runner/docker-runner';
 import LoggerFactory from '../../lib/logger-factory';
 import RunnerFactory from '../../lib/runner-factory';
+import { generateUniqUuid } from '../../lib/utils';
 import {
     CredentialDiggerRunner,
     CredentialDiggerRunnerBinaryConfig,
@@ -37,7 +38,10 @@ describe('RunnerFactory  - Unit Tests', function () {
                 CredentialDiggerRuntime.Docker,
                 generateDBConfig(DbType.SQLite),
             );
-            const result = RunnerFactory.getInstance(runnerConfig);
+            const result = RunnerFactory.getInstance(
+                runnerConfig,
+                generateUniqUuid(),
+            );
             expect(result).to.be.not.null;
             expect(result.getId()).to.be.not.empty.string;
         });
@@ -47,7 +51,10 @@ describe('RunnerFactory  - Unit Tests', function () {
                 CredentialDiggerRuntime.WebServer,
             );
             const fsExistsSyncStub = sinon.stub(fs, 'existsSync').returns(true);
-            const result = RunnerFactory.getInstance(runnerConfig);
+            const result = RunnerFactory.getInstance(
+                runnerConfig,
+                generateUniqUuid(),
+            );
             expect(result).to.be.not.null;
             expect(result.getId()).to.be.not.empty.string;
             expect(fsExistsSyncStub.callCount).to.be.eql(1);
@@ -59,7 +66,10 @@ describe('RunnerFactory  - Unit Tests', function () {
                 generateDBConfig(DbType.Postgres),
             );
             const fsExistsSyncStub = sinon.stub(fs, 'existsSync').returns(true);
-            const result = RunnerFactory.getInstance(runnerConfig);
+            const result = RunnerFactory.getInstance(
+                runnerConfig,
+                generateUniqUuid(),
+            );
             expect(result).to.be.not.null;
             expect(result.getId()).to.be.not.empty.string;
             expect(fsExistsSyncStub.callCount).to.be.eql(1);
@@ -73,7 +83,7 @@ describe('RunnerFactory  - Unit Tests', function () {
             };
 
             try {
-                RunnerFactory.getInstance(runnerConfig);
+                RunnerFactory.getInstance(runnerConfig, generateUniqUuid());
             } catch (err) {
                 expect(err).to.be.not.null;
                 expect((err as Error).message).to.be.eql(errMessage);
@@ -87,7 +97,7 @@ describe('RunnerFactory  - Unit Tests', function () {
             } as unknown as CredentialDiggerRunner;
 
             try {
-                RunnerFactory.getInstance(runnerConfig);
+                RunnerFactory.getInstance(runnerConfig, generateUniqUuid());
             } catch (err) {
                 expect(err).to.be.not.null;
                 expect((err as Error).message).to.be.eql(errMessage);
@@ -101,7 +111,7 @@ describe('RunnerFactory  - Unit Tests', function () {
                 { type: faker.database.type() } as unknown as DbConfig,
             );
             try {
-                RunnerFactory.getInstance(runnerConfig);
+                RunnerFactory.getInstance(runnerConfig, generateUniqUuid());
             } catch (err) {
                 expect(err).to.be.not.null;
                 expect((err as Error).message).to.be.eql(errMessage);
@@ -119,7 +129,7 @@ describe('RunnerFactory  - Unit Tests', function () {
             };
             const fsExistsSyncStub = sinon.stub(fs, 'existsSync').returns(true);
             try {
-                RunnerFactory.getInstance(runnerConfig);
+                RunnerFactory.getInstance(runnerConfig, generateUniqUuid());
             } catch (err) {
                 expect(err).to.be.not.null;
                 expect((err as Error).message).to.be.eql(errMessage);
@@ -137,7 +147,7 @@ describe('RunnerFactory  - Unit Tests', function () {
             );
             const fsExistsSyncStub = sinon.stub(fs, 'existsSync').returns(true);
             try {
-                RunnerFactory.getInstance(runnerConfig);
+                RunnerFactory.getInstance(runnerConfig, generateUniqUuid());
             } catch (err) {
                 expect(err).to.be.not.null;
                 expect((err as Error).message).to.be.eql(errMessage);
@@ -158,7 +168,7 @@ describe('RunnerFactory  - Unit Tests', function () {
             );
             const fsExistsSyncStub = sinon.stub(fs, 'existsSync').returns(true);
             try {
-                RunnerFactory.getInstance(runnerConfig);
+                RunnerFactory.getInstance(runnerConfig, generateUniqUuid());
             } catch (err) {
                 expect(err).to.be.not.null;
                 expect((err as Error).message).to.be.eql(errMessage);
@@ -178,7 +188,7 @@ describe('RunnerFactory  - Unit Tests', function () {
                 },
             } as unknown as CredentialDiggerRunner;
             try {
-                RunnerFactory.getInstance(runnerConfig);
+                RunnerFactory.getInstance(runnerConfig, generateUniqUuid());
             } catch (err) {
                 expect(err).to.be.not.null;
                 expect((err as Error).message).to.be.eql(errMessage);
@@ -196,7 +206,7 @@ describe('RunnerFactory  - Unit Tests', function () {
                 },
             } as unknown as CredentialDiggerRunner;
             try {
-                RunnerFactory.getInstance(runnerConfig);
+                RunnerFactory.getInstance(runnerConfig, generateUniqUuid());
             } catch (err) {
                 expect(err).to.be.not.null;
                 expect((err as Error).message).to.be.eql(errMessage);
@@ -214,7 +224,7 @@ describe('RunnerFactory  - Unit Tests', function () {
                 .stub(fs, 'existsSync')
                 .returns(false);
             try {
-                RunnerFactory.getInstance(runnerConfig);
+                RunnerFactory.getInstance(runnerConfig, generateUniqUuid());
             } catch (err) {
                 expect(err).to.be.not.null;
                 expect((err as Error).message).to.be.eql(errMessage);
@@ -233,7 +243,7 @@ describe('RunnerFactory  - Unit Tests', function () {
                 },
             };
             try {
-                RunnerFactory.getInstance(runnerConfig);
+                RunnerFactory.getInstance(runnerConfig, generateUniqUuid());
             } catch (err) {
                 expect(err).to.be.not.null;
                 expect((err as Error).message).to.be.eql(errMessage);
@@ -250,7 +260,7 @@ describe('RunnerFactory  - Unit Tests', function () {
                 runnerConfig.webserver as CredentialDiggerRunnerWebServerConfig
             ).host = faker.system.filePath();
             try {
-                RunnerFactory.getInstance(runnerConfig);
+                RunnerFactory.getInstance(runnerConfig, generateUniqUuid());
             } catch (err) {
                 expect(err).to.be.not.null;
                 expect((err as Error).message).to.be.eql(errMessage);
@@ -264,7 +274,7 @@ describe('RunnerFactory  - Unit Tests', function () {
                 CredentialDiggerRuntime.WebServer,
             );
             try {
-                RunnerFactory.getInstance(runnerConfig);
+                RunnerFactory.getInstance(runnerConfig, generateUniqUuid());
             } catch (err) {
                 expect(err).to.be.not.null;
                 expect((err as Error).message).to.be.eql(errMessage);
@@ -300,7 +310,10 @@ describe('RunnerFactory  - Unit Tests', function () {
                 .stub(window, 'showInformationMessage')
                 .resolves();
             const rules = faker.system.filePath();
-            await RunnerFactory.getInstance(runnerConfig).addRules(rules);
+            await RunnerFactory.getInstance(
+                runnerConfig,
+                generateUniqUuid(),
+            ).addRules(rules);
             expect(runnerAddRulesStub.callCount).to.be.eql(1);
             expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
@@ -319,7 +332,10 @@ describe('RunnerFactory  - Unit Tests', function () {
                 .stub(window, 'showErrorMessage')
                 .resolves();
             const rules = faker.system.filePath();
-            await RunnerFactory.getInstance(runnerConfig).addRules(rules);
+            await RunnerFactory.getInstance(
+                runnerConfig,
+                generateUniqUuid(),
+            ).addRules(rules);
             expect(runnerAddRulesStub.callCount).to.be.eql(1);
             expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
@@ -343,7 +359,10 @@ describe('RunnerFactory  - Unit Tests', function () {
                 .resolves();
             const rules = faker.system.filePath();
             try {
-                await RunnerFactory.getInstance(runnerConfig).addRules(rules);
+                await RunnerFactory.getInstance(
+                    runnerConfig,
+                    generateUniqUuid(),
+                ).addRules(rules);
             } catch (err) {
                 expect(err).not.to.be.null;
                 expect(err).to.be.eql(error);
@@ -395,11 +414,10 @@ describe('RunnerFactory  - Unit Tests', function () {
             const runnerCleanupStub = sinon
                 .stub(DockerRunner.prototype, 'cleanup')
                 .resolves();
-            await RunnerFactory.getInstance(runnerConfig).scan(
-                currentFile,
-                storageUri,
-                diagCollection,
-            );
+            await RunnerFactory.getInstance(
+                runnerConfig,
+                generateUniqUuid(),
+            ).scan(currentFile, storageUri, diagCollection);
             expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
             expect(runnerSetFileStub.callCount).to.be.eql(1);
@@ -431,11 +449,10 @@ describe('RunnerFactory  - Unit Tests', function () {
             const runnerCleanupStub = sinon
                 .stub(DockerRunner.prototype, 'cleanup')
                 .resolves();
-            await RunnerFactory.getInstance(runnerConfig).scan(
-                currentFile,
-                storageUri,
-                diagCollection,
-            );
+            await RunnerFactory.getInstance(
+                runnerConfig,
+                generateUniqUuid(),
+            ).scan(currentFile, storageUri, diagCollection);
             expect(loggerInstance.callCount).to.be.eql(2);
             expect(debugStub.callCount).to.be.eql(2);
             expect(runnerSetFileStub.callCount).to.be.eql(1);
