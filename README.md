@@ -32,7 +32,7 @@ The tool provides the following support:
 
 ## Download and Installation
 
-The extension could be installed directly from the VS Code Marketplace!
+The extension could be installed directly from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=SAPOSS.vs-code-extension-for-project-credential-digger)
 
 ## Configuration
 
