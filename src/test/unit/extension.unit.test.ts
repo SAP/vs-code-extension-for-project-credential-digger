@@ -409,6 +409,10 @@ describe('Extension - Unit Tests', function () {
             const diag = {} as unknown as DiagnosticCollection;
             existsSyncStub = sinon.stub(fs, 'existsSync').returns(false);
             mkdirSyncStub = sinon.stub(fs, 'mkdirSync').returns(undefined);
+            workspace.updateWorkspaceFolders(0, 0, {
+                uri: Uri.parse(faker.system.directoryPath()),
+                name: faker.system.directoryPath(),
+            });
             const createDiagnosticCollectionStub = sinon
                 .stub(languages, 'createDiagnosticCollection')
                 .returns(diag);

@@ -1,11 +1,25 @@
 import * as crypto from 'crypto';
-import { createReadStream } from 'fs';
-import { Task, TaskPanelKind, TaskRevealKind, tasks } from 'vscode';
+import { createReadStream, existsSync, promises as fs } from 'fs';
+import { resolve } from 'path';
+import {
+    CodeAction,
+    Diagnostic,
+    DiagnosticCollection,
+    Task,
+    TaskPanelKind,
+    TaskRevealKind,
+    Uri,
+    tasks,
+    window,
+    workspace,
+} from 'vscode';
 
 import { parse } from 'csv-parse';
 import { cloneDeep } from 'lodash';
 
-import { ExtensionConfig } from '../types/config';
+import { call_openAI_gpt3 } from './code-actions/openai';
+import { call_openAI_btp } from './code-actions/openai-btp';
+import { CONFIGURATION_NAME, ExtensionConfig } from '../types/config';
 import { Discovery, RawDiscovery, State } from '../types/db';
 
 export async function executeTask(task: Task): Promise<number | undefined> {
@@ -173,4 +187,151 @@ export class TaskUtils {
             });
         });
     }
+}
+
+/**
+ * function to get the AI response from the OpenAI API
+ * Check the configuration and the key mode from the settings view of the extension
+ */
+export async function getAIResponse(prompt: string) {
+    const settings = workspace
+        .getConfiguration()
+        .get<ExtensionConfig>(CONFIGURATION_NAME);
+    if (!settings) {
+        return {
+            success: false,
+            message: 'Extension setting is not configured',
+        };
+    }
+    if (!settings.openaiCallMode) {
+        return { success: false, message: '"OpenAI" Mode is not configured' };
+    }
+    if (!settings.openaiKeyPath) {
+        return { success: false, message: '"OpenAI" key is not configured' };
+    }
+
+    const AIfunction =
+        settings.openaiCallMode === 'BTP OpenAI'
+            ? call_openAI_btp
+            : call_openAI_gpt3;
+
+    window.showInformationMessage(
+        '⛏️ Credential Digger: 🤖 Wait! We are calling an AI for you. 🤖',
+    );
+    return await AIfunction(prompt, settings.openaiKeyPath);
+}
+
+/**
+ * function to remove the diagnostic from the collection and refresh the diagnostics
+ */
+export function removeDiagnosticAndRefresh(
+    uri: Uri,
+    diagnosticToRemove: Diagnostic,
+    diagnosticCollection: DiagnosticCollection,
+) {
+    let diagnostics = diagnosticCollection.get(uri);
+    if (diagnostics) {
+        diagnostics = diagnostics.filter((d) => d !== diagnosticToRemove);
+        diagnosticCollection.set(uri, diagnostics);
+    }
+    return diagnosticCollection;
+}
+
+/**
+ * function to get the WorkspaceEdit from the CodeAction
+ */
+export function getEdit(action: CodeAction) {
+    const edit = action.edit;
+    if (!edit) {
+        throw new Error('No WorkspaceEdit provided');
+    }
+    return edit;
+}
+
+/**
+ * function to get the active editor
+ */
+export function getEditor() {
+    const editor = window.activeTextEditor;
+    if (!editor) {
+        throw new Error('No editor is active.');
+    }
+    return editor;
+}
+
+/**
+ * function to handle the error
+ */
+export function handleError(error: unknown): void {
+    if (error instanceof Error) {
+        console.error('Error: ', error.message);
+        window.showErrorMessage('⛏️ Credential Digger: ' + error.message);
+        return;
+    } else {
+        console.error('Error: ', error);
+        window.showErrorMessage('⛏️ Credential Digger: ' + error);
+        return;
+    }
+}
+
+/**
+ * Function to load the JSON data from the file
+ * Used for two different types of JSON data
+ * 1. Language data -> isLanguage: true
+ * 2. AI prompts and docs -> isLanguage: false
+ */
+export async function loadJsonData(path: string, isLanguage: boolean) {
+    if (!existsSync(resolve(__dirname, path))) {
+        throw new Error('File not found: ' + path);
+    }
+
+    const rawData = await fs.readFile(resolve(__dirname, path), 'utf-8');
+    try {
+        if (isLanguage) {
+            return JSON.parse(rawData);
+        } else {
+            return JSON.parse(rawData);
+        }
+    } catch (error) {
+        throw new Error('Invalid JSON data: ' + error);
+    }
+}
+
+/**
+ * Find the secret value to replace.
+ */
+export function findSecretToReplace(
+    match: RegExpMatchArray | null,
+    snippet: string,
+    rules: string,
+) {
+    if (!match) {
+        // no match
+        return null;
+    }
+
+    if (match.length === 1) {
+        // only one match
+        return match[0];
+    }
+
+    // if the snippet contains '=>' or ':' and there are two matches
+    // means the secret is the value of the key-value pair
+    if (
+        (snippet.includes('=>') || snippet.includes(':')) &&
+        match.length === 2
+    ) {
+        return match[1];
+    }
+
+    // more than one match then return the first one by default
+    if (!snippet.includes('=>') && match.length > 1) {
+        for (const m of match) {
+            const newMacth = m.match(rules);
+            if (newMacth) {
+                return m;
+            }
+        }
+    }
+    return null;
 }
