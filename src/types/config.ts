@@ -26,6 +26,8 @@ export interface ExtensionConfig {
     rules?: string;
     filterPattern?: string[];
     credentialDiggerRunner: CredentialDiggerRunner;
+    openaiCallMode?: string;
+    openaiKeyPath?: string;
 }
 
 export interface CredentialDiggerRunner {

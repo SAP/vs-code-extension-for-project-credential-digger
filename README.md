@@ -25,6 +25,18 @@ The tool provides the following support:
 -   Triggers the scan when opening/saving a file
 -   Forces a scan of a file via the command `Credential Digger: Scan`
 -   Highlights the findings in the code and displays them in the `Problems` panel as warnings
+-   Proposes three "quick fix" functionalities to address the secrets found in the code:
+
+    -   <u>Quick Fix 1:</u> **Remove Secret** - Instantly remove the secret from your code, making cleanup tasks and revision simpler.
+    -   <u>Quick Fix 2:</u> **Create Environment Variable** - With this feature, you can effortlessly store found secrets in a dedicated file and set up dependencies. This will be done automatically if your coding language is amongst Python, PHP, JavaScript, C#, or Java Maven. If your language is outside these five, you will receive AI-assisted advice to guide your manual setup.
+    -   <u>Quick Fix 3:</u> **Secret Storage Options** - This feature provides three secret storage options, namely, BTP Secret Store, AWS Secret Manager, and Vault.
+
+        -   For BTP Secret Store, the documentation is written mostly by us with a portion that is AI-generated.
+        -   For AWS Secret Manager and Vault, the entire set of instructions is AI-generated to provide a comprehensive, dynamic and user-specific guide for securely storing secrets and integrating them into your project.
+
+        (To fully benefit from the <u>AI functionality</u>, you need to configure some settings. Go to 'Configuration' section to have more information.)
+
+These features aim to streamline your coding workflow, making it more efficient and secure.
 
 ## Requirements
 
@@ -63,6 +75,20 @@ If your Credential digger instance does not have scanning rules or you want to p
 If you would like to exclude some files from being scanned you need to configure the extension by providing the patterns to filter out
 
 ![exclude-files](images/credential-digger-exclude-files.gif)
+
+### OpenAI
+
+To fully benefit from the AI functionality, you need to configure some settings. Specifically, two fields need to be filled in the extension settings.
+(Your code will not be transmitted to an AI, only the file extension will be used on the prompt.)
+
+-   **Openai Mode**: Select your preferred AI mode from the dropdown. The options include "BTP OpenAI" and "OpenAI."
+
+    -   <u>BTP OpenAI</u>: This option is for a Multi-tenant BTP service proxy for third-party LLM APIs. The extension use Azure OpenAI text-davinci-003 model.
+    -   <u>OpenAI</u>: This option is for OpenAI (https://platform.openai.com/).
+
+-   **Openai Key Path**: This field is for entering the full path to your OpenAI key. The type of key file depends on the selected OpenAI mode.
+    -   If <u>BTP OpenAI</u> was selected in the OpenAI Mode, the path should lead to a `.json` file containing your key.
+    -   If <u>OpenAI</u> was chosen, the path should direct to a `.txt` file containing only your copied and pasted key.
 
 ## Support, Feedback, Contributing
 

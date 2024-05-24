@@ -10,9 +10,13 @@ import {
     window,
     workspace,
 } from 'vscode';
+import * as vscode from 'vscode';
 
 import ignore from 'ignore';
 
+import { QuickFixProviderEnvVar } from './lib/code-actions/QuickFixProviderEnvVar';
+import { QuickFixProviderRemoveSecret } from './lib/code-actions/QuickFixProviderRemoveSecret';
+import { QuickFixProviderSecretStore } from './lib/code-actions/QuickFixProviderSecretStore';
 import LoggerFactory from './lib/logger-factory';
 import MetaReaderFactory from './lib/meta-reader-factory';
 import RunnerFactory from './lib/runner-factory';
@@ -79,6 +83,54 @@ export async function activate(context: ExtensionContext): Promise<void> {
         workspace.onDidSaveTextDocument(scanHandler),
         workspace.onDidCloseTextDocument(cleanUpHandler),
         workspace.onDidChangeConfiguration(updateFilterPatternHandler),
+    );
+
+    // Quick Fix
+    const quickFixProviderRemoveSecret = new QuickFixProviderRemoveSecret(
+        diagCollection,
+    );
+    const quickFixProviderEnvVar = new QuickFixProviderEnvVar(diagCollection);
+    const quickFixProviderSecretStore = new QuickFixProviderSecretStore(
+        diagCollection,
+    );
+
+    context.subscriptions.push(
+        vscode.languages.registerCodeActionsProvider(
+            '*',
+            quickFixProviderSecretStore,
+            {
+                //  '*' means all languages
+                providedCodeActionKinds:
+                    QuickFixProviderSecretStore.providedCodeActionKinds,
+            },
+        ),
+    );
+    context.subscriptions.push(
+        vscode.languages.registerCodeActionsProvider(
+            '*',
+            quickFixProviderEnvVar,
+            {
+                //  '*' means all languages
+                providedCodeActionKinds:
+                    QuickFixProviderEnvVar.providedCodeActionKinds,
+            },
+        ),
+    );
+    context.subscriptions.push(
+        vscode.languages.registerCodeActionsProvider(
+            '*',
+            quickFixProviderRemoveSecret,
+            {
+                //  '*' means all languages
+                providedCodeActionKinds:
+                    QuickFixProviderRemoveSecret.providedCodeActionKinds,
+            },
+        ),
+    );
+    context.subscriptions.push(
+        quickFixProviderRemoveSecret.registerCommands(),
+        quickFixProviderEnvVar.registerCommands(),
+        quickFixProviderSecretStore.registerCommands(),
     );
 
     // The commandId has been defined in the package.json file

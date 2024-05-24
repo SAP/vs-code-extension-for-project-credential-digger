@@ -2,7 +2,7 @@
     "name": "vs-code-extension-for-project-credential-digger",
     "displayName": "VS Code extension for project \"Credential Digger\"",
     "description": "Runs credential digger scan",
-    "version": "1.2.0",
+    "version": "1.3.0",
     "icon": "resources/logo-CD.png",
     "keywords": [
         "Credential Digger",
@@ -183,6 +183,22 @@
                             "description": "Specifies whether to validate the Credential Digger webserver certificate"
                         }
                     }
+                },
+                "credentialDigger.openaiCallMode": {
+                    "type": "string",
+                    "description": "Specifies the way you want to call OpenAI API",
+                    "enum": [
+                        "BTP OpenAI",
+                        "OpenAI"
+                    ],
+                    "enumDescriptions": [
+                        "OpenAI instance running on BTP (the extension use Azure OpenAI text-davinci-003 model)",
+                        "OpenAI from https://openai.com/"
+                    ]
+                },
+                "credentialDigger.openaiKeyPath": {
+                    "type": "string",
+                    "description": "Full path to the file with the key\n- BTP OpenAI: a json file with a 'client credentials token' from a Multi-tenant BTP service proxy for third-party LLM APIs \n- OpenAI: a txt file with a key from https://openai.com/. \n"
                 }
             }
         }
@@ -229,7 +245,7 @@
         "@types/vscode": "1.76.0",
         "@typescript-eslint/eslint-plugin": "5.60.0",
         "@typescript-eslint/parser": "5.53.0",
-        "@vscode/test-electron": "2.3.4",
+        "@vscode/test-electron": "2.3.10",
         "@vscode/vsce": "2.19.0",
         "chai": "4.3.8",
         "commitizen": "4.3.0",

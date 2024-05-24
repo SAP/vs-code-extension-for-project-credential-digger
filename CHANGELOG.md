@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/SAP/vs-code-extension-for-project-credential-digger/compare/v1.2.0...v1.3.0) (2024-05-24)
+
+### Features
+
+-   **extension:** add quick fix suggestions for secrets ([a25823c](https://github.com/SAP/vs-code-extension-for-project-credential-digger/commit/a25823c28765c3554719e7733ea87b4dd82f55e3))
+
 ## [1.2.0](https://github.com/SAP/vs-code-extension-for-project-credential-digger/compare/v1.1.0...v1.2.0) (2023-09-18)
 
 ### Features
