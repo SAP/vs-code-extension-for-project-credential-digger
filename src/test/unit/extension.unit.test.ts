@@ -48,6 +48,17 @@ describe('Extension - Unit Tests', function () {
     let fsStatStub: sinon.SinonStub;
     let runnerFactoryStub: sinon.SinonStub;
 
+    before(() => {
+        workspace.updateWorkspaceFolders(0, 0, {
+            uri: Uri.parse(faker.system.directoryPath()),
+            name: faker.system.directoryPath(),
+        });
+    });
+
+    after(() => {
+        workspace.updateWorkspaceFolders(0, 1);
+    });
+
     beforeEach(() => {
         currentFile = generateCurrentFile();
         context = {
@@ -409,10 +420,6 @@ describe('Extension - Unit Tests', function () {
             const diag = {} as unknown as DiagnosticCollection;
             existsSyncStub = sinon.stub(fs, 'existsSync').returns(false);
             mkdirSyncStub = sinon.stub(fs, 'mkdirSync').returns(undefined);
-            workspace.updateWorkspaceFolders(0, 0, {
-                uri: Uri.parse(faker.system.directoryPath()),
-                name: faker.system.directoryPath(),
-            });
             const createDiagnosticCollectionStub = sinon
                 .stub(languages, 'createDiagnosticCollection')
                 .returns(diag);
@@ -442,10 +449,12 @@ describe('Extension - Unit Tests', function () {
             expect(showInformationMessageStub.callCount).to.be.eql(1);
             expect(loggerInstanceStub.callCount).to.be.eql(1);
             expect(warnStub.callCount).to.be.eql(1);
-            expect(registerCommandStub.callCount).to.be.eql(2);
+            // expect(registerCommandStub.callCount).to.be.eql(2);
+            expect(registerCommandStub.callCount).to.be.eql(5); // + 3 quick fix added
             expect(getExtensionScanCommandStub.callCount).to.be.eql(1);
             expect(getExtensionAddRulesCommandStub.callCount).to.be.eql(1);
-            expect(context.subscriptions.length).to.be.eql(6);
+            // expect(context.subscriptions.length).to.be.eql(6);
+            expect(context.subscriptions.length).to.be.eql(12); // + 6 more subscription for the quick fix added
         });
 
         it('Should fail to activate the extension: invalid storage', async function () {

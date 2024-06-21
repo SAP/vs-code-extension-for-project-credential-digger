@@ -192,7 +192,7 @@
                         "OpenAI"
                     ],
                     "enumDescriptions": [
-                        "OpenAI instance running on BTP (the extension use Azure OpenAI text-davinci-003 model)",
+                        "OpenAI instance running on BTP (the extension use Azure OpenAI gpt-4 model)",
                         "OpenAI from https://openai.com/"
                     ]
                 },

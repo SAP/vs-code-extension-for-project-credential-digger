@@ -95,7 +95,6 @@ export default abstract class Runner {
         if (!rules) {
             throw new Error('Please provide the path to the rules file');
         }
-        console.log('Rules file path: ', rules);
         this.rules = Uri.parse(rules);
         switch (this.runnerType) {
             case CredentialDiggerRuntime.Docker:
