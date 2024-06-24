@@ -257,7 +257,7 @@
         "eslint-plugin-import": "2.28.1",
         "glob": "10.3.3",
         "husky": "8.0.3",
-        "lint-staged": "13.2.2",
+        "lint-staged": "15.2.7",
         "mocha": "10.2.0",
         "mocha-explorer-launcher-scripts": "0.4.0",
         "mochawesome": "7.1.3",
