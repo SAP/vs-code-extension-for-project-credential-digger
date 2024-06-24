@@ -230,7 +230,7 @@
         "test:integration": "npm run pretest && node ./out/test/runTest.js integration"
     },
     "devDependencies": {
-        "@commitlint/cli": "17.6.6",
+        "@commitlint/cli": "19.3.0",
         "@commitlint/config-conventional": "17.6.5",
         "@faker-js/faker": "8.0.2",
         "@istanbuljs/nyc-config-typescript": "1.0.2",
