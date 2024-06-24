@@ -14,9 +14,9 @@ import * as vscode from 'vscode';
 
 import ignore from 'ignore';
 
-import { QuickFixProviderEnvVar } from './lib/code-actions/QuickFixProviderEnvVar';
-import { QuickFixProviderRemoveSecret } from './lib/code-actions/QuickFixProviderRemoveSecret';
-import { QuickFixProviderSecretStore } from './lib/code-actions/QuickFixProviderSecretStore';
+import { QuickFixProviderEnvVar } from './lib/code-actions/quick-fix-provider-env-var';
+import { QuickFixProviderRemoveSecret } from './lib/code-actions/quick-fix-provider-remove-secret';
+import { QuickFixProviderSecretStore } from './lib/code-actions/quick-fix-provider-secret-store';
 import LoggerFactory from './lib/logger-factory';
 import MetaReaderFactory from './lib/meta-reader-factory';
 import RunnerFactory from './lib/runner-factory';

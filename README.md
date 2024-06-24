@@ -8,10 +8,10 @@ VS Code extension for project "Credential Digger" is a free IDE extension that l
 
 ### How it works
 
-Open any source file, or edit an existing one and save, then you will start seeing the issues reported by the extension.
+<u>Open</u> any source file, or edit an existing one and <u>save</u>, then you will start seeing the issues reported by the extension.
 The issues are highlighted in your code as warnings, and also are listed in the `Problems` panel.
 
-![on-the-fly](images/credential-digger-how-it-works.gif)
+![on-the-fly](images/cd-how-it-works.png)
 
 ### Features
 
@@ -52,43 +52,102 @@ The extension could be installed directly from the [VS Code Marketplace](https:/
 
 The extension relies on an existing instance of the Credential Digger, hence you need to configure the extension based on the chosen mode
 
+![settings](images/cd-settings.png)
+
 #### Local
 
-![local](images/credential-digger-local.gif)
+Navigate to the extension settings first. Go to the `Type` section and select the `binary` option. Then, from the `Binary` section, click on `Edit in settings.json`.
+
+![local](images/cd-binary.png)
+
+Next, provide the required information as shown in the following example:
+
+```
+"credentialDigger.credentialDiggerRunner.type": "binary",
+"credentialDigger.credentialDiggerRunner.binary": {
+    "path": "/bin/credentialdigger",
+    "databaseConfig": {
+        "type": "postgres",
+        "postgres": {
+            "envFile": "/tmp/test/postgres/.env"
+        }
+    }
+}
+```
 
 #### Docker
 
-![docker](images/credential-digger-docker.gif)
+Navigate to the extension settings first. Go to the `Type` section and select the `docker` option. Then, from the `Docker` section, click on `Edit in settings.json`.
+
+![docker-edit](images/cd-docker.png)
+
+Next, provide the required information as shown in the following example:
+
+```
+"credentialDigger.credentialDiggerRunner.type": "docker",
+"credentialDigger.credentialDiggerRunner.docker": {
+    "containerId": "378ffa800494",
+    "databaseConfig": {
+        "type": "sqlite",
+        "sqlite": {
+            "filename": "/data/db/data.db"
+        }
+    }
+}
+```
 
 #### Web Server
 
-![webserver](images/credential-digger-webserver.gif)
+Navigate to the extension settings first. Go to the `Type` section and select the `webserver` option. Then, from the `Webserver` section, click on `Edit in settings.json`.
+
+![webserver-type](images/cd-webserver.png)
+
+Next, provide the required information as shown in the following example:
+
+```
+"credentialDigger.credentialDiggerRunner.type": "webserver",
+"credentialDigger.credentialDiggerRunner.webserver": {
+    "host": "http://localhost:5000",
+    "envFile": "/tmp/test/sqlite/.env"
+}
+```
 
 ### Add rules
 
-If your Credential digger instance does not have scanning rules or you want to provide your customized set then you can push them by running this command `Credential Digger: Add Rules`
+If your Credential digger instance does not have scanning rules or you want to provide your customized set then you can first enter the path to your rules file into the `Rules` section and then push them by running this command `Credential Digger: Add Rules`
 
-![add-rules](images/credential-digger-add-rules.gif)
+![add-rules](images/cd-add-rules.png)
 
 ### Exclude files
 
 If you would like to exclude some files from being scanned you need to configure the extension by providing the patterns to filter out
 
-![exclude-files](images/credential-digger-exclude-files.gif)
+Click on `Add Item`:
+
+![exclude-files](images/cd-filter.png)
+
+Then, enter each pattern individually:
+
+![exclude-files-add](images/cd-filter-add.png)
 
 ### OpenAI
 
-To fully benefit from the AI functionality, you need to configure some settings. Specifically, two fields need to be filled in the extension settings.
-(Your code will not be transmitted to an AI, only the file extension will be used on the prompt.)
+To fully benefit from the AI functionality, you need to configure two fields.
+(Your code will not be transmitted to an AI, only the file extension, like '.js' or '.java' will be used on the prompt.)
 
--   **Openai Mode**: Select your preferred AI mode from the dropdown. The options include "BTP OpenAI" and "OpenAI."
+You have two AI modes at your disposal:
 
-    -   <u>BTP OpenAI</u>: This option is for a Multi-tenant BTP service proxy for third-party LLM APIs. The extension use Azure OpenAI text-davinci-003 model.
-    -   <u>OpenAI</u>: This option is for OpenAI (https://platform.openai.com/).
+-   **BTP OpenAI**: This option is for a Multi-tenant BTP service proxy for third-party LLM APIs. The extension use Azure OpenAI gpt-4 model.
+    -   Navigate to the `Openai Call Mode` section. From the dropdown menu, choose `BTP OpenAI`.
+    -   Then navigate to the `Openai Key Path` section. Here, enter a path that leads to your key within a .json file.
 
--   **Openai Key Path**: This field is for entering the full path to your OpenAI key. The type of key file depends on the selected OpenAI mode.
-    -   If <u>BTP OpenAI</u> was selected in the OpenAI Mode, the path should lead to a `.json` file containing your key.
-    -   If <u>OpenAI</u> was chosen, the path should direct to a `.txt` file containing only your copied and pasted key.
+![btp-openai](images/cd-btp.png)
+
+-   **OpenAI**: This option is for OpenAI (https://platform.openai.com/)
+    -   Navigate to the `Openai Call Mode` section. From the dropdown menu, choose `OpenAI`.
+    -   Then navigate to the `Openai Key Path` section. Here, enter the path that directs to a .txt file. Make sure this file contains only the key you've copied and pasted.
+
+![openai](images/cd-ai.png)
 
 ## Support, Feedback, Contributing
 

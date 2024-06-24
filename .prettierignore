@@ -2,6 +2,7 @@
 .*ignore
 .reuse/dep5
 *.gif
+*.png
 *.csv
 .nvmrc
 package-lock.json

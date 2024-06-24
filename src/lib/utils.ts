@@ -1,6 +1,5 @@
 import * as crypto from 'crypto';
-import { createReadStream, existsSync, promises as fs } from 'fs';
-import { resolve } from 'path';
+import { createReadStream } from 'fs';
 import {
     CodeAction,
     Diagnostic,
@@ -19,6 +18,7 @@ import { cloneDeep } from 'lodash';
 
 import { call_openAI_gpt3 } from './code-actions/openai';
 import { call_openAI_btp } from './code-actions/openai-btp';
+import LoggerFactory from './logger-factory';
 import { CONFIGURATION_NAME, ExtensionConfig } from '../types/config';
 import { Discovery, RawDiscovery, State } from '../types/db';
 
@@ -214,10 +214,6 @@ export async function getAIResponse(prompt: string) {
         settings.openaiCallMode === 'BTP OpenAI'
             ? call_openAI_btp
             : call_openAI_gpt3;
-
-    window.showInformationMessage(
-        '⛏️ Credential Digger: 🤖 Wait! We are calling an AI for you. 🤖',
-    );
     return await AIfunction(prompt, settings.openaiKeyPath);
 }
 
@@ -263,38 +259,9 @@ export function getEditor() {
  * function to handle the error
  */
 export function handleError(error: unknown): void {
-    if (error instanceof Error) {
-        console.error('Error: ', error.message);
-        window.showErrorMessage('⛏️ Credential Digger: ' + error.message);
-        return;
-    } else {
-        console.error('Error: ', error);
-        window.showErrorMessage('⛏️ Credential Digger: ' + error);
-        return;
-    }
-}
-
-/**
- * Function to load the JSON data from the file
- * Used for two different types of JSON data
- * 1. Language data -> isLanguage: true
- * 2. AI prompts and docs -> isLanguage: false
- */
-export async function loadJsonData(path: string, isLanguage: boolean) {
-    if (!existsSync(resolve(__dirname, path))) {
-        throw new Error('File not found: ' + path);
-    }
-
-    const rawData = await fs.readFile(resolve(__dirname, path), 'utf-8');
-    try {
-        if (isLanguage) {
-            return JSON.parse(rawData);
-        } else {
-            return JSON.parse(rawData);
-        }
-    } catch (error) {
-        throw new Error('Invalid JSON data: ' + error);
-    }
+    LoggerFactory.getInstance().error('Error: ', { error: error });
+    window.showErrorMessage('⛏️ Credential Digger: ' + error);
+    return;
 }
 
 /**

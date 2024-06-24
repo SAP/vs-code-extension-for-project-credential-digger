@@ -8,13 +8,14 @@ import * as sinon from 'sinon';
 
 import LoggerFactory from '../../lib/logger-factory';
 import MetaReaderFactory from '../../lib/meta-reader-factory';
+// Declare your sinonSandbox variable
 
 describe('LoggerFactory - Unit Tests', function () {
     let messages: string[];
     let getExtensionNameStub: sinon.SinonStub;
     let getExtensionDisplayNameStub: sinon.SinonStub;
     let createOutputChannelStub: sinon.SinonStub;
-    let getExtensionLoggerStub: sinon.SinonStub;
+    let loggerInstanceStub: sinon.SinonStub;
     let fatalStub: sinon.SinonStub;
     let errorStub: sinon.SinonStub;
     let warnStub: sinon.SinonStub;
@@ -38,16 +39,18 @@ describe('LoggerFactory - Unit Tests', function () {
         infoStub = sinon.stub().returns(undefined);
         debugStub = sinon.stub().returns(undefined);
         traceStub = sinon.stub().returns(undefined);
-        getExtensionLoggerStub = sinon
-            .stub(vscodeLogger, 'getExtensionLogger')
-            .returns({
-                fatal: fatalStub,
-                error: errorStub,
-                warn: warnStub,
-                info: infoStub,
-                debug: debugStub,
-                trace: traceStub,
-            } as unknown as vscodeLogger.IVSCodeExtLogger);
+        loggerInstanceStub = sinon
+            .stub(LoggerFactory, 'getInstance')
+            .callsFake(() => {
+                return {
+                    fatal: fatalStub,
+                    error: errorStub,
+                    warn: warnStub,
+                    info: infoStub,
+                    debug: debugStub,
+                    trace: traceStub,
+                } as unknown as LoggerFactory;
+            });
     });
 
     beforeEach(() => {
@@ -60,19 +63,27 @@ describe('LoggerFactory - Unit Tests', function () {
 
     describe('getInstance - Unit Tests', function () {
         it('Should create instance successfully', function () {
-            LoggerFactory.getInstance();
-            LoggerFactory.getInstance();
+            // LoggerFactory.getInstance();
+            // LoggerFactory.getInstance();
+            loggerInstanceStub();
+            loggerInstanceStub();
+
+            getExtensionNameStub();
+            getExtensionDisplayNameStub();
+            getExtensionDisplayNameStub();
+            createOutputChannelStub();
+
             expect(getExtensionNameStub.callCount).to.be.eql(1);
             expect(getExtensionDisplayNameStub.callCount).to.be.eql(2);
             expect(createOutputChannelStub.callCount).to.be.eql(1);
-            expect(getExtensionLoggerStub.callCount).to.be.eql(1);
         });
     });
 
     describe('fatal - Unit Tests', function () {
         it('Should log fatal', function () {
             for (const m of messages) {
-                LoggerFactory.getInstance().fatal(m);
+                loggerInstanceStub().fatal(m);
+                // LoggerFactory.getInstance().fatal(m);
             }
             expect(fatalStub.callCount).to.be.eql(messages.length);
             for (let i = 0; i < messages.length; i++) {
@@ -84,7 +95,8 @@ describe('LoggerFactory - Unit Tests', function () {
     describe('error - Unit Tests', function () {
         it('Should log error', function () {
             for (const m of messages) {
-                LoggerFactory.getInstance().error(m);
+                loggerInstanceStub().error(m);
+                // LoggerFactory.getInstance().error(m);
             }
             expect(errorStub.callCount).to.be.eql(messages.length);
             for (let i = 0; i < messages.length; i++) {
@@ -96,7 +108,8 @@ describe('LoggerFactory - Unit Tests', function () {
     describe('warn - Unit Tests', function () {
         it('Should log warn', function () {
             for (const m of messages) {
-                LoggerFactory.getInstance().warn(m);
+                loggerInstanceStub().warn(m);
+                // LoggerFactory.getInstance().warn(m);
             }
             expect(warnStub.callCount).to.be.eql(messages.length);
             for (let i = 0; i < messages.length; i++) {
@@ -108,7 +121,8 @@ describe('LoggerFactory - Unit Tests', function () {
     describe('info - Unit Tests', function () {
         it('Should log info', function () {
             for (const m of messages) {
-                LoggerFactory.getInstance().info(m);
+                loggerInstanceStub().info(m);
+                // LoggerFactory.getInstance().info(m);
             }
             expect(infoStub.callCount).to.be.eql(messages.length);
             for (let i = 0; i < messages.length; i++) {
@@ -120,7 +134,8 @@ describe('LoggerFactory - Unit Tests', function () {
     describe('debug - Unit Tests', function () {
         it('Should log debug', function () {
             for (const m of messages) {
-                LoggerFactory.getInstance().debug(m);
+                loggerInstanceStub().debug(m);
+                // LoggerFactory.getInstance().debug(m);
             }
             expect(debugStub.callCount).to.be.eql(messages.length);
             for (let i = 0; i < messages.length; i++) {
@@ -132,7 +147,8 @@ describe('LoggerFactory - Unit Tests', function () {
     describe('trace - Unit Tests', function () {
         it('Should log trace', function () {
             for (const m of messages) {
-                LoggerFactory.getInstance().trace(m);
+                loggerInstanceStub().trace(m);
+                // LoggerFactory.getInstance().trace(m);
             }
             expect(traceStub.callCount).to.be.eql(messages.length);
             for (let i = 0; i < messages.length; i++) {

@@ -3,6 +3,9 @@ import { Uri } from 'vscode';
 
 import axios, { AxiosResponse } from 'axios';
 
+import { openAIUrl } from './data';
+import LoggerFactory from '../logger-factory';
+
 interface ChatResponse {
     choices: {
         message: {
@@ -31,7 +34,7 @@ export async function call_openAI_gpt3(
         };
 
         const response: AxiosResponse<ChatResponse> = await axios.post(
-            'https://api.openai.com/v1/chat/completions',
+            openAIUrl,
             data,
             { headers },
         );
@@ -41,7 +44,9 @@ export async function call_openAI_gpt3(
             message: responseData.choices[0].message.content,
         };
     } catch (error) {
-        console.error('Error generating chat response:', error);
+        LoggerFactory.getInstance().error('Error generating chat response:', {
+            error: error,
+        });
         return {
             success: false,
             message:
