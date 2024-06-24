@@ -253,7 +253,7 @@
         "cz-conventional-changelog": "3.3.0",
         "esbuild": "0.19.2",
         "eslint": "8.42.0",
-        "eslint-config-prettier": "8.8.0",
+        "eslint-config-prettier": "9.1.0",
         "eslint-plugin-import": "2.28.1",
         "glob": "10.3.3",
         "husky": "8.0.3",
