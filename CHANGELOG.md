@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.1](https://github.com/SAP/vs-code-extension-for-project-credential-digger/compare/v1.3.0...v1.3.1) (2024-06-24)
+
+### Bug Fixes
+
+-   **extension:** fixed JSON file error ([a1d5118](https://github.com/SAP/vs-code-extension-for-project-credential-digger/commit/a1d511836d11c983dd129fae5304ed5c1239dcaa))
+-   **extension:** update README ([a1d5118](https://github.com/SAP/vs-code-extension-for-project-credential-digger/commit/a1d511836d11c983dd129fae5304ed5c1239dcaa))
+-   **extension:** update AI model on BTP to gpt-4 ([a1d5118](https://github.com/SAP/vs-code-extension-for-project-credential-digger/commit/a1d511836d11c983dd129fae5304ed5c1239dcaa))
+-   **extension:** wrote unit test for quick fix suggestions ([#107](https://github.com/SAP/vs-code-extension-for-project-credential-digger/issues/107))
+
 ## [1.3.0](https://github.com/SAP/vs-code-extension-for-project-credential-digger/compare/v1.2.0...v1.3.0) (2024-05-24)
 
 ### Features
